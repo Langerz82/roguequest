@@ -27,6 +27,7 @@ COMMENTS:
 * Gems that are purchased will be logged and will always be added despite any data wipes.
 
 LINKS:
-DISCORD: https://discord.gg/sQHEa6Z
+* DISCORD: 
+https://discord.gg/sQHEa6Z
 
 
