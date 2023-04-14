@@ -3,6 +3,8 @@
 PLAY NOW AT:
 http://retrorpgonline2.com/play/index.html
 
+![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
+
 INSTRUCTIONS:
 * To Move you can can click on the Map, or use the arrow keys.
 * To Attack mouse click on the Monster or get within attack range and press Space bar.
