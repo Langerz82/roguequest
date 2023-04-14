@@ -26,5 +26,7 @@ COMMENTS:
 * Game Server wipes will only occur if there is significant disruption to Character data or the in-game economy due to exploits.
 * Gems that are purchased will be logged and will always be added despite any data wipes.
 
+LINKS:
+DISCORD: https://discord.gg/sQHEa6Z
 
 
