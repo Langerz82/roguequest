@@ -59,6 +59,7 @@ Additional Credits:
 
 ### Game Resources:
 * Sprites and game sounds, Content is licensed under CC-BY-SA 3.0. 
+* Sprites - Time Fantasy: https://finalbossblues.com/timefantasy/contact/
 * Skill Icons, Rexard - Unreal Engine Marketplace
 * Weapon and Armor Icons - ?? TBD (Will be replaced in future).
 
