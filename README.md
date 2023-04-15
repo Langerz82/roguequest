@@ -35,32 +35,32 @@ https://discord.gg/sQHEa6Z
 ## CREDITS:
 Copyright Joshua Langley 2023 - Head Developer and Game Designer https://github.com/Langerz82 . 
 
-Initial Game Engine - Browser Quest by Little Workshop
+* Initial Game Engine - Browser Quest by Little Workshop
 Code is licensed under MPL 2.0. Content is licensed under CC-BY-SA 3.0. 
 Franck Lecollinet - @whatthefranck
 Guillaume Lecollinet - @glecollinet
 https://github.com/mozilla/BrowserQuest
 
-Substantial modifications in this version (Browserquest) by Asky:
+* Substantial modifications in this version (Browserquest) by Asky:
 Code is licensed under MPL 2.0. Content is licensed under CC-BY-SA 3.0.
 RedPain: yootiong@hanmail.net
 Heyyo: kinora@gmail.com
 https://github.com/browserquest/BrowserQuest-Asky
 
-PIXIJS - a rendering system that uses WebGL (or optionally Canvas) to display images and other 2D visual content.
+* PIXIJS - a rendering system that uses WebGL (or optionally Canvas) to display images and other 2D visual content.
 This content is released under the (http://opensource.org/licenses/MIT) MIT License.
 Copyright (c) 2013-2023 Mathew Groves, Chad Engler
 https://github.com/pixijs/pixijs
 
-All the Node-JS Developers.
-
-Game Resources:
-Sprites and game sounds, Content is licensed under CC-BY-SA 3.0. 
-Skill Icons, Rexard - Unreal Engine Marketplace
-Weapon and Armor Icons - ?? TBD (Will be replaced in future).
+* All the Node-JS Developers.
 
 Additional Credits:
-Flavius Poenaru, https://github.com/Veradictus
+* Flavius Poenaru, https://github.com/Veradictus
+
+### Game Resources:
+* Sprites and game sounds, Content is licensed under CC-BY-SA 3.0. 
+* Skill Icons, Rexard - Unreal Engine Marketplace
+* Weapon and Armor Icons - ?? TBD (Will be replaced in future).
 
 If anything needs changing let me know.
 
