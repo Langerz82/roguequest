@@ -1,6 +1,6 @@
-# Retro RPG Online 2 Client
+# Retro RPG Online 2 Client - Alpha testing.
 
-## PLAY NOW AT:
+## PLAY FOR FREE NOW AT:
 http://retrorpgonline2.com/play/index.html
 
 ![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
