@@ -3,8 +3,10 @@
 ## PLAY FOR FREE NOW AT:
 http://retrorpgonline2.com/play/index.html
 
-NOTE - Black screen upon Login, Known Issue just click refresh on your browser and try again. It's 
-an issue with image caching and I will try and provide a fix soon.
+07/09/2023 - New version released. To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
+If that does not work, click on chrome://settings/privacy, and select Clear Browsing Data, then tick ONLY Cached images and files then select Clear Data.
+
+Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/retrorpgonline2-client/issues
 
 ![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
 
