@@ -10,6 +10,22 @@ Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/r
 
 ![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
 
+## FEATURES:
+* The game uses Pixi-JS 3D, and is optimized to work on lower spec GPU's and consume less power.
+* Game is online and many people can play on the Server at once.
+* A real-time like battle system, power up to deal maximum damage, and avoid enemy attacks by moving away.
+* An Inventory system, Equip armor and weapons at level 10 onwards.
+* Quest NPC's to take on various quests (will make some more diverse and scripted ones in future).
+* NPC Shops to buy various consumables and basic Weapons and Armor.
+* Auction House to sell or buy items listed by players.
+* Enchant your weapons and armor to make them more powerful.
+* Bank system to store items should your inventory get full.
+* Change your avatars appearance with paid gems (not yet enabled).
+* PvP combat is enabled at level 20 onwards, when you reach that level expect chaos.
+* Player stat system that occurs at level 10, distribute the points how you want to make your character more unique.
+* Skill system that is still a work in progress.
+* A sectional map system that enables larger maps and they will be auto-generated in future.
+  
 ## INSTRUCTIONS:
 * To Move you can can click on the Map, or use the arrow keys.
 * To Attack mouse click on the Monster or get within attack range and press Space bar.
