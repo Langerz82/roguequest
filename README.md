@@ -1,7 +1,7 @@
 # Retro RPG Online 2 Client - Alpha testing.
 
 ## PLAY FOR FREE NOW AT:
-http://retrorpgonline2.com/play/index.html
+http://www.retrorpgonline2.com/play/index.html
 
 07/09/2023 - New version released. To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
 If that does not work, click on chrome://settings/privacy, and select Clear Browsing Data, then tick ONLY Cached images and files then select Clear Data.
