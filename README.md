@@ -3,6 +3,8 @@
 ## PLAY FOR FREE NOW AT:
 http://www.retrorpgonline2.com/play/index.html
 
+18/09/2023 - New Version. Various changes to re-factor of code, please report all bugs in Github issues, thanks.
+
 07/09/2023 - New version released. To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
 If that does not work, click on chrome://settings/privacy, and select Clear Browsing Data, then tick ONLY Cached images and files then select Clear Data.
 
