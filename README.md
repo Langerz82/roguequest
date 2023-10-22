@@ -11,6 +11,7 @@ https://play.google.com/store/apps/details?id=com.retrorpgonline2
 * Fixed a bunch of stability and gameplay bugs without hopefully creating new ones.
 * Achievements feature added.
 * Preliminary party system added. To create a party in chat enter /party [username], /leader [username], and you can leave the party in the menu >> social window.
+* Also improved some of the loading system, so it downloads and loads faster. For older users on Chrome press Ctrl+F5 to reload the cache.
 
 18/09/2023 - New Version. Various changes to re-factor of code, please report all bugs in Github issues, thanks.
 
