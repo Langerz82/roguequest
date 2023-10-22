@@ -3,6 +3,15 @@
 ## PLAY FOR FREE NOW AT:
 http://www.retrorpgonline2.com/play/index.html
 
+## PLAY ON ANDROID PHONES VIA PLAY STORE AT:
+https://play.google.com/store/apps/details?id=com.retrorpgonline2
+
+## UPDATES:
+23/10/2023 Version 0.74 Released.
+* Fixed a bunch of stability and gameplay bugs without hopefully creating new ones.
+* Achievements feature added.
+* Preliminary party system added. To create a party in chat enter /party [username], /leader [username], and you can leave the party in the menu >> social window.
+
 18/09/2023 - New Version. Various changes to re-factor of code, please report all bugs in Github issues, thanks.
 
 07/09/2023 - New version released. To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
@@ -11,6 +20,8 @@ If that does not work, click on chrome://settings/privacy, and select Clear Brow
 Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/retrorpgonline2-client/issues
 
 ![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
+
+
 
 ## FEATURES:
 * The game uses Pixi-JS 3D, and is optimized to work on lower spec GPU's and consume less power.
