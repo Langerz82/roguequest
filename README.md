@@ -21,8 +21,6 @@ Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/r
 
 ![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
 
-
-
 ## FEATURES:
 * The game uses Pixi-JS 3D, and is optimized to work on lower spec GPU's and consume less power.
 * Game is online and many people can play on the Server at once.
@@ -55,6 +53,10 @@ Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/r
 * Right Button to mouse click.
 * Hold Shoulder-Left Button then other Button A,B,X,Y to activate Skill shortcut.
 * Hold Shoulder-Right Button then other Button A,B,X,Y to activate Consumables.
+
+## CROWD SOURCE FUNDING
+* If you have a spare few dollars I would appreciate the help to cover server costs, and to able to afford more game content assets.
+https://gofund.me/892686a0
 
 ## COMMENTS:
 * Game is in Alpha Stage.
