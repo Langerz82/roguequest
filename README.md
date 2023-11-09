@@ -14,17 +14,6 @@ https://play.google.com/store/apps/details?id=com.retrorpgonline2
 * Various Armor slots now introduced instead of just one.
 * Various code re-factoring and bug fixes.
 
-23/10/2023 Version 0.74 Released.
-* Fixed a bunch of stability and gameplay bugs without hopefully creating new ones.
-* Achievements feature added.
-* Preliminary party system added. To create a party in chat enter /party [username], /leader [username], and you can leave the party in the menu >> social window.
-* Also improved some of the loading system, so it downloads and loads faster. For older users on Chrome press Ctrl+F5 to reload the cache.
-
-18/09/2023 - New Version. Various changes to re-factor of code, please report all bugs in Github issues, thanks.
-
-07/09/2023 - New version released. To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
-If that does not work, click on chrome://settings/privacy, and select Clear Browsing Data, then tick ONLY Cached images and files then select Clear Data.
-
 Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/retrorpgonline2-client/issues
 
 ![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
@@ -102,10 +91,23 @@ Additional Credits:
 * Flavius Poenaru, https://github.com/Veradictus
 
 ### Game Resources:
-* Sprites and game sounds, Content is licensed under CC-BY-SA 3.0. 
+* Sprites and game sounds, Content is licensed under CC-BY-SA 3.0.
 * Sprites - Time Fantasy: https://finalbossblues.com/timefantasy/contact/
 * Skill Icons, Rexard - Unreal Engine Marketplace
-* Weapon and Armor Icons - ?? TBD (Will be replaced in future).
+* Weapon & Armor Icons: Medievalmore https://cartoonsmart.com/profile/?ID=9323
+* Craft Icons: BizmasterStudios https://opengameart.org/users/bizmasterstudios
+
+## Old Version History
+23/10/2023 Version 0.74 Released.
+* Fixed a bunch of stability and gameplay bugs without hopefully creating new ones.
+* Achievements feature added.
+* Preliminary party system added. To create a party in chat enter /party [username], /leader [username], and you can leave the party in the menu >> social window.
+* Also improved some of the loading system, so it downloads and loads faster. For older users on Chrome press Ctrl+F5 to reload the cache.
+
+18/09/2023 - New Version. Various changes to re-factor of code, please report all bugs in Github issues, thanks.
+
+07/09/2023 - New version released. To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
+If that does not work, click on chrome://settings/privacy, and select Clear Browsing Data, then tick ONLY Cached images and files then select Clear Data.
 
 If anything needs changing let me know.
 
