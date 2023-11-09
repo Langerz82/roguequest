@@ -7,6 +7,13 @@ http://www.retrorpgonline2.com/play/index.html
 https://play.google.com/store/apps/details?id=com.retrorpgonline2
 
 ## UPDATES:
+09/11/2023 Version 0.85 Released.
+* Initial Craft System Added. You can now craft armors, weapons and gather nodes will come later on.
+* Archer and Fighter class merged. You can switch by equipping a ranged weapon or melee weapon.
+* Weapon Types Levelling now introduced in addition to specific weapon sepcializations.
+* Various Armor slots now introduced instead of just one.
+* Various code re-factoring and bug fixes.
+
 23/10/2023 Version 0.74 Released.
 * Fixed a bunch of stability and gameplay bugs without hopefully creating new ones.
 * Achievements feature added.
