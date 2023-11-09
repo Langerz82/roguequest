@@ -1,7 +1,7 @@
 # Retro RPG Online 2 Client - Alpha/Beta testing.
 
 ## PLAY FOR FREE NOW AT:
-http://www.retrorpgonline2.com/play/index.html
+https://www.retrorpgonline2.com/play/index.html
 
 ## PLAY ON ANDROID PHONES VIA PLAY STORE AT:
 https://play.google.com/store/apps/details?id=com.retrorpgonline2
