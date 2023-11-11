@@ -8,7 +8,7 @@ https://play.google.com/store/apps/details?id=com.retrorpgonline2
 
 ## UPDATES:
 11/11/2023
-Items and Quests may have been wiped for current accounts. This was needed as they save in a new format. Having it done now will make the saving backend faster, thanks in advance.
+Items and Quests may have been wiped for current accounts. This was needed as they save in a new format. Having it done now will make the saving backend faster, thanks for your understanding.
 
 09/11/2023 Version 0.85 Released.
 * Initial Craft System Added. You can now craft armors, weapons and gather nodes will come later on.
