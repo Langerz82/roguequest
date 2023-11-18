@@ -54,6 +54,28 @@ Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/r
 * Hold Shoulder-Left Button then other Button A,B,X,Y to activate Skill shortcut.
 * Hold Shoulder-Right Button then other Button A,B,X,Y to activate Consumables.
 
+## HOST YOUR OWN SERVER
+Simply git clone this repository. 
+
+### For Client:
+Copy client directory to a http Server in the root directory, then to access in your browser enter http://localhost/client, for example.
+If you need to change the Servers address, in client/js/compress.js use find in a text editor and look for "host":, then enter the IP address or hostname of your server.
+If you change the IP address you might have to edit the CORS header in the client/index.html file to allow it to communicate with the server.
+
+### For Server:
+Enter in the server directory:
+npm install -d   <--- (Will install all the node_module dependencies.
+npm install redis-server   <-- Install the database software.
+node run.js  <-- Will run the server.
+
+### Terms and Conditions:
+This software is provided as is, is a compiled and covered under MPL V2.0 and is copyright code and content to there respective owners.
+You may not profit off the software without permission of the original authors, and content creators.
+You may not modify and/or re-distribute the software, and the assets contained are copyright the original authors.
+
+For more details see:
+https://www.mozilla.org/en-US/MPL/2.0/
+
 ## CROWD SOURCE FUNDING
 * If you have a spare few dollars I would appreciate the help to cover server costs, and to able to afford more game content assets.
 https://gofund.me/892686a0
