@@ -1,0 +1,17 @@
+{
+"1": {
+	"npcId": 575,
+	"name": "Intro 1",
+	"type": 1,
+	"level": 0,
+	"object": {"type": 2, "kind": 1, "count": 1}
+},
+"2": {
+	"npcId": 575,
+	"name": "Intro 2",
+	"type": 2,
+	"level": 0,
+	"object": {"type": 2, "kind": 1, "level": [0,2]},
+	"object2": {"type": 4, "kind": 1, "count": 3, "chance": 20}
+}
+}
