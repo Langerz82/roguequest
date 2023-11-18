@@ -65,8 +65,11 @@ If you change the IP address you might have to edit the CORS header in the clien
 ### For Server:
 Enter in the server directory:
 ```npm install -d```   <--- (Will install all the node_module dependencies.
+
 ```npm install redis-server```   <-- Install the database software.
+
 ```node run.js```  <-- Will run the server.
+
 
 ### Terms and Conditions:
 This software is provided as is, is a compiled and covered under MPL V2.0 and is copyright code and content to there respective owners.
