@@ -7,7 +7,7 @@
   "metrics_enabled": false,
   "use_one_port": true,
   "redis_port": 6379,
-  "redis_host": "127.0.0.1",
+  "redis_host": "localhost",
   "redis_password": "",
   "memcached_host": "127.0.0.1",
   "memcached_port": 11211,
@@ -16,7 +16,7 @@
   "world_id": 1,
   "production": "heroku",
   "database": "redis",
-  "version":85,
+  "version":86,
   "verify_email": "",
   "verify_key": "",
   "world_name": ["North America"]
