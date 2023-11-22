@@ -7,6 +7,9 @@ https://www.retrorpgonline2.com/play/index.html
 https://play.google.com/store/apps/details?id=com.retrorpgonline2
 
 ## UPDATES:
+22/11/2023
+Unfortunately there were major errors when saving Players. For this reason I had to wipe the Server data. Old accounts will need to be re-created and Players will have to start from new again. My sincere apologies however this was a necessary step as the data save process corrupted accounts and did not let the users in again once created. Thanks for understanding.
+
 11/11/2023
 Items and Quests may have been wiped for current accounts. This was needed as they save in a new format. Having it done now will make the saving backend faster, thanks for your understanding.
 
