@@ -31,7 +31,7 @@
     "underscore": "^1.13.2"
   },
   "scripts": {
-    "build": "browserify --node --ignore-missing js/main.js | terser > index.js"
+    "build": "browserify --node --ignore-missing js/main.js | terser > index.js & uglifyjs --compress --mangle -- index.js > run.js"
   },
   "repository": {
     "type": "git",
