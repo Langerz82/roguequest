@@ -10,16 +10,6 @@ https://play.google.com/store/apps/details?id=com.retrorpgonline2
 22/11/2023
 Unfortunately there were major errors when saving Players. For this reason I had to wipe the Server data. Old accounts will need to be re-created and Players will have to start from new again. My sincere apologies however this was a necessary step as the data save process corrupted accounts and did not let the users in again once created. Thanks for understanding.
 
-11/11/2023
-Items and Quests may have been wiped for current accounts. This was needed as they save in a new format. Having it done now will make the saving backend faster, thanks for your understanding.
-
-09/11/2023 Version 0.85 Released.
-* Initial Craft System Added. You can now craft armors, weapons and gather nodes will come later on.
-* Archer and Fighter class merged. You can switch by equipping a ranged weapon or melee weapon.
-* Weapon Types Levelling now introduced in addition to specific weapon sepcializations.
-* Various Armor slots now introduced instead of just one.
-* Various code re-factoring and bug fixes.
-
 Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/retrorpgonline2-client/issues
 
 ![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
@@ -129,6 +119,16 @@ Additional Credits:
 * Craft Icons: BizmasterStudios https://opengameart.org/users/bizmasterstudios
 
 ## Old Version History
+11/11/2023
+Items and Quests may have been wiped for current accounts. This was needed as they save in a new format. Having it done now will make the saving backend faster, thanks for your understanding.
+
+09/11/2023 Version 0.85 Released.
+* Initial Craft System Added. You can now craft armors, weapons and gather nodes will come later on.
+* Archer and Fighter class merged. You can switch by equipping a ranged weapon or melee weapon.
+* Weapon Types Levelling now introduced in addition to specific weapon sepcializations.
+* Various Armor slots now introduced instead of just one.
+* Various code re-factoring and bug fixes.
+
 23/10/2023 Version 0.74 Released.
 * Fixed a bunch of stability and gameplay bugs without hopefully creating new ones.
 * Achievements feature added.
