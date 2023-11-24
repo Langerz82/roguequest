@@ -77,7 +77,7 @@ Enter in the server directory:
 ### Terms and Conditions:
 This software is provided as is, is a compiled and covered under MPL V2.0 and is copyright code and content to there respective owners.
 You may not profit off the software without permission of the original authors, and content creators.
-You may not modify and/or re-distribute the software, and the assets contained are copyright the original authors.
+You may not modify then re-distribute the software, and the assets contained are copyright the original authors.
 
 For more details see:
 https://www.mozilla.org/en-US/MPL/2.0/
