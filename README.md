@@ -62,7 +62,7 @@ Simply git clone this repository.
 
 ### For Client:
 Copy client directory to a http Server in the root directory, then to access in your browser enter http://localhost/client, for example.
-If you need to change the Servers address, in client/js/compress.js use find in a text editor and look for "host":, then enter the IP address or hostname of your server.
+If you need to change the Servers address, in client/config/config_build.js, then enter the IP address or hostname of your server and modify as needed.
 If you change the IP address you might have to edit the CORS header in the client/index.html file to allow it to communicate with the server.
 
 ### For Server:
