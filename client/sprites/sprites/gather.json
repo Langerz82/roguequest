@@ -68,5 +68,31 @@
     "offset_x": 0,
     "offset_y": 0,
     "file": "misc/nodeset1.png"
-  }
+  },
+  {
+    "id": "nodeset2",
+    "width": 16,
+    "height": 16,
+    "animations": {
+      "node1": {
+        "length": 1,
+        "col": 0,
+        "row": 0
+      },
+      "node2": {
+        "length": 1,
+        "col": 0,
+        "row": 1
+      },
+      "node3": {
+        "length": 1,
+        "col": 0,
+        "row": 2
+      }
+    },
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "misc/nodeset2.png"
+  },
+
 ]

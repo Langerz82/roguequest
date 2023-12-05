@@ -55,5 +55,24 @@
     "spritewidth": 32,
     "spriteheight": 32,
     "scale": 1
+  },
+  {
+    "id": 7,
+    "sheet":"misc/craft2.png",
+    "width": 528,
+    "height": 528,
+    "spritewidth": 48,
+    "spriteheight": 48,
+    "scale": 1
+  },
+  {
+    "id": 8,
+    "sheet":"misc/nodeset2.png",
+    "width": 96,
+    "height": 128,
+    "spritewidth": 32,
+    "spriteheight": 32,
+    "scale": 1
   }
+
 ]

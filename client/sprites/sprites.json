@@ -20156,6 +20156,21 @@
     "offset_y": 0,
     "file": "misc/craft1.png"
   },
+  {
+    "id": "craft2",
+    "width": 24,
+    "height": 24,
+    "animations": {
+      "idle_down": {
+        "length": 1,
+        "col": 0,
+        "row": 0
+      }
+    },
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "misc/craft2.png"
+  },
 
   {
     "id": "block-1",
@@ -20267,6 +20282,32 @@
     "offset_x": 0,
     "offset_y": 0,
     "file": "misc/nodeset1.png"
+  },
+
+  {
+    "id": "nodeset2",
+    "width": 16,
+    "height": 16,
+    "animations": {
+      "node1": {
+        "length": 1,
+        "col": 0,
+        "row": 0
+      },
+      "node2": {
+        "length": 1,
+        "col": 0,
+        "row": 1
+      },
+      "node3": {
+        "length": 1,
+        "col": 0,
+        "row": 2
+      }
+    },
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "misc/nodeset2.png"
   },
 
   {

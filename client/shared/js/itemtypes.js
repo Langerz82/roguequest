@@ -221,6 +221,13 @@ ItemTypes.isMeleeWeapon = function(kind) {
 			item.type === "axe";
 };
 
+ItemTypes.isHarvestWeapon = function(kind) {
+    var item = KindData[kind];
+    if (!item) return false;
+    return item.type === "hammer" ||
+			item.type === "axe";
+};
+
 ItemTypes.isArcherWeapon = function(kind) {
     var item = KindData[kind];
     if (!item) return false;
@@ -302,6 +309,20 @@ ItemTypes.getItemListBy = function (itemType, minLevel, maxLevel) {
     	if (!item || item.legacy == 1)
     	    continue;
 
+			if (itemType == 4 && !(ItemTypes.isArmor(k) || ItemTypes.isWeapon(k)))
+      {
+          ItemsList.push({
+						name: item.name,
+						kind: k,
+						type: item.type,
+						buyCount: item.buycount,
+						buyPrice: item.buy,
+						craftPrice: ItemTypes.getCraftPrice(k),
+						itemKind: k,
+						itemNumber: item.buycount,
+						craft: item.craft
+          });
+      }
       if (itemType == 1 && item.type == "object" && item.buy > 0)
       {
           ItemsList.push({

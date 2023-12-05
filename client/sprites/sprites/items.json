@@ -75,6 +75,22 @@
     "file": "misc/nodeset1.png"
   },
   {
+    "id": "craft2",
+    "width": 24,
+    "height": 24,
+    "animations": {
+      "idle_down": {
+        "length": 1,
+        "col": 0,
+        "row": 0
+      }
+    },
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "misc/craft2.png"
+  },
+
+  {
     "id": "craft1",
     "width": 16,
     "height": 16,

@@ -428,9 +428,6 @@
 		"modifier":20,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[310,16]
-		],
 		"offset":[1,5]
 	},
 	{
@@ -442,9 +439,6 @@
 		"modifier":10,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[310,4]
-		],
 		"offset":[1,4]
 	},
 	{
@@ -456,9 +450,6 @@
 		"modifier":10,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[310,4]
-		],
 		"offset":[1,6]
 	},
 	{
@@ -470,9 +461,6 @@
 		"modifier":10,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[310,4]
-		],
 		"offset":[1,7]
 	},
 
@@ -485,9 +473,6 @@
 		"modifier":30,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[311,16]
-		],
 		"offset":[2,5]
 	},
 	{
@@ -499,9 +484,6 @@
 		"modifier":15,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[311,4]
-		],
 		"offset":[2,4]
 	},
 	{
@@ -513,9 +495,6 @@
 		"modifier":15,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[311,4]
-		],
 		"offset":[2,6]
 	},
 	{
@@ -527,9 +506,6 @@
 		"modifier":15,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[311,4]
-		],
 		"offset":[2,7]
 	},
 
@@ -542,9 +518,6 @@
 		"modifier":40,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[312,16]
-		],
 		"offset":[3,5]
 	},
 	{
@@ -556,9 +529,6 @@
 		"modifier":20,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[312,4]
-		],
 		"offset":[3,4]
 	},
 	{
@@ -570,9 +540,6 @@
 		"modifier":20,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[312,4]
-		],
 		"offset":[3,6]
 	},
 	{
@@ -584,9 +551,6 @@
 		"modifier":20,
 		"staticsheet":1,
 		"spriteName":"armors",
-		"craft": [
-			[312,4]
-		],
 		"offset":[3,7]
 	},
 
@@ -1049,82 +1013,59 @@
 			"name": "Coal",
 			"type":"craft",
 			"level": 20,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,1]
+			"staticsheet":8,
+			"spriteName":"nodeset2",
+			"offset":[1,0]
 		},
 		{
 			"id":302,
-			"name": "Iron",
+			"name": "Light Iron",
 			"type":"craft",
-			"level": 30,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,2]
+			"staticsheet":8,
+			"spriteName":"nodeset2",
+			"offset":[1,1]
 		},
 		{
 			"id":303,
-			"name": "Copper",
+			"name": "Medium Iron",
 			"type":"craft",
-			"level": 40,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,3]
+			"staticsheet":8,
+			"spriteName":"nodeset2",
+			"offset":[1,2]
 		},
 		{
 			"id":304,
-			"name": "Silver",
+			"name": "Hard Iron",
 			"type":"craft",
-			"level": 50,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,4]
+			"staticsheet":8,
+			"spriteName":"nodeset2",
+			"offset":[1,3]
 		},
 		{
 			"id":305,
-			"name": "Gold",
+			"name": "Iron Ingot 1",
 			"type":"craft",
-			"level": 60,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,5]
+			"staticsheet":8,
+			"spriteName":"nodeset2",
+			"offset":[2,1]
 		},
 		{
 			"id":306,
-			"name": "Platinum",
+			"name": "Iron Ingot 2",
 			"type":"craft",
-			"level": 70,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,6]
+			"staticsheet":8,
+			"spriteName":"nodeset2",
+			"offset":[2,2]
 		},
 		{
 			"id":307,
-			"name": "Tin",
+			"name": "Iron Ingot 3",
 			"type":"craft",
-			"level": 80,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,7]
+			"staticsheet":8,
+			"spriteName":"nodeset2",
+			"offset":[2,3]
 		},
-		{
-			"id":308,
-			"name": "Zinc",
-			"type":"craft",
-			"level": 90,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,8]
-		},
-		{
-			"id":309,
-			"name": "Lead",
-			"type":"craft",
-			"level": 100,
-			"staticsheet":5,
-			"spriteName":"gather1",
-			"offset":[1,9]
-		},
+
 		{
 			"id":310,
 			"name": "Leather 1",
@@ -1156,6 +1097,14 @@
 			"staticsheet":6,
 			"spriteName":"craft1",
 			"offset":[3,0]
+		},
+		{
+			"id":320,
+			"name": "Wood",
+			"type":"craft",
+			"staticsheet":7,
+			"spriteName":"craft2",
+			"offset":[0,0]
 		}
 
 ]
