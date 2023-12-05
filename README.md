@@ -7,6 +7,9 @@ https://www.retrorpgonline2.com/play/index.html
 https://play.google.com/store/apps/details?id=com.retrorpgonline2
 
 ## UPDATES:
+06/12/2023
+The version uploaded to this repository is v87, which is a new test version. The test server is still at the previous version 86. I will update the Game Server to the same version when I have tested the version more. Thanks.
+
 22/11/2023
 Unfortunately there were major errors when saving Players. For this reason I had to wipe the Server data. Old accounts will need to be re-created and Players will have to start from new again. My sincere apologies however this was a necessary step as the data save process corrupted accounts and did not let the users in again once created. Thanks for understanding.
 
