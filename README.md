@@ -62,7 +62,9 @@ If you change the IP address you might have to edit the CORS header in the clien
 Enter in the server directory:
 ```npm install -d```   <--- (Will install all the node_module dependencies.
 
-```npm install redis-server```   <-- Install the database software.
+Install the Redis-Server database software. 
+  Windows - For as a windows redis-server server download here: https://redis.io/download/
+  Linux - see: https://www.dragonflydb.io/faq/how-to-start-redis-server
 
 ```node run.js```  <-- Will run the server.
 
