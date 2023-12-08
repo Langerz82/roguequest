@@ -84,7 +84,7 @@
     "HARVEST_INVALID": "You cannot harvest at this point, use the right weapon, try somewhere else or again later.",
     "HARVEST_ADDED": "{0} has been added to your inventory",
     "HARVEST_WRONG_TYPE": "You cannot harvest this with a {0}.",
-    "HARVET_NO_WEAPON": "You do not have a harvest item equipped.",
+    "HARVEST_NO_WEAPON": "You do not have a harvest item equipped.",
 
     "QUESTS": {
       "1": [
