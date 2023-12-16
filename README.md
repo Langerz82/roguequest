@@ -72,7 +72,7 @@ Install the Redis-Server database software.
 ### Terms and Conditions:
 This software is provided as is, is a compiled and covered under MPL V2.0 and is copyright code and content to there respective owners.
 You may not profit off the software without permission of the original authors, and content creators.
-You may not modify then re-distribute the software, and the assets contained are copyright the original authors.
+You may re-distribute the software unmodified, and the assets contained are copyright the original authors.
 
 For more details see:
 https://www.mozilla.org/en-US/MPL/2.0/
@@ -122,6 +122,7 @@ Additional Credits:
 * Skill Icons, Rexard - [Unreal Engine Marketplace ](https://www.unrealengine.com/marketplace/en-US/profile/REXARD)
 * Weapon & Armor Icons: Medievalmore https://cartoonsmart.com/profile/?ID=9323
 * Craft Icons: BizmasterStudios https://opengameart.org/users/bizmasterstudios
+* Menu Icons: Raven Fantasy https://clockworkraven.itch.io/raven-fantasy-pixel-art-rpg-icons-starter-pack
 
 ## Old Version History
 11/11/2023
