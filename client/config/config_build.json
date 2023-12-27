@@ -1,7 +1,7 @@
 {
-		"host": "127.0.0.1",
-    "port": 1340,
-		"protocol": "http",
+		"host": "www.retrorpgonline2.com",
+    "port": 1341,
+		"protocol": "https",
     "useLocalAPI": false,
     "dispatcher": false,
     "version":87,
