@@ -1,8 +1,6 @@
 {
-  "use_http": 1,
-  "use_https": 1,
-  "http_port": 1340,
-  "https_port": 1341,
+  "protocol": "http",
+  "port": 1340,
   "https_cert": "",
   "https_key": "",
   "ip": "0.0.0.0",
@@ -21,7 +19,7 @@
   "world_id": 1,
   "production": "heroku",
   "database": "redis",
-  "version":87,
+  "version":88,
   "verify_email": "",
   "verify_key": "",
   "world_name": ["North America"]

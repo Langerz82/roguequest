@@ -5,13 +5,16 @@ EventType = {
   LOOTITEM: 2,
   KILLPLAYER: 3,
   DAMAGE: 4,
+  USE_NODE: 5,
+  HARVEST: 6
 };
 
 QuestType = {
   KILLMOBKIND: 1,
   GETITEMKIND: 2,
   KILLMOBS: 3,
-  HIDEANDSEEK: 4
+  HIDEANDSEEK: 4,
+  USENODE: 5
 };
 
 QuestStatus = {
@@ -77,14 +80,14 @@ Types = {
       CS_GOLD: 22,
       CS_PARTY: 23,
       BI_HARVEST: 24,
-      CS_HARVEST_ENTITY: 25,
+      CS_USE_NODE: 25,
       CS_LOADLOOKS: 26,
       CS_LOOKUPDATE: 27,
       CS_LOOT: 28,
       CS_MOVE: 29,
       CS_MOVEPATH: 30,
       CS_PLAYER_REVIVE: 31,
-      //CS_PURCHASE: 32,
+      CS_QUEST: 32,
       //CS_ACHIEVEMENT: 33,
       BI_SEND_BANK: 34,
       BI_SEND_INVENTORY: 35,
@@ -136,7 +139,7 @@ Types = {
       SC_STATINFO: 93,
       SC_TELEPORT_MAP: 94,
       SC_SKILL_XP: 95,
-      //SC_SEND_BANK: 96,
+      SC_DIALOGUE: 96,
       //SC_SEND_INVENTORY: 97,
 
     },
@@ -160,7 +163,7 @@ Types = {
       CHEST: 7,
       BLOCK: 8,
       TRAP: 9,
-      GATHER: 10,
+      NODE: 10,
     },
 
     Keys: {

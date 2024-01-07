@@ -54,12 +54,19 @@
     "TUTORIAL_4": "You can use Keys 1-4 for Skill Shortcuts, and Keys 5-8 for consumables like Potions.",
     "TUTORIAL_5": "If you need to buy items you can select Menu >> Town to instantly warp to Town.",
     "TUTORIAL_6": "At level 10 you can equip Items in Menu >> Equipment, and at level 20 you can assign Stat Points.",
+
     "ACHIEVEMENTS_0": "Kill {0} Monsters.",
     "ACHIEVEMENTS_1": "Collect {0} Items.",
     "ACHIEVEMENTS_2": "Do {0} Damage to Monsters.",
+    "ACHIEVEMENTS_3": "Mine {0} Nodes.",
+    "ACHIEVEMENTS_4": "Log {0} Trees.",
+    "ACHIEVEMENTS_5": "Interact with {0} Objects.",
     "ACHIEVEMENTS_0_COMPLETE": "Achievement - Kill {0} Monsters Completed. {1}XP Added.",
     "ACHIEVEMENTS_1_COMPLETE": "Achievement - Collect {0} Items Completed. {1}XP Added.",
     "ACHIEVEMENTS_2_COMPLETE": "Achievement - Do {0} Damage to Monsters Completed. {1}XP Added.",
+    "ACHIEVEMENTS_3_COMPLETE": "Achievement - Mine {0} Nodes Completed. {1}XP Added.",
+    "ACHIEVEMENTS_4_COMPLETE": "Achievement - Log {0} Trees Completed. {1}XP Added.",
+    "ACHIEVEMENTS_5_COMPLETE": "Achievement - Interact with {0} Objects Completed. {1}XP Added.",
 
     "PARTY_PLAYER_INVITE_SENT": "Party invite sent to player {0}",
     "PARTY_MAX_PLAYERS": "Max players reached in party.",
@@ -81,41 +88,8 @@
 
     "HARVEST_INVALID": "You cannot harvest at this point, use the right weapon, try somewhere else or again later.",
     "HARVEST_ADDED": "{0} has been added to your inventory",
-    "HARVEST_WRONG_TYPE": "You cannot harvest this with a {0}.",
-    "HARVET_NO_WEAPON": "You do not have a harvest item equipped.",
+    "HARVEST_WRONG_TYPE": "You cannot use this with a {0}.",
+    "HARVET_NO_WEAPON": "You do not have a harvest item equipped."
 
-    "QUESTS": {
-      "1": [
-          [
-            [0, "You look lost young boy..."],
-            [1, "Where am I?"],
-            [0, "What do you mean where you are? Anyway I need help son."],
-            [0, "You see, young one, my house, well, it's not quite the welcoming place it used to be."],
-            [0, "It's overrun by rats, scurrying through every nook and cranny, making themselves right at home."],
-            [0, "It's a bit of a mess, I'm afraid. Can you kill %count% rats for me, Sonny?"],
-            [0, "That way I can get into my home again."]
-          ],
-          ["Kill %count% %name%'s"]
-      ],
-
-      "2": ["QUESTS2: %name2%'s have stolen my %count% %name%s'. I need you to kill %name2%'s and get my %name%s' back.",
-       "Have you got my %count% %name%'s?",
-       "Thank you for returning my %name%'s now I can use them."]
-    },
-
-    "QUESTS_MOB": [
-        ["Kill %count% %name%'s for me.",
-         "Killed %count% %name%'s"]
-    ],
-    "QUESTS_ITEM": [
-      ["%name2%'s have stolen my %count% %name%s'. I need you to kill %name2%'s and get my %name%s' back.",
-       "Have you got my %count% %name%'s?",
-       "Thank you for returning my %name%'s now I can use them."]
-
-    ],
-    "QUEST_SUMMARY": {
-      "1": "Kill %count% %name%'s",
-      "2": "Retrieve %count% %name%'s from %name2%s'"
-    }
   }
 }

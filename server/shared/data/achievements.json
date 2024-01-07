@@ -25,5 +25,32 @@
     {"type": 4, "objectType": 0, "objectKind": 0, "count": 25000},
     {"type": 4, "objectType": 0, "objectKind": 0, "count": 50000},
     {"type": 4, "objectType": 0, "objectKind": 0, "count": 100000}
+  ],
+  [
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 10},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 25},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 50},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 100},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 200},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 500},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 1000}
+  ],
+  [
+    {"type": 6, "objectType": 0, "objectKind": 0, "count": 10},
+    {"type": 6, "objectType": 0, "objectKind": 0, "count": 25},
+    {"type": 6, "objectType": 0, "objectKind": 0, "count": 50},
+    {"type": 6, "objectType": 0, "objectKind": 0, "count": 100},
+    {"type": 6, "objectType": 0, "objectKind": 0, "count": 200},
+    {"type": 6, "objectType": 0, "objectKind": 0, "count": 500},
+    {"type": 6, "objectType": 0, "objectKind": 0, "count": 1000}
+  ],
+  [
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 20},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 50},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 100},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 200},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 500},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 1000},
+    {"type": 5, "objectType": 0, "objectKind": 0, "count": 2000}
   ]
 ]

@@ -54,14 +54,19 @@
     "TUTORIAL_4": "You can use Keys 1-4 for Skill Shortcuts, and Keys 5-8 for consumables like Potions.",
     "TUTORIAL_5": "If you need to buy items you can select Menu >> Town to instantly warp to Town.",
     "TUTORIAL_6": "At level 10 you can equip Items in Menu >> Equipment, and at level 20 you can assign Stat Points.",
+
     "ACHIEVEMENTS_0": "Kill {0} Monsters.",
     "ACHIEVEMENTS_1": "Collect {0} Items.",
     "ACHIEVEMENTS_2": "Do {0} Damage to Monsters.",
-    "ACHIEVEMENTS_3": "Kill {0} Monsters.",
+    "ACHIEVEMENTS_3": "Mine {0} Nodes.",
+    "ACHIEVEMENTS_4": "Log {0} Trees.",
+    "ACHIEVEMENTS_5": "Interact with {0} Objects.",
     "ACHIEVEMENTS_0_COMPLETE": "Achievement - Kill {0} Monsters Completed. {1}XP Added.",
     "ACHIEVEMENTS_1_COMPLETE": "Achievement - Collect {0} Items Completed. {1}XP Added.",
     "ACHIEVEMENTS_2_COMPLETE": "Achievement - Do {0} Damage to Monsters Completed. {1}XP Added.",
-    "ACHIEVEMENTS_3_COMPLETE": "Achievement - Kill {0} Monsters Completed. {1}XP Added.",
+    "ACHIEVEMENTS_3_COMPLETE": "Achievement - Mine {0} Nodes Completed. {1}XP Added.",
+    "ACHIEVEMENTS_4_COMPLETE": "Achievement - Log {0} Trees Completed. {1}XP Added.",
+    "ACHIEVEMENTS_5_COMPLETE": "Achievement - Interact with {0} Objects Completed. {1}XP Added.",
 
     "PARTY_PLAYER_INVITE_SENT": "Party invite sent to player {0}",
     "PARTY_MAX_PLAYERS": "Max players reached in party.",
@@ -83,31 +88,129 @@
 
     "HARVEST_INVALID": "You cannot harvest at this point, use the right weapon, try somewhere else or again later.",
     "HARVEST_ADDED": "{0} has been added to your inventory",
-    "HARVEST_WRONG_TYPE": "You cannot harvest this with a {0}.",
+    "HARVEST_WRONG_TYPE": "You cannot use this with a {0}.",
     "HARVEST_NO_WEAPON": "You do not have a harvest item equipped.",
+
+    "DIALOGUE_1": [
+      [0, "You look lost young boy..."],
+      [1, "Where am I?"],
+      [0, "What do you mean where you are? Anyway I need help son."],
+      [0, "You see, young one, my house, well, it's not quite the welcoming place it used to be."],
+      [0, "It's overrun by rats, scurrying through every nook and cranny, making themselves right at home."],
+      [0, "It's a bit of a mess, I'm afraid. Can you kill 10 rats for me, Sonny?"],
+      [0, "That way I can get into my home again.", "QUEST_1"]
+    ],
+    "DIALOGUE_2": [
+      [0, "Rats have stolen my 3 dice I need you to kill some Rats to get them.", "QUEST_2"]
+    ],
+    "DIALOGUE_3": [
+      [0, "Rats have stolen my tasty cheese.", "QUEST_3"]
+    ],
+    "DIALOGUE_4": [
+      [0, "Hello I was writing my memiors earlier.."],
+      [0, "When a pesky Crab stole my Feather Quilt."],
+      [0, "The problem is I don't know which one stole it"],
+      [0, "So I need you to kill and search all of them until it's found.", "QUEST_4"]
+    ],
+    "DIALOGUE_5": [
+      [0, "Crabs have overrun the place..", "QUEST_5"]
+    ],
+    "DIALOGUE_6": [
+      [0, "Fires were started by Goblins after they left the area"],
+      [0, "I need you to put out some fires so they don't get out of control.", "QUEST_6"]
+    ],
+
+    "DIALOGUE_7": [
+      [0, "The graveyard is overrun with Skeletons."],
+      [0, "I need you to remove the tombstones."],
+      [0, "This will prevent the evil wizards resurrecting people in graves.", "QUEST_7"]
+    ],
+
+    "QUESTS_NONE": [
+      [0, "I have no more quests for you."],
+      [1, "Ah ok thanks anyway."]
+    ],
+    "QUESTS_NONE_0": [
+      [0, "I have no more quests for you, head EAST and look for Baelan."]
+    ],
+    "QUESTS_NONE_1": [
+      [0, "I have no more quests for you, head SOUTH and look for Caelum."]
+    ],
+    "QUESTS_NONE_2": [
+      [0, "I have no more quests for you, head WEST and look for Darian."]
+    ],
+    "QUESTS_NONE_3": [
+      [0, "I have no more quests for you, head WEST and look for Eldryn."]
+    ],
+    "QUESTS_NONE_4": [
+      [0, "I have no more quests for you, head NORTH and look for Faelan."]
+    ],
+    "QUESTS_NONE_5": [
+      [0, "I have no more quests for you, head NORTH and look for Gavriel."]
+    ],
+    "QUESTS_NONE_6": [
+      [0, "I have no more quests for you, head EAST and look for NPC."]
+    ],
 
     "QUESTS": {
       "1": [
           [
-            [0, "You look lost young boy..."],
-            [1, "Where am I?"],
-            [0, "What do you mean where you are? Anyway I need help son."],
-            [0, "You see, young one, my house, well, it's not quite the welcoming place it used to be."],
-            [0, "It's overrun by rats, scurrying through every nook and cranny, making themselves right at home."],
-            [0, "It's a bit of a mess, I'm afraid. Can you kill %count% rats for me, Sonny?"],
-            [0, "That way I can get into my home again."]
+            [0, "Thank you when you have completed this return to me."]
           ],
           ["Kill %count% %name%'s"]
       ],
-
-      "2": ["QUESTS2: %name2%'s have stolen my %count% %name%s'. I need you to kill %name2%'s and get my %name%s' back.",
-       "Have you got my %count% %name%'s?",
-       "Thank you for returning my %name%'s now I can use them."]
+      "2": [
+        [
+          [0, "Please get the dice and return to me when complete."]
+        ],
+        ["Come back when you have my %count% %name%."],
+        [
+          [0, "Thank-you for returning my dice."],
+          [0, "I can now gamble hardcore with my lucky dice."],
+          [1, "Err, your welcome I guess..."]
+        ]
+      ],
+      "3": [
+          [
+            [0, "Can you please kill rats and return my cheese?"],
+            [0, "I need %count% pieces back to me."]
+          ],
+          ["Get %count% pieces of cheese."],
+          ["Thank-you for returning my cheese."]
+      ],
+      "4": [
+          [
+            [0, "Can you please kill Crabs and return my Feather Quill?"]
+          ],
+          ["Return my Feather Quill."],
+          [
+            [0,"Thank-you for returning my Feather Quill."],
+            [0,"I can now resume writing my memiors."]
+          ]
+      ],
+      "5": [
+          [
+            [0, "Kill %count% Crabs for me?"]
+          ],
+          ["Kill %count% Crabs."]
+      ],
+      "6": [
+          [
+            [0, "Can you destroy %count% fires?"]
+          ],
+          ["Destroy %count% fires."]
+      ],
+      "7": [
+          [
+            [0, "Can you destroy %count% tombstones for me?"]
+          ],
+          ["Destroy %count% tombstones."]
+      ]
     },
 
     "QUESTS_MOB": [
         ["Kill %count% %name%'s for me.",
-         "Killed %count% %name%'s"]
+         "Have you killed %count% %name%s for me yet?"]
     ],
     "QUESTS_ITEM": [
       ["%name2%'s have stolen my %count% %name%s'. I need you to kill %name2%'s and get my %name%s' back.",
@@ -116,8 +219,17 @@
 
     ],
     "QUEST_SUMMARY": {
-      "1": "Kill %count% %name%'s",
-      "2": "Retrieve %count% %name%'s from %name2%s'"
+      "HIDEANDSEEK": "Find %name%",
+      "KILLMOBKIND": "Kill %count% %name%s",
+      "GETITEMKIND": "Get %count% pieces of %name% from %name2%s",
+      "USENODE": "Use %count% %name%.",
+      "1": "Kill %count% %name%s",
+      "2": "Retrieve %count% %name%'s from %name2%s",
+      "3": "Get %count% pieces of %name% from %name2%s",
+      "4": "Get the Feather Quill from %name%s",
+      "5": "Kill %count% %name%s",
+      "6": "Destroy %count% Fires.",
+      "7": "Destroy %count% Tombstones."
     }
   }
 }
