@@ -1,7 +1,7 @@
-# Retro RPG Online 2 Client - Alpha/Beta testing.
+# Rogue Quest - Beta.
 
 ## PLAY FOR FREE NOW AT:
-https://www.retrorpgonline2.com/play/index.html
+https://www.roguequest.net/play/index.html
 
 ## PLAY ON ANDROID PHONES VIA PLAY STORE AT:
 https://play.google.com/store/apps/details?id=com.retrorpgonline2
@@ -13,9 +13,9 @@ The version uploaded to this repository is v87, which is a new test version. The
 22/11/2023
 Unfortunately there were major errors when saving Players. For this reason I had to wipe the Server data. Old accounts will need to be re-created and Players will have to start from new again. My sincere apologies however this was a necessary step as the data save process corrupted accounts and did not let the users in again once created. Thanks for understanding.
 
-Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/retrorpgonline2-client/issues
+Note - Report any bugs to the issue tracker here: https://github.com/Langerz82/roguequest/issues
 
-![alt text](https://github.com/Langerz82/retrorpgonline2-client/blob/main/rro2-promo.png?raw=true)
+![alt text](https://github.com/Langerz82/roguequest/blob/main/rro2-promo.png?raw=true)
 
 ## FEATURES:
 * The game uses Pixi-JS 3D, and is optimized to work on lower spec GPU's and consume less power.
