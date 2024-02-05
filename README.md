@@ -1,4 +1,5 @@
 # Rogue Quest - Beta.
+formerly Retro RPG Online 2
 
 ## PLAY FOR FREE NOW AT:
 https://www.roguequest.net/play/index.html
