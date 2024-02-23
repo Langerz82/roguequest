@@ -146,11 +146,12 @@ ItemTypes.getEnchantSellPrice = function(item) {
 	return Math.floor(value);
 };
 
-ItemTypes.getEnchantPrice = function(item) {
+ItemTypes.getEnchantPrice = function(item, current) {
+			current = current || false;
 			if (!item) return NaN;
 
 			var data = KindData[item.itemKind];
-			var enchantLevel = item.itemNumber+1;
+			var enchantLevel = (current) ? item.itemNumber : item.itemNumber+1;
 			var curLevel = item.itemNumber;
 			if (enchantLevel >= 25) return NaN;
 
@@ -164,20 +165,33 @@ ItemTypes.getEnchantPrice = function(item) {
       return cost;
 };
 
+var Clamp = function(min, max, value) {
+    if(value < min) {
+        return min;
+    } else if(value > max) {
+        return max;
+    } else {
+        return value;
+    }
+};
+
 ItemTypes.getRepairPrice = function(item) {
 	var value = ItemTypes.getBuyPrice(item.itemKind) / 10;
-	var point = item.itemNumber;
+	//var point = item.itemNumber;
 	//console.info("kind="+kind+",point="+point);
 	if (item.itemDurability == item.itemDurabilityMax)
 		return 0;
 
-	if (point > 1)
+	if (item.itemNumber > 1)
 	{
-			value += Math.pow(1.8, point);
+			value = ItemTypes.getEnchantPrice(item, true) / 10;
 	}
-	value *= (item.itemDurability / item.itemDurabilityMax) * (item.itemDurabilityMax / 900) * item.itemNumber;
+	var mp = ((item.itemDurabilityMax / 900) * (1 - (item.itemDurability / item.itemDurabilityMax)));
+	log.info("getRepairPrice - mp: "+mp);
+	value *= Clamp(0,1,mp);
+	//value *= (item.itemDurability / item.itemDurabilityMax) * (item.itemDurabilityMax / 900) * item.itemNumber;
 	//console.info("full price:"+value);
-	return Math.floor(value);
+	return 1 + ~~(value);
 };
 
 ItemTypes.isEquippable = function(kind) {
@@ -210,6 +224,19 @@ ItemTypes.isEquipment = function(kind) {
     var item = KindData[kind];
     if (!item) return false;
     return ItemTypes.isWeapon(kind) || ItemTypes.isArmor(kind);
+};
+
+ItemTypes.getEquipmentSlot = function (kind) {
+	if (ItemTypes.isWeapon(kind)) return 4;
+
+	var item = KindData[kind];
+	if (!item) return -1;
+
+	if (item.type === "helm") return 0;
+	if (item.type === "chest") return 1;
+	if (item.type === "gloves") return 2;
+	if (item.type === "boots") return 3;
+	return -1;
 };
 
 ItemTypes.isMeleeWeapon = function(kind) {
