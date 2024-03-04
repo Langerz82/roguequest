@@ -5,9 +5,13 @@ formerly Retro RPG Online 2
 https://www.roguequest.net/play/index.html
 
 ## PLAY ON ANDROID PHONES VIA PLAY STORE AT:
-https://play.google.com/store/apps/details?id=com.retrorpgonline2
+https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be removed from app store soon due to lack of activity.
 
 ## UPDATES:
+05/03/2024 - Version 0.88
+Various fixes and code restructuring. Any bugs or issues or even just suggestions please open a issue.
+https://github.com/Langerz82/roguequest/issues
+
 06/12/2023
 The version uploaded to this repository is v87, which is a new test version. The test server is still at the previous version 86. I will update the Game Server to the same version when I have tested the version more. Thanks.
 
