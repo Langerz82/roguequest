@@ -8,6 +8,9 @@ https://www.roguequest.net/play/index.html
 https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be removed from app store soon due to lack of activity.
 
 ## UPDATES:
+10/03/2024
+Minor update to the targetting and movement.
+
 05/03/2024 - Version 0.88
 Various fixes and code restructuring. Any bugs or issues or even just suggestions please open a issue.
 https://github.com/Langerz82/roguequest/issues
