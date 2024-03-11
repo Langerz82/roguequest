@@ -9,16 +9,20 @@ https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be remo
 
 ## UPDATES:
 11/03/2024
+
 Achievements had to be reset as they were not working properly on the server. The data structure also changed. Any bugs with the new format let me know, thanks.
 
 10/03/2024
+
 Minor update to the targetting and movement.
 
 05/03/2024 - Version 0.88
+
 Various fixes and code restructuring. Any bugs or issues or even just suggestions please open a issue.
 https://github.com/Langerz82/roguequest/issues
 
 06/12/2023
+
 The version uploaded to this repository is v87, which is a new test version. The test server is still at the previous version 86. I will update the Game Server to the same version when I have tested the version more. Thanks.
 
 22/11/2023
