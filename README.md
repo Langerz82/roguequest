@@ -8,6 +8,9 @@ https://www.roguequest.net/play/index.html
 https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be removed from app store soon due to lack of activity.
 
 ## UPDATES:
+11/03/2024
+Achievements had to be reset as they were not working properly on the server. The data structure also changed. Any bugs with the new format let me know, thanks.
+
 10/03/2024
 Minor update to the targetting and movement.
 
