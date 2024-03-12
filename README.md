@@ -8,6 +8,10 @@ https://www.roguequest.net/play/index.html
 https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be removed from app store soon due to lack of activity.
 
 ## UPDATES:
+13/03/2024
+
+You can now remove your user account. Beware it will remove all your players as well as the account PERMANENTLY from the Data Store.
+
 11/03/2024
 
 Achievements had to be reset as they were not working properly on the server. The data structure also changed. Any bugs with the new format let me know, thanks.
