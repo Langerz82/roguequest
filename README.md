@@ -98,7 +98,7 @@ https://www.mozilla.org/en-US/MPL/2.0/
 
 ## FUNDING
 * If you have a spare few dollars I would appreciate the help to cover server costs, and to able to afford more game content assets.
-[https://www.paypal.com/paypalme/Langerz82](paypal.me/Langerz82)
+![paypal.me/Langerz82](https://www.paypal.com/paypalme/Langerz82)
 
 ## COMMENTS:
 * Game is in Alpha Stage.
