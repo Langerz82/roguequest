@@ -64,6 +64,7 @@ Types = {
       CS_LOGIN_USER: 2,
       CS_CREATE_PLAYER: 3,
       CS_LOGIN_PLAYER: 4,
+      CS_REMOVE_USER: 5,
       //CS_ZONE: 10,
       CS_ITEMSLOT: 10,
       CS_APPEARANCEUNLOCK: 11,
@@ -127,7 +128,7 @@ Types = {
       SC_LIST: 81,
       SC_LOOKS: 82,
       SC_LOG: 83,
-      SC_LOOKUPDATE: 84,
+      //SC_LOOKUPDATE: 84,
       SC_MOVE: 85,
       SC_MOVEPATH: 86,
       SC_NOTIFY: 87,
@@ -140,7 +141,8 @@ Types = {
       SC_TELEPORT_MAP: 94,
       SC_SKILL_XP: 95,
       SC_DIALOGUE: 96,
-      //SC_SEND_INVENTORY: 97,
+      SC_SET_SPRITE: 97,
+      SC_SET_ANIMATION: 98,
 
     },
 

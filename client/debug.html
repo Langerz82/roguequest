@@ -131,6 +131,18 @@
 		</div>
 	</div>
 
+  <div class="frame-new-button" id="user_remove">REMOVE ACCOUNT</div>
+  <div class="frame" id="remove_window">
+    <div class="frame-heading" id="skillHeading">ACCOUNT<div class="frame-close-button" id="user_close"></div></div>
+    <div class="frame-content">
+      <div class="newFieldName">Current Password</div><br/>
+      <input type="password" id="remove_password" class="stroke" name="player-loginpw" placeholder="Password" maxlength="16" autocomplete="off"/><br/><br/>
+      Type in "YES" exactly to PERMANENTLY remove all your PLAYERS and ACCOUNT.<br/><br/>
+      <input type="text" id="remove_confirm" class="stroke" maxlength="3" autocomplete="off"/><br/><br/>
+      <div class="frame-new-button" id="user_remove_confirm">REMOVE</div>
+    </div>
+  </div>
+
 	<div class="frame" id="player_window">
 		<div class="frame-heading">PLAYERS</div>
 		<div class="frame-content">
@@ -162,7 +174,7 @@
 		</div>
 		<div class="frame-content error">
 			<p class="errordetails frame-stroke1"></p>
-			<a class="errorback frame-new-button" href="index.html">REFRESH</a>
+			<div id="error_refresh" class="errorback frame-new-button">REFRESH</div>
 	    </div>
     </div>
 </div>
