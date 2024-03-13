@@ -136,7 +136,7 @@ Additional Credits:
 * Flavius Poenaru, https://github.com/Veradictus
 
 ### Game Resources:
-* Sprites and game sounds, Content is licensed under CC-BY-SA 3.0.
+* Sprites and game sounds, and some Content is licensed under CC-BY-SA 3.0, others like the resources below are copyright their respective owners.
 * Sprites - Time Fantasy: https://finalbossblues.com/timefantasy/contact/
 * Skill Icons, Rexard - [Unreal Engine Marketplace ](https://www.unrealengine.com/marketplace/en-US/profile/REXARD)
 * Weapon & Armor Icons: Medievalmore https://cartoonsmart.com/profile/?ID=9323
