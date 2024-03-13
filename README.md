@@ -96,9 +96,9 @@ You may re-distribute the software unmodified, and the assets contained are copy
 For more details see:
 https://www.mozilla.org/en-US/MPL/2.0/
 
-## CROWD SOURCE FUNDING
+## FUNDING
 * If you have a spare few dollars I would appreciate the help to cover server costs, and to able to afford more game content assets.
-https://gofund.me/892686a0
+https://www.paypal.com/paypalme/Langerz82
 
 ## COMMENTS:
 * Game is in Alpha Stage.
