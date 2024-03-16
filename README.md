@@ -96,9 +96,9 @@ You may re-distribute the software unmodified, and the assets contained are copy
 For more details see:
 https://www.mozilla.org/en-US/MPL/2.0/
 
-## CROWD SOURCE FUNDING
+## FUNDING
 * If you have a spare few dollars I would appreciate the help to cover server costs, and to able to afford more game content assets.
-https://gofund.me/892686a0
+https://www.paypal.com/paypalme/Langerz82
 
 ## COMMENTS:
 * Game is in Alpha Stage.
@@ -136,7 +136,7 @@ Additional Credits:
 * Flavius Poenaru, https://github.com/Veradictus
 
 ### Game Resources:
-* Sprites and game sounds, Content is licensed under CC-BY-SA 3.0.
+* Sprites and game sounds, and some Content is licensed under CC-BY-SA 3.0, others like the resources below are copyright their respective owners.
 * Sprites - Time Fantasy: https://finalbossblues.com/timefantasy/contact/
 * Skill Icons, Rexard - [Unreal Engine Marketplace ](https://www.unrealengine.com/marketplace/en-US/profile/REXARD)
 * Weapon & Armor Icons: Medievalmore https://cartoonsmart.com/profile/?ID=9323
