@@ -19,7 +19,7 @@
   "world_id": 1,
   "production": "heroku",
   "database": "redis",
-  "version":88,
+  "version":89,
   "verify_email": "",
   "verify_key": "",
   "world_name": ["North America"]

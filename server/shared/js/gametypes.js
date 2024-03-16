@@ -102,7 +102,7 @@ Types = {
       CS_TELEPORT_MAP: 43,
       CS_WHO: 44,
       CS_SKILL: 45,
-      CS_SKILLINSTALL: 46,
+      CS_SHORTCUT: 46,
 
       SC_ERROR: 60,
       SC_WORLDS: 61,
