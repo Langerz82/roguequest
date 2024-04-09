@@ -108,7 +108,7 @@ https://www.paypal.com/paypalme/Langerz82
 
 ## LINKS:
 * DISCORD: 
-https://discord.gg/sQHEa6Z
+https://discord.gg/NYV9aJtyK8
 
 ## CREDITS:
 Copyright Joshua Langley 2023 - Head Developer and Game Designer https://github.com/Langerz82 . 
