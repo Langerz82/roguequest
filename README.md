@@ -6,6 +6,7 @@ https://www.roguequest.net/play/index.html
 
 ## PLAY ON ANDROID PHONES VIA PLAY STORE AT:
 https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be removed from app store soon due to lack of activity.
+NOTE - Does NOT support latest v90 yet.
 
 ## UPDATES:
 19/04/2024 - v0.90.01
