@@ -12,6 +12,7 @@ NOTE - Does NOT support latest v90 yet.
 19/04/2024 - v0.90.01
 
 Mainly code restructuring, some minor fixes.
+Any bugs or issues or even just suggestions please open a issue. https://github.com/Langerz82/roguequest/issues
 
 13/04/2024 - v0.89.04
 
