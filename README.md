@@ -8,6 +8,10 @@ https://www.roguequest.net/play/index.html
 https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be removed from app store soon due to lack of activity.
 
 ## UPDATES:
+19/04/2024 - v0.90.01
+
+Mainly code restructuring, some minor fixes.
+
 13/04/2024 - v0.89.04
 
 Various stability fixes and code re-structure.
