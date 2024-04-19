@@ -1,4 +1,11 @@
 TODO:
+
+Update shortcut equipment count when activating item.
+
+Harvest Entity sometimes does not remove Sword when destroying any.
+When NPC is targeted it's not shifting the target to an enemy next to the player.
+
+
 TEST - Also in enchant and repair make item deselected when Enchanting or repairing.
 TEST - Enchant and possibly Repair does not work for new equipment slots.
 

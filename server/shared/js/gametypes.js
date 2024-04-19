@@ -123,7 +123,7 @@ Types = {
       SC_PARTY: 76,
       BI_PLAYERINFO: 77,
       SC_ITEMLEVELUP: 78,
-      SC_KILL: 79,
+      SC_STAT: 79,
       SC_LEVELUP: 80,
       SC_LIST: 81,
       SC_LOOKS: 82,
@@ -143,7 +143,6 @@ Types = {
       SC_DIALOGUE: 96,
       SC_SET_SPRITE: 97,
       SC_SET_ANIMATION: 98,
-
     },
 
     Orientations: {

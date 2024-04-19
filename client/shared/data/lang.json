@@ -127,29 +127,8 @@
     ],
 
     "QUESTS_NONE": [
-      [0, "I have no more quests for you."],
-      [1, "Ah ok thanks anyway."]
-    ],
-    "QUESTS_NONE_0": [
-      [0, "I have no more quests for you, head EAST and look for Baelan."]
-    ],
-    "QUESTS_NONE_1": [
-      [0, "I have no more quests for you, head SOUTH and look for Caelum."]
-    ],
-    "QUESTS_NONE_2": [
-      [0, "I have no more quests for you, head WEST and look for Darian."]
-    ],
-    "QUESTS_NONE_3": [
-      [0, "I have no more quests for you, head WEST and look for Eldryn."]
-    ],
-    "QUESTS_NONE_4": [
-      [0, "I have no more quests for you, head NORTH and look for Faelan."]
-    ],
-    "QUESTS_NONE_5": [
-      [0, "I have no more quests for you, head NORTH and look for Gavriel."]
-    ],
-    "QUESTS_NONE_6": [
-      [0, "I have no more quests for you, head EAST and look for NPC."]
+      [0, "I have no more quests for you, head {0} and look for {1}."],
+      [1, "Thanks {2}."]
     ],
 
     "QUESTS": {
