@@ -9,6 +9,10 @@ https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be remo
 NOTE - Does NOT support latest v90 yet.
 
 ## UPDATES:
+24/04/2024 - NOTICE
+
+I will be no longer working on this project. I've come to the realisation that in order for this project to grow, I need more content and variety. Coding a game like this in a browser has several technical challenges and resource costs which I simply cannot afford being a solo developer. Compiled Client and Server code will be kept up here. The Live Server will run for as long as I can keep it up for without running extra costs but any new releases will most likely not occur.
+
 19/04/2024 - v0.90.01
 
 Mainly code restructuring, some minor fixes.
