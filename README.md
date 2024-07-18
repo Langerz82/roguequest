@@ -4,11 +4,22 @@ formerly Retro RPG Online 2
 ## PLAY FOR FREE NOW AT:
 https://www.roguequest.net/play/index.html
 
-## PLAY ON ANDROID PHONES VIA PLAY STORE AT:
-https://play.google.com/store/apps/details?id=com.retrorpgonline2 - Will be removed from app store soon due to lack of activity.
-NOTE - Does NOT support latest v90 yet.
-
 ## UPDATES:
+### 18/07/2024 - NOTICE
+As I am no longer working on this code, I have provided the source to the Client and Server, see the js directory in client and server.
+
+To compile client run:
+```
+cd client
+npm run build
+npm run css
+```
+To compile server run:
+```
+npm run build
+```
+If you want to modify or extend on any code you can, I'm releasing it under GPL. The resources (sprites/images/fonts/audio) have various copyrights and are subject to the condition respective of the original authors. So you may need pay for licensing any content see at bottom for details if you wish to release the same content in a game.
+
 ### 24/04/2024 - NOTICE
 I will be no longer working on this project. I've come to the realisation that in order for this project to grow, I need more content and variety. Coding a game like this in a browser has several technical challenges and resource costs which I simply cannot afford being a solo developer. Compiled Client and Server code will be kept up here. The Live Server will run for as long as I can keep it up for without running extra costs but any new releases will most likely not occur.
 
