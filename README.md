@@ -16,6 +16,7 @@ npm run css
 ```
 To compile server run:
 ```
+cd server
 npm run build
 ```
 If you want to modify or extend on any code you can, I'm releasing it under GPL. The resources (sprites/images/fonts/audio) have various copyrights and are subject to the condition respective of the original authors. So you may need pay for licensing any content see at bottom for details if you wish to release the same content in a game.
