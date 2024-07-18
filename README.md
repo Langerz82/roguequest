@@ -19,7 +19,7 @@ To compile server run:
 cd server
 npm run build
 ```
-If you want to modify or extend on any code you can, I'm releasing it under GPL. The resources (sprites/images/fonts/audio) have various copyrights and are subject to the condition respective of the original authors. So you may need pay for licensing any content see at bottom for details if you wish to release the same content in a game.
+If you want to modify or extend on any code you can, I'm releasing only the code under GPL. The resources (sprites/images/fonts/audio) have various copyrights and are subject to the condition respective of the original authors. So you may need pay for licensing any content see at bottom for details if you wish to release the same content in a game.
 
 ### 24/04/2024 - NOTICE
 I will be no longer working on this project. I've come to the realisation that in order for this project to grow, I need more content and variety. Coding a game like this in a browser has several technical challenges and resource costs which I simply cannot afford being a solo developer. Compiled Client and Server code will be kept up here. The Live Server will run for as long as I can keep it up for without running extra costs but any new releases will most likely not occur.
