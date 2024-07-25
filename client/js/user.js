@@ -223,6 +223,9 @@ function(UserClient, Player, AppearanceData) {
         player.move = function (orientation, state) {
           var self = this;
 
+          if (this.isDying || this.isDead)
+            return;
+
           if (this.fsm == "ATTACK") {
             return;
           }
@@ -233,72 +236,32 @@ function(UserClient, Player, AppearanceData) {
               return;
             }
 
-            if (this.freeze) {
-              return;
-            }
-
             if (this.keyMove) {
-              if (orientation == this.moveOrientation) {
-                this.nextOrientation = 0;
+              if (orientation == this.orientation) {
                 return;
-              } else {
-                this.nextOrientation = orientation;
-              }
-            }
-
-            this.setOrientation(orientation);
-            if (!this.canMove(orientation)) {
-              return;
+              } /*else {
+                this.changedOrientation = true;
+              }*/
             }
 
             this.harvestOff();
             this.forceStop();
 
             this.fsm = "MOVING";
-            this.freeze = true;
-            //this.repeatCheck = true;
 
-            var funcMove = function () {
-              self.freeze = false;
-
-              if (!self.keyMove || self.fsm != "MOVING") {
-                self.forceStop();
-                return;
-              }
-
-              if (self.isDying || self.isDead)
-                return;
-
-              self.moveOrientation = orientation;
-              self.setOrientation(orientation);
-              self.walk();
-            };
-
-            if (this.keyMove)
-              funcMove();
-            else
-              this.moveTimeout = setTimeout(funcMove, G_LATENCY);
+            this.setOrientation(orientation);
+            this.walk();
 
             this.keyMove = true;
           }
           if (!state)
           {
-            if (this.movement.inProgress && orientation != this.orientation) {
+            if (orientation != this.orientation)
+            {
+              //this.changedOrientation = false;
               return;
             }
-
-            if (this.freeze) {
-              clearTimeout(this.moveTimeout);
-            }
-
             this.forceStop();
-
-            var next = this.nextOrientation;
-            if (next) {
-              this.move(next, true);
-            }
-            this.nextOrientation = 0;
-            //this.repeatCheck = false;
           }
           if (this.key_move_callback)
           {

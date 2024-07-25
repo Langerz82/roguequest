@@ -188,7 +188,7 @@ define(['entity/character', 'timer', 'entity/player', 'entity/entitymoving'], fu
 
 			// TODO - Optimization not working.
             // This code is intensive.
-            var frames = Math.max(1, ~~((Date.now() - this.lastUpdateTime) / G_UPDATE_INTERVAL));
+            //var frames = Math.max(1, ~~((Date.now() - this.lastUpdateTime) / G_UPDATE_INTERVAL));
             //console.warn("uc ticks="+ticks);
             game.forEachEntity(function(entity) {
                 self.game.updateCameraEntity(entity.id, entity);
@@ -197,7 +197,7 @@ define(['entity/character', 'timer', 'entity/player', 'entity/entitymoving'], fu
 
                 entity.tickFrames = 0;
                 if (entity.tick > 0) {
-                  entity.tickFrames = entity.tick * frames;
+                  entity.tickFrames = entity.tick;
                   //console.warn("entity.tickFrames:"+entity.tickFrames);
                 }
                 if (entity instanceof Player)

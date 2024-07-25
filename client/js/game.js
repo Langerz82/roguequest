@@ -177,6 +177,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 this.dialogueWindow = $("#npcDialog");
                 this.npcText = $("#npcText");
 
+                this.requestAnimFrame = typeof(requestAnimFrame) !== "undefined";
+
                 setInterval(function() {
                 	self.removeObsoleteEntities();
                 },30000);
@@ -513,16 +515,13 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
             tick: function() {
               var self = game;
-              //var fpsLimit = G_UPDATE_INTERVAL;
+
               self.currentTime = getTime();
 
-              var elapsedTime = (self.currentTime - self.previousDelta);
-
-              if(typeof(requestAnimFrame) !== "undefined") {
-                if (!self.started || self.isStopped) {
+              if (!self.started || self.isStopped) {
+                if(self.requestAnimFrame)
                   requestAnimationFrame(self.tick.bind(self));
-                  return;
-                }
+                return;
               }
 
               self.updateTime = self.currentTime;
@@ -535,29 +534,21 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
         				self.updateCursorLogic();
         			}
 
-              /*if(typeof(requestAnimFrame) !== "undefined") {
-                requestAnimationFrame(self.renderer.renderFrame.bind(self.renderer));
-              } else {
-                self.renderer.renderFrame();
-              }*/
               self.renderer.renderFrame();
 
-              var fpsLimit = G_UPDATE_INTERVAL;
-              if(typeof(requestAnimFrame) !== "undefined") {
-                var delta = getTime() - self.previousDelta;
-                //log.info("delta:"+delta);
-                if (delta < fpsLimit) {
-                  //var delay = ~~((1000/60) - (Date.now() - self.currentTime));
-                  //requestAnimationFrame(self.renderer.renderFrame.bind(self.renderer));
-                  setTimeout(function() {
-                    requestAnimationFrame(self.tick.bind(self));
-                  }, fpsLimit);
+              var nextFrameCheck = function () {
+                var delta = getTime() - self.currentTime;
+                if (delta >= G_UPDATE_INTERVAL) {
+                  self.tick();
                 } else {
-                  requestAnimationFrame(self.tick.bind(self));
+                  requestAnimationFrame(nextFrameCheck);
                 }
+              };
+
+              if(self.requestAnimFrame) {
+                requestAnimationFrame(nextFrameCheck);
               }
 
-              self.previousDelta = self.currentTime;
             },
 
             start: function() {

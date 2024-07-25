@@ -18871,6 +18871,9 @@ function(UserClient, Player, AppearanceData) {
         player.move = function (orientation, state) {
           var self = this;
 
+          if (this.isDying || this.isDead)
+            return;
+
           if (this.fsm == "ATTACK") {
             return;
           }
@@ -18881,72 +18884,32 @@ function(UserClient, Player, AppearanceData) {
               return;
             }
 
-            if (this.freeze) {
-              return;
-            }
-
             if (this.keyMove) {
-              if (orientation == this.moveOrientation) {
-                this.nextOrientation = 0;
+              if (orientation == this.orientation) {
                 return;
-              } else {
-                this.nextOrientation = orientation;
-              }
-            }
-
-            this.setOrientation(orientation);
-            if (!this.canMove(orientation)) {
-              return;
+              } /*else {
+                this.changedOrientation = true;
+              }*/
             }
 
             this.harvestOff();
             this.forceStop();
 
             this.fsm = "MOVING";
-            this.freeze = true;
-            //this.repeatCheck = true;
 
-            var funcMove = function () {
-              self.freeze = false;
-
-              if (!self.keyMove || self.fsm != "MOVING") {
-                self.forceStop();
-                return;
-              }
-
-              if (self.isDying || self.isDead)
-                return;
-
-              self.moveOrientation = orientation;
-              self.setOrientation(orientation);
-              self.walk();
-            };
-
-            if (this.keyMove)
-              funcMove();
-            else
-              this.moveTimeout = setTimeout(funcMove, G_LATENCY);
+            this.setOrientation(orientation);
+            this.walk();
 
             this.keyMove = true;
           }
           if (!state)
           {
-            if (this.movement.inProgress && orientation != this.orientation) {
+            if (orientation != this.orientation)
+            {
+              //this.changedOrientation = false;
               return;
             }
-
-            if (this.freeze) {
-              clearTimeout(this.moveTimeout);
-            }
-
             this.forceStop();
-
-            var next = this.nextOrientation;
-            if (next) {
-              this.move(next, true);
-            }
-            this.nextOrientation = 0;
-            //this.repeatCheck = false;
           }
           if (this.key_move_callback)
           {
@@ -24585,7 +24548,7 @@ define('updater',['entity/character', 'timer', 'entity/player', 'entity/entitymo
 
 			// TODO - Optimization not working.
             // This code is intensive.
-            var frames = Math.max(1, ~~((Date.now() - this.lastUpdateTime) / G_UPDATE_INTERVAL));
+            //var frames = Math.max(1, ~~((Date.now() - this.lastUpdateTime) / G_UPDATE_INTERVAL));
             //console.warn("uc ticks="+ticks);
             game.forEachEntity(function(entity) {
                 self.game.updateCameraEntity(entity.id, entity);
@@ -24594,7 +24557,7 @@ define('updater',['entity/character', 'timer', 'entity/player', 'entity/entitymo
 
                 entity.tickFrames = 0;
                 if (entity.tick > 0) {
-                  entity.tickFrames = entity.tick * frames;
+                  entity.tickFrames = entity.tick;
                   //console.warn("entity.tickFrames:"+entity.tickFrames);
                 }
                 if (entity instanceof Player)
@@ -34189,6 +34152,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 this.dialogueWindow = $("#npcDialog");
                 this.npcText = $("#npcText");
 
+                this.requestAnimFrame = typeof(requestAnimFrame) !== "undefined";
+
                 setInterval(function() {
                 	self.removeObsoleteEntities();
                 },30000);
@@ -34525,16 +34490,13 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
             tick: function() {
               var self = game;
-              //var fpsLimit = G_UPDATE_INTERVAL;
+
               self.currentTime = getTime();
 
-              var elapsedTime = (self.currentTime - self.previousDelta);
-
-              if(typeof(requestAnimFrame) !== "undefined") {
-                if (!self.started || self.isStopped) {
+              if (!self.started || self.isStopped) {
+                if(self.requestAnimFrame)
                   requestAnimationFrame(self.tick.bind(self));
-                  return;
-                }
+                return;
               }
 
               self.updateTime = self.currentTime;
@@ -34547,29 +34509,21 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
         				self.updateCursorLogic();
         			}
 
-              /*if(typeof(requestAnimFrame) !== "undefined") {
-                requestAnimationFrame(self.renderer.renderFrame.bind(self.renderer));
-              } else {
-                self.renderer.renderFrame();
-              }*/
               self.renderer.renderFrame();
 
-              var fpsLimit = G_UPDATE_INTERVAL;
-              if(typeof(requestAnimFrame) !== "undefined") {
-                var delta = getTime() - self.previousDelta;
-                //log.info("delta:"+delta);
-                if (delta < fpsLimit) {
-                  //var delay = ~~((1000/60) - (Date.now() - self.currentTime));
-                  //requestAnimationFrame(self.renderer.renderFrame.bind(self.renderer));
-                  setTimeout(function() {
-                    requestAnimationFrame(self.tick.bind(self));
-                  }, fpsLimit);
+              var nextFrameCheck = function () {
+                var delta = getTime() - self.currentTime;
+                if (delta >= G_UPDATE_INTERVAL) {
+                  self.tick();
                 } else {
-                  requestAnimationFrame(self.tick.bind(self));
+                  requestAnimationFrame(nextFrameCheck);
                 }
+              };
+
+              if(self.requestAnimFrame) {
+                requestAnimationFrame(nextFrameCheck);
               }
 
-              self.previousDelta = self.currentTime;
             },
 
             start: function() {
