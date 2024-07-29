@@ -404,6 +404,26 @@ module.exports = World = cls.Class.extend(
             }
         }, 256);
 
+        setInterval(function()
+        {
+            for (mapId in self.maps)
+            {
+                var map = self.maps[mapId];
+                if (map && map.ready && map.entities.players &&
+                    Object.keys(map.entities.players).length > 0)
+                {
+                  for (var id in map.entities.players)
+                  {
+                      var player = map.entities.players[id];
+                      if (player.user.lastPacketTime >= 300000)
+                      {
+                          player.connection.close("idle timeout");
+                      }
+                  }
+                }
+            }
+        }, 60000);
+
         /*setInterval(function()
         {
             for (mapId in self.maps)

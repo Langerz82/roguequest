@@ -55,6 +55,8 @@ module.exports = PacketHandler = Class.extend({
       }
       message.shift();
 
+      self.user.lastPacketTime = Date.now();
+
       switch (action) {
         case Types.Messages.BI_PLAYERINFO:
           self.handlePlayerInfo(message);

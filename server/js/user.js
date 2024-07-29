@@ -60,6 +60,8 @@ module.exports = User = cls.Class.extend({
 
         this.gems = 0;
 
+        this.lastPacketTime = Date.now();
+
         this.listener = function(message) {
           console.info("recv[0]="+message);
           var action = parseInt(message[0]);
