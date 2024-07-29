@@ -415,7 +415,7 @@ module.exports = World = cls.Class.extend(
                   for (var id in map.entities.players)
                   {
                       var player = map.entities.players[id];
-                      if (player.user.lastPacketTime >= 300000)
+                      if ((Date.now() - player.user.lastPacketTime) >= 300000)
                       {
                           player.connection.close("idle timeout");
                       }
