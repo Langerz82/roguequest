@@ -495,7 +495,7 @@ module.exports = Player = Character.extend({
         for (var player of this.party.players) {
           if (this.isInScreen([player.x,player.y]))
           {
-            bonus += 0.1 * this.players.length;
+            bonus += 0.1 * this.party.players.length;
           }
         }
       }
