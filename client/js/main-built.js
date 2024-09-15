@@ -23032,9 +23032,9 @@ define('map',['detect', 'mapworker'], function(Detect, worker) {
 
     _generateCollisionGrid: function() {
       //log.debug(JSON.stringify(this.collision));
-      this.collision = [];
+      this.collision = new Array(this.height);
       for (var j, i = 0; i < this.height; i++) {
-        this.collision[i] = [];
+        this.collision[i] = new Array(this.width).fill(false);
         for (j = 0; j < this.width; j++) {
           this.collision[i][j] = (this.collisionData[i * this.width + j] == 1 ? true : false);
         }
@@ -23043,7 +23043,7 @@ define('map',['detect', 'mapworker'], function(Detect, worker) {
     },
 
     _generateTileGrid: function() {
-      this.tile = [];
+      this.tile = new Array(this.height);
       for (var i = 0; i < this.height; i++) {
         this.tile[i] = this.tileData.slice(i*this.width, (i+1)*this.width);
       }
@@ -25098,12 +25098,12 @@ define('pathfinder',['lib/astar'], function(AStar) {
         },
 
         initBlankGrid_: function() {
-            for(var i=0; i < this.height; i += 1) {
+            /*for(var i=0; i < this.height; i += 1) {
                 this.blankGrid[i] = [];
                 for(var j=0; j < this.width; j += 1) {
                     this.blankGrid[i][j] = 0;
                 }
-            }
+            }*/
         },
 
         checkValidPath: function (path) {
@@ -25198,11 +25198,12 @@ define('pathfinder',['lib/astar'], function(AStar) {
     			//log.info(JSON.stringify(subend));
     			//log.info("minX="+minX+",maxX="+maxX+",minY="+minY+",maxY="+maxY);
 
-    			var crop = [];
+
           maxX = Math.min(grid[0].length-1, maxX);
           maxY = Math.min(grid.length-1, maxY);
-    			for(var i = minY; i <= maxY; ++i) {
-    				crop.push(grid[i].slice(minX, maxX));
+          var crop = new Array(maxY - minY);
+    			for(var j=0, i = minY; i <= maxY; ++i) {
+    				crop[j++] = grid[i].slice(minX, maxX);
     			}
 
     			return {
@@ -34493,11 +34494,16 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               self.currentTime = getTime();
 
+
               if (!self.started || self.isStopped) {
                 if(self.requestAnimFrame)
                   requestAnimationFrame(self.tick.bind(self));
                 return;
               }
+
+              setTimeout(() => {
+                requestAnimationFrame(self.tick);
+              }, 12);
 
               self.updateTime = self.currentTime;
 
@@ -34511,7 +34517,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               self.renderer.renderFrame();
 
-              var nextFrameCheck = function () {
+              /*var nextFrameCheck = function () {
                 var delta = getTime() - self.currentTime;
                 if (delta >= G_UPDATE_INTERVAL) {
                   self.tick();
@@ -34522,8 +34528,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               if(self.requestAnimFrame) {
                 requestAnimationFrame(nextFrameCheck);
-              }
-
+              }*/
             },
 
             start: function() {

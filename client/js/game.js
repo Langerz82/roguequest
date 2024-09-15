@@ -518,11 +518,16 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               self.currentTime = getTime();
 
+
               if (!self.started || self.isStopped) {
                 if(self.requestAnimFrame)
                   requestAnimationFrame(self.tick.bind(self));
                 return;
               }
+
+              setTimeout(() => {
+                requestAnimationFrame(self.tick);
+              }, 12);
 
               self.updateTime = self.currentTime;
 
@@ -536,7 +541,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               self.renderer.renderFrame();
 
-              var nextFrameCheck = function () {
+              /*var nextFrameCheck = function () {
                 var delta = getTime() - self.currentTime;
                 if (delta >= G_UPDATE_INTERVAL) {
                   self.tick();
@@ -547,8 +552,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               if(self.requestAnimFrame) {
                 requestAnimationFrame(nextFrameCheck);
-              }
-
+              }*/
             },
 
             start: function() {

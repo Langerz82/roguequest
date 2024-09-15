@@ -12,12 +12,12 @@ define(['lib/astar'], function(AStar) {
         },
 
         initBlankGrid_: function() {
-            for(var i=0; i < this.height; i += 1) {
+            /*for(var i=0; i < this.height; i += 1) {
                 this.blankGrid[i] = [];
                 for(var j=0; j < this.width; j += 1) {
                     this.blankGrid[i][j] = 0;
                 }
-            }
+            }*/
         },
 
         checkValidPath: function (path) {
@@ -112,11 +112,12 @@ define(['lib/astar'], function(AStar) {
     			//log.info(JSON.stringify(subend));
     			//log.info("minX="+minX+",maxX="+maxX+",minY="+minY+",maxY="+maxY);
 
-    			var crop = [];
+
           maxX = Math.min(grid[0].length-1, maxX);
           maxY = Math.min(grid.length-1, maxY);
-    			for(var i = minY; i <= maxY; ++i) {
-    				crop.push(grid[i].slice(minX, maxX));
+          var crop = new Array(maxY - minY);
+    			for(var j=0, i = minY; i <= maxY; ++i) {
+    				crop[j++] = grid[i].slice(minX, maxX);
     			}
 
     			return {
