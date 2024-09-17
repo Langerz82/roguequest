@@ -20434,6 +20434,7 @@ define('camera',['entity/entity'], function(Entity) {
             var gs = this.renderer.gameScale;
             var w = this.renderer.innerWidth;
             var h = this.renderer.innerHeight;
+            log.debug("camera: w="+w+",h="+h);
             var ts = this.tilesize;
             var tsgs = (ts * gs);
             this.gridW = Math.ceil(w / tsgs);
@@ -20449,8 +20450,15 @@ define('camera',['entity/entity'], function(Entity) {
 
             //var zoom = 1/this.renderer.resolution;
             var zoom = 1; //this.renderer.gameZoom;
-            this.screenW = ~~(this.gridW*tsgs*zoom);
-            this.screenH = ~~(this.gridH*tsgs*zoom);
+            this.screenW = w; //~~(this.gridW*tsgs*zoom);
+            this.screenH = h; //~~(this.gridH*tsgs*zoom);
+            this.screenWE = ~~(this.gridWE*tsgs*zoom);
+            this.screenHE = ~~(this.gridHE*tsgs*zoom);
+            //this.screenW2 = w;
+            //this.screenH2 = h;
+
+            log.debug("camera: this.screenW="+this.screenW+",this.screenH="+this.screenH);
+            //log.debug("camera: this.screenW2="+this.screenW2+",this.screenH2="+this.screenH2);
 
             //this.screenW = w - (this.border*2*tsgs); //this.gridW * ts;
             //this.screenH = h - (this.border*2*tsgs); //this.gridH * ts;
@@ -20462,6 +20470,10 @@ define('camera',['entity/entity'], function(Entity) {
 
             this.wOffX = ~~((this.tScreenW - this.screenW)/(2*gs));
             this.wOffY = ~~((this.tScreenH - this.screenH)/(2*gs));
+            //this.cOffX = (this.screenWE-w)/(gs*2);
+            //this.cOffY = (this.screenHE-h)/(gs*2);
+            log.debug("camera: this.wOffX="+this.wOffX+",this.wOffY="+this.wOffY);
+            //log.debug("camera: this.cOffX="+this.cOffX+",this.cOffY="+this.cOffY);
             this.eOffX = this.wOffX-ts;
             this.eOffY = this.wOffY-ts;
 
@@ -20479,13 +20491,10 @@ define('camera',['entity/entity'], function(Entity) {
           var ts = this.tilesize;
           var mc = game.mapContainer;
           var fe = this.focusEntity;
-          var gs = this.renderer.gameScale;
-          //var r = game.renderer;
-          var gw = this.gridW;
-          var gh = this.gridH;
 
-          var hgw = ~~(this.screenW / (2*gs));
-          var hgh = ~~(this.screenH / (2*gs));
+          var hgw = ~~(this.screenX / 2);
+          var hgh = ~~(this.screenY / 2);
+          log.info("camera: hgw="+hgw+",hgh="+hgh);
 
           if (!fe)
             return;
@@ -20493,55 +20502,29 @@ define('camera',['entity/entity'], function(Entity) {
           var x = this.x = fe.x - hgw;
           var y = this.y = fe.y - hgh;
 
-          this.rx = x;
-          this.ry = y;
-
-          var mw = mc.width;
-          var mh = mc.height;
-
           this.x = this.x.clamp(mc.gcsx, mc.gcex);
           this.y = this.y.clamp(mc.gcsy, mc.gcey);
 
-          var gcsx = 0;
-          var gcex = ((mw-1)*ts)-(this.screenW/gs);
-          var gcsy = 0;
-          var gcey = ((mh-1)*ts)-(this.screenH/gs);
+          this.rx = x;
+          this.ry = y;
 
-          this.scrollX = true;
-          this.scrollY = true;
+          var gcsx = 0;
+          var gcex = mc.gcex;
+          var gcsy = 0;
+          var gcey = mc.gcey;
 
           var tMinX=gcsx, tMaxX=gcex, tMinY=gcsy, tMaxY=gcey;
-          if (x <= tMinX || x >= tMaxX)
-          {
-            this.x = this.x.clamp(tMinX, tMaxX);
-          }
-          if (y <= tMinY || y >= tMaxY)
-          {
-            this.y = this.y.clamp(tMinY, tMaxY);
-          }
 
           tMinX+=this.wOffX;
           tMinY+=this.wOffY;
           tMaxX-=this.wOffX;
           tMaxY-=this.wOffY;
 
-          this.sx = this.rx;
-          this.sy = this.ry;
+          this.scrollX = (x > tMinX && x <= tMaxX);
+          this.scrollY = (y > tMinY && y <= tMaxY);
 
-          if (x <= tMinX || x > tMaxX)
-          {
-            this.scrollX = false;
-            this.sx = this.rx.clamp(tMinX, tMaxX);
-          } else {
-            this.scrollX = true;
-          }
-          if (y <= tMinY || y > tMaxY)
-          {
-            this.scrollY = false;
-            this.sy = this.sy.clamp(tMinY, tMaxY);
-          } else {
-            this.scrollY = true;
-          }
+          this.sx = x.clamp(tMinX, tMaxX);
+          this.sy = y.clamp(tMinY, tMaxY);
 
           this.gx = this.x >> 4;
           this.gy = this.y >> 4;
@@ -20549,15 +20532,10 @@ define('camera',['entity/entity'], function(Entity) {
 
         getGridPos: function (pos)
         {
-          var c = game.camera;
           var ts = game.tilesize;
           var r = game.renderer;
           var mc = game.mapContainer;
-          var gs = r.gameScale;
           if (!mc) return;
-
-          var mtw = (mc.width-1) * ts;
-          var mth = (mc.height-1) * ts;
 
           var x = pos[0];
               y = pos[1];
@@ -20565,8 +20543,8 @@ define('camera',['entity/entity'], function(Entity) {
           var tw = -r.hOffX;
           var th = -r.hOffY;
 
-          var tx = ((x-c.x) + tw) / ts;
-          var ty = ((y-c.y) + th) / ts;
+          var tx = ((x-this.x) + tw) / ts;
+          var ty = ((y-this.y) + th) / ts;
 
           return [tx,ty];
         },
@@ -22570,26 +22548,14 @@ define('renderer',['camera', 'entity/item', 'data/items', 'data/itemlootdata', '
                   gs = this.gameScale,
                   mc = game.mapContainer;
 
-              this.wx = 0; //c.border*ts;
-              this.wy = 0; //c.border*ts;
-
               x = -x;
               y = -y;
 
-              x += this.wx;
-              y += this.wy;
+              var mx = Math.abs(c.rx-c.sx);
+              var my = Math.abs(c.ry-c.sy);
 
               var offX = -c.wOffX;
               var offY = -c.wOffY;
-
-              //var swOffsets = this.getWindowOffsets();
-
-              var mx = Math.abs(c.rx-c.sx);
-              var my = Math.abs(c.ry-c.sy);
-              /*if (c.rx != c.sx && Math.abs(c.rx-c.sx) <= 1)
-                offX = swOffsets[0];
-              if (c.ry != c.sy && Math.abs(c.ry-c.sy) <= 1)
-                offY = swOffsets[1];*/
 
               if (c.rx < c.sx) {
                 offX = Math.min(offX+mx, 0);
@@ -22620,18 +22586,8 @@ define('renderer',['camera', 'entity/item', 'data/items', 'data/itemlootdata', '
 
               Container.COLLISION.x = x;
               Container.COLLISION.y = y;
-
               Container.COLLISION2.x = x;
               Container.COLLISION2.y = y;
-
-              var ex = c.wOffX % ts;
-              var ey = c.wOffY % ts;
-              //Container.ENTITIES.x = +((ts/2) * gs);
-              //Container.ENTITIES.y = +((ts/2) * gs);
-              //Container.HUD.x = c.wOffX * gs;
-              //Container.HUD.y = c.wOffY * gs;
-              //x -= tOffX * gs;
-              //y -= tOffY * gs;
 
               //log.info("offset x:"+x+",y:"+y);
 
@@ -23444,20 +23400,10 @@ define('mapcontainer',['area', 'detect', 'mapworker', 'map'], function(Area, Det
         {
           map = this.maps[i];
           map.ready(function () {
-            //self._updateMapOffsets(this);
-            //self._updateGrid(this);
             this.gridUpdated = true;
-            //this.refreshMap = true;
-            //game.renderer.forceRedraw = true;
             if ((++self.inc) == self.count) {
               self.OnAllReady();
               self.inc = 0;
-              //self.count = 0;
-              //var fe = c.focusEntity;
-              //fe.skipScrollX = (fe.x % 16 != 0);
-              //fe.skipScrollY = (fe.y % 16 != 0);
-              //fe.mapScroll = false;
-              //self.moveGrid();
               self.moveGrid(true);
               game.renderer.forceRedraw = true;
               self.gridReady = true;
@@ -23486,10 +23432,7 @@ define('mapcontainer',['area', 'detect', 'mapworker', 'map'], function(Area, Det
         if ( (distX + distY) < (this.chunkHeight * 2) )
         {
           if (!this.maps[i]) {
-            var map = this.GetMap(i);
-            //this.maps[i] = map;
-            //if (!init)
-              //map.loadMap();
+            this.GetMap(i);
           }
         }
         else if ( (distX + distY) > (this.chunkHeight * 4))
@@ -23514,43 +23457,6 @@ define('mapcontainer',['area', 'detect', 'mapworker', 'map'], function(Area, Det
       if (!fe || !this.gridReady)
         return false;
 
-      var o = fe.orientation;
-      /*if (o == Types.Orientations.LEFT || o == Types.Orientations.RIGHT)
-      {
-        if (!c.scrollX) return false;
-      }
-      if (o == Types.Orientations.UP || o == Types.Orientations.DOWN)
-      {
-        if (!c.scrollY) return false;
-      }*/
-
-      //if (Object.keys(this.maps).length == 1)
-        //return false;
-
-      if (!force && (this.fex == fe.x && this.fey == fe.y)) {
-        return false;
-      }
-      this.fex = fe.x;
-      this.fey = fe.y;
-
-      var hcx = ~~(c.gridW / 2);
-      var hcy = ~~(c.gridH / 2);
-
-      if (this.lgx != fe.gx && (fe.gx <= hcx || fe.gx >= (this.width - hcx))) {
-        this.lgx = fe.gx;
-        this.lgy = fe.gy;
-        return false;
-      }
-      if (this.lgy != fe.gy && (fe.gy <= hcy || fe.gy >= (this.height - hcy))) {
-        this.lgx = fe.gx;
-        this.lgy = fe.gy;
-        return false;
-      }
-
-      this.lgx = fe.gx;
-      this.lgy = fe.gy;
-
-
       this.reloadMaps();
 
       for (var i in this.maps)
@@ -23569,7 +23475,6 @@ define('mapcontainer',['area', 'detect', 'mapworker', 'map'], function(Area, Det
         var res = RectContains(sr, mr);
         if (res)
         {
-          //this._updateMapOffsets(map);
           this._updateGrid(map);
         }
       }
@@ -23592,8 +23497,8 @@ define('mapcontainer',['area', 'detect', 'mapworker', 'map'], function(Area, Det
       var fe = c.focusEntity;
       var dim = map.dimensions;
 
-      //var cgw = c.gridWE;
-      //var cgh = c.gridHE;
+      var cgw = c.gridWE;
+      var cgh = c.gridHE;
       var cgwh = (cgw >> 1);
       var cghh = (cgh >> 1);
 
@@ -23605,31 +23510,13 @@ define('mapcontainer',['area', 'detect', 'mapworker', 'map'], function(Area, Det
 
       var gx = fe.x >> 4, gy = fe.y >> 4;
 
-      //var hcw = cgwh;
-      //var hch = cghh;
-      //gx = gx.clamp(hcw,this.width-hcw);
-      //gy = gy.clamp(hch,this.height-hch);
-
-      //var gx = Math.round(fe.x / 16) , gy = Math.round(fe.y/16);
-      /*if (fe.orientation == Types.Orientations.LEFT)
-        gx++;
-      if (fe.orientation == Types.Orientations.UP)
-        gy++;*/
-
-      //var gx = (fe.x-1.5*ts ) >> 4,
-        //  gy = (fe.y-1.5*ts ) >> 4;
-
-      var sw = this.width-1;
-      var sh = this.height-1;
-
-      //var tx = (gx-hgw).clamp(0, sw-cgw);
-      //var ty = (gy-hgh).clamp(0, sh-cgh);
+      var sw = this.width;
+      var sh = this.height;
 
       var tx = (gx-cgwh).clamp(0, sw-cgw);
       var ty = (gy-cghh).clamp(0, sh-cgh);
 
       gx = tx, gy = ty;
-      //var gx = (c.gx)-2, gy = (c.gy)-2;
 
       var dim = map.dimensions;
 
@@ -24459,10 +24346,6 @@ define('updater',['entity/character', 'timer', 'entity/player', 'entity/entitymo
               var res = game.moveCharacter(c, x, c.y);
               if (res) {
                 c.setPosition(x, c.y);
-                if (x % G_TILESIZE === 0)
-                {
-                  game.mapContainer.moveGrid();
-                }
               } else {
                 c.forceStop();
               }
@@ -24474,10 +24357,6 @@ define('updater',['entity/character', 'timer', 'entity/player', 'entity/entitymo
               var res = game.moveCharacter(c, c.x, y);
               if (res) {
                 c.setPosition(c.x, y);
-                if (y % G_TILESIZE === 0)
-                {
-                  game.mapContainer.moveGrid();
-                }
               } else {
                 c.forceStop();
               }
@@ -24487,20 +24366,12 @@ define('updater',['entity/character', 'timer', 'entity/player', 'entity/entitymo
             this.playerPathXF = function(c, m) {
               var x = c.x + m;
               c.setPosition(x, c.y);
-              if (x % G_TILESIZE === 0)
-              {
-                game.mapContainer.moveGrid();
-              }
               return c.nextStep();
             };
 
             this.playerPathYF = function(c, m) {
               var y = c.y + m;
               c.setPosition(c.x, y);
-              if (y % G_TILESIZE === 0)
-              {
-                game.mapContainer.moveGrid();
-              }
               return c.nextStep();
             };
 

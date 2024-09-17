@@ -356,20 +356,10 @@ define(['area', 'detect', 'mapworker', 'map'], function(Area, Detect, worker, Ma
         {
           map = this.maps[i];
           map.ready(function () {
-            //self._updateMapOffsets(this);
-            //self._updateGrid(this);
             this.gridUpdated = true;
-            //this.refreshMap = true;
-            //game.renderer.forceRedraw = true;
             if ((++self.inc) == self.count) {
               self.OnAllReady();
               self.inc = 0;
-              //self.count = 0;
-              //var fe = c.focusEntity;
-              //fe.skipScrollX = (fe.x % 16 != 0);
-              //fe.skipScrollY = (fe.y % 16 != 0);
-              //fe.mapScroll = false;
-              //self.moveGrid();
               self.moveGrid(true);
               game.renderer.forceRedraw = true;
               self.gridReady = true;
@@ -398,10 +388,7 @@ define(['area', 'detect', 'mapworker', 'map'], function(Area, Detect, worker, Ma
         if ( (distX + distY) < (this.chunkHeight * 2) )
         {
           if (!this.maps[i]) {
-            var map = this.GetMap(i);
-            //this.maps[i] = map;
-            //if (!init)
-              //map.loadMap();
+            this.GetMap(i);
           }
         }
         else if ( (distX + distY) > (this.chunkHeight * 4))
@@ -426,43 +413,6 @@ define(['area', 'detect', 'mapworker', 'map'], function(Area, Detect, worker, Ma
       if (!fe || !this.gridReady)
         return false;
 
-      var o = fe.orientation;
-      /*if (o == Types.Orientations.LEFT || o == Types.Orientations.RIGHT)
-      {
-        if (!c.scrollX) return false;
-      }
-      if (o == Types.Orientations.UP || o == Types.Orientations.DOWN)
-      {
-        if (!c.scrollY) return false;
-      }*/
-
-      //if (Object.keys(this.maps).length == 1)
-        //return false;
-
-      if (!force && (this.fex == fe.x && this.fey == fe.y)) {
-        return false;
-      }
-      this.fex = fe.x;
-      this.fey = fe.y;
-
-      var hcx = ~~(c.gridW / 2);
-      var hcy = ~~(c.gridH / 2);
-
-      if (this.lgx != fe.gx && (fe.gx <= hcx || fe.gx >= (this.width - hcx))) {
-        this.lgx = fe.gx;
-        this.lgy = fe.gy;
-        return false;
-      }
-      if (this.lgy != fe.gy && (fe.gy <= hcy || fe.gy >= (this.height - hcy))) {
-        this.lgx = fe.gx;
-        this.lgy = fe.gy;
-        return false;
-      }
-
-      this.lgx = fe.gx;
-      this.lgy = fe.gy;
-
-
       this.reloadMaps();
 
       for (var i in this.maps)
@@ -481,7 +431,6 @@ define(['area', 'detect', 'mapworker', 'map'], function(Area, Detect, worker, Ma
         var res = RectContains(sr, mr);
         if (res)
         {
-          //this._updateMapOffsets(map);
           this._updateGrid(map);
         }
       }
@@ -504,8 +453,8 @@ define(['area', 'detect', 'mapworker', 'map'], function(Area, Detect, worker, Ma
       var fe = c.focusEntity;
       var dim = map.dimensions;
 
-      //var cgw = c.gridWE;
-      //var cgh = c.gridHE;
+      var cgw = c.gridWE;
+      var cgh = c.gridHE;
       var cgwh = (cgw >> 1);
       var cghh = (cgh >> 1);
 
@@ -517,31 +466,13 @@ define(['area', 'detect', 'mapworker', 'map'], function(Area, Detect, worker, Ma
 
       var gx = fe.x >> 4, gy = fe.y >> 4;
 
-      //var hcw = cgwh;
-      //var hch = cghh;
-      //gx = gx.clamp(hcw,this.width-hcw);
-      //gy = gy.clamp(hch,this.height-hch);
-
-      //var gx = Math.round(fe.x / 16) , gy = Math.round(fe.y/16);
-      /*if (fe.orientation == Types.Orientations.LEFT)
-        gx++;
-      if (fe.orientation == Types.Orientations.UP)
-        gy++;*/
-
-      //var gx = (fe.x-1.5*ts ) >> 4,
-        //  gy = (fe.y-1.5*ts ) >> 4;
-
-      var sw = this.width-1;
-      var sh = this.height-1;
-
-      //var tx = (gx-hgw).clamp(0, sw-cgw);
-      //var ty = (gy-hgh).clamp(0, sh-cgh);
+      var sw = this.width;
+      var sh = this.height;
 
       var tx = (gx-cgwh).clamp(0, sw-cgw);
       var ty = (gy-cghh).clamp(0, sh-cgh);
 
       gx = tx, gy = ty;
-      //var gx = (c.gx)-2, gy = (c.gy)-2;
 
       var dim = map.dimensions;
 

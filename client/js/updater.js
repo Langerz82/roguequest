@@ -99,10 +99,6 @@ define(['entity/character', 'timer', 'entity/player', 'entity/entitymoving'], fu
               var res = game.moveCharacter(c, x, c.y);
               if (res) {
                 c.setPosition(x, c.y);
-                if (x % G_TILESIZE === 0)
-                {
-                  game.mapContainer.moveGrid();
-                }
               } else {
                 c.forceStop();
               }
@@ -114,10 +110,6 @@ define(['entity/character', 'timer', 'entity/player', 'entity/entitymoving'], fu
               var res = game.moveCharacter(c, c.x, y);
               if (res) {
                 c.setPosition(c.x, y);
-                if (y % G_TILESIZE === 0)
-                {
-                  game.mapContainer.moveGrid();
-                }
               } else {
                 c.forceStop();
               }
@@ -127,20 +119,12 @@ define(['entity/character', 'timer', 'entity/player', 'entity/entitymoving'], fu
             this.playerPathXF = function(c, m) {
               var x = c.x + m;
               c.setPosition(x, c.y);
-              if (x % G_TILESIZE === 0)
-              {
-                game.mapContainer.moveGrid();
-              }
               return c.nextStep();
             };
 
             this.playerPathYF = function(c, m) {
               var y = c.y + m;
               c.setPosition(c.x, y);
-              if (y % G_TILESIZE === 0)
-              {
-                game.mapContainer.moveGrid();
-              }
               return c.nextStep();
             };
 

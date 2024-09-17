@@ -24,6 +24,7 @@ define(['entity/entity'], function(Entity) {
             var gs = this.renderer.gameScale;
             var w = this.renderer.innerWidth;
             var h = this.renderer.innerHeight;
+            log.debug("camera: w="+w+",h="+h);
             var ts = this.tilesize;
             var tsgs = (ts * gs);
             this.gridW = Math.ceil(w / tsgs);
@@ -39,8 +40,15 @@ define(['entity/entity'], function(Entity) {
 
             //var zoom = 1/this.renderer.resolution;
             var zoom = 1; //this.renderer.gameZoom;
-            this.screenW = ~~(this.gridW*tsgs*zoom);
-            this.screenH = ~~(this.gridH*tsgs*zoom);
+            this.screenW = w; //~~(this.gridW*tsgs*zoom);
+            this.screenH = h; //~~(this.gridH*tsgs*zoom);
+            this.screenWE = ~~(this.gridWE*tsgs*zoom);
+            this.screenHE = ~~(this.gridHE*tsgs*zoom);
+            //this.screenW2 = w;
+            //this.screenH2 = h;
+
+            log.debug("camera: this.screenW="+this.screenW+",this.screenH="+this.screenH);
+            //log.debug("camera: this.screenW2="+this.screenW2+",this.screenH2="+this.screenH2);
 
             //this.screenW = w - (this.border*2*tsgs); //this.gridW * ts;
             //this.screenH = h - (this.border*2*tsgs); //this.gridH * ts;
@@ -52,6 +60,10 @@ define(['entity/entity'], function(Entity) {
 
             this.wOffX = ~~((this.tScreenW - this.screenW)/(2*gs));
             this.wOffY = ~~((this.tScreenH - this.screenH)/(2*gs));
+            //this.cOffX = (this.screenWE-w)/(gs*2);
+            //this.cOffY = (this.screenHE-h)/(gs*2);
+            log.debug("camera: this.wOffX="+this.wOffX+",this.wOffY="+this.wOffY);
+            //log.debug("camera: this.cOffX="+this.cOffX+",this.cOffY="+this.cOffY);
             this.eOffX = this.wOffX-ts;
             this.eOffY = this.wOffY-ts;
 
@@ -69,13 +81,10 @@ define(['entity/entity'], function(Entity) {
           var ts = this.tilesize;
           var mc = game.mapContainer;
           var fe = this.focusEntity;
-          var gs = this.renderer.gameScale;
-          //var r = game.renderer;
-          var gw = this.gridW;
-          var gh = this.gridH;
 
-          var hgw = ~~(this.screenW / (2*gs));
-          var hgh = ~~(this.screenH / (2*gs));
+          var hgw = ~~(this.screenX / 2);
+          var hgh = ~~(this.screenY / 2);
+          log.info("camera: hgw="+hgw+",hgh="+hgh);
 
           if (!fe)
             return;
@@ -83,55 +92,29 @@ define(['entity/entity'], function(Entity) {
           var x = this.x = fe.x - hgw;
           var y = this.y = fe.y - hgh;
 
-          this.rx = x;
-          this.ry = y;
-
-          var mw = mc.width;
-          var mh = mc.height;
-
           this.x = this.x.clamp(mc.gcsx, mc.gcex);
           this.y = this.y.clamp(mc.gcsy, mc.gcey);
 
-          var gcsx = 0;
-          var gcex = ((mw-1)*ts)-(this.screenW/gs);
-          var gcsy = 0;
-          var gcey = ((mh-1)*ts)-(this.screenH/gs);
+          this.rx = x;
+          this.ry = y;
 
-          this.scrollX = true;
-          this.scrollY = true;
+          var gcsx = 0;
+          var gcex = mc.gcex;
+          var gcsy = 0;
+          var gcey = mc.gcey;
 
           var tMinX=gcsx, tMaxX=gcex, tMinY=gcsy, tMaxY=gcey;
-          if (x <= tMinX || x >= tMaxX)
-          {
-            this.x = this.x.clamp(tMinX, tMaxX);
-          }
-          if (y <= tMinY || y >= tMaxY)
-          {
-            this.y = this.y.clamp(tMinY, tMaxY);
-          }
 
           tMinX+=this.wOffX;
           tMinY+=this.wOffY;
           tMaxX-=this.wOffX;
           tMaxY-=this.wOffY;
 
-          this.sx = this.rx;
-          this.sy = this.ry;
+          this.scrollX = (x > tMinX && x <= tMaxX);
+          this.scrollY = (y > tMinY && y <= tMaxY);
 
-          if (x <= tMinX || x > tMaxX)
-          {
-            this.scrollX = false;
-            this.sx = this.rx.clamp(tMinX, tMaxX);
-          } else {
-            this.scrollX = true;
-          }
-          if (y <= tMinY || y > tMaxY)
-          {
-            this.scrollY = false;
-            this.sy = this.sy.clamp(tMinY, tMaxY);
-          } else {
-            this.scrollY = true;
-          }
+          this.sx = x.clamp(tMinX, tMaxX);
+          this.sy = y.clamp(tMinY, tMaxY);
 
           this.gx = this.x >> 4;
           this.gy = this.y >> 4;
@@ -139,15 +122,10 @@ define(['entity/entity'], function(Entity) {
 
         getGridPos: function (pos)
         {
-          var c = game.camera;
           var ts = game.tilesize;
           var r = game.renderer;
           var mc = game.mapContainer;
-          var gs = r.gameScale;
           if (!mc) return;
-
-          var mtw = (mc.width-1) * ts;
-          var mth = (mc.height-1) * ts;
 
           var x = pos[0];
               y = pos[1];
@@ -155,8 +133,8 @@ define(['entity/entity'], function(Entity) {
           var tw = -r.hOffX;
           var th = -r.hOffY;
 
-          var tx = ((x-c.x) + tw) / ts;
-          var ty = ((y-c.y) + th) / ts;
+          var tx = ((x-this.x) + tw) / ts;
+          var ty = ((y-this.y) + th) / ts;
 
           return [tx,ty];
         },

@@ -1633,26 +1633,14 @@ define(['camera', 'entity/item', 'data/items', 'data/itemlootdata', 'entity/enti
                   gs = this.gameScale,
                   mc = game.mapContainer;
 
-              this.wx = 0; //c.border*ts;
-              this.wy = 0; //c.border*ts;
-
               x = -x;
               y = -y;
 
-              x += this.wx;
-              y += this.wy;
+              var mx = Math.abs(c.rx-c.sx);
+              var my = Math.abs(c.ry-c.sy);
 
               var offX = -c.wOffX;
               var offY = -c.wOffY;
-
-              //var swOffsets = this.getWindowOffsets();
-
-              var mx = Math.abs(c.rx-c.sx);
-              var my = Math.abs(c.ry-c.sy);
-              /*if (c.rx != c.sx && Math.abs(c.rx-c.sx) <= 1)
-                offX = swOffsets[0];
-              if (c.ry != c.sy && Math.abs(c.ry-c.sy) <= 1)
-                offY = swOffsets[1];*/
 
               if (c.rx < c.sx) {
                 offX = Math.min(offX+mx, 0);
@@ -1683,18 +1671,8 @@ define(['camera', 'entity/item', 'data/items', 'data/itemlootdata', 'entity/enti
 
               Container.COLLISION.x = x;
               Container.COLLISION.y = y;
-
               Container.COLLISION2.x = x;
               Container.COLLISION2.y = y;
-
-              var ex = c.wOffX % ts;
-              var ey = c.wOffY % ts;
-              //Container.ENTITIES.x = +((ts/2) * gs);
-              //Container.ENTITIES.y = +((ts/2) * gs);
-              //Container.HUD.x = c.wOffX * gs;
-              //Container.HUD.y = c.wOffY * gs;
-              //x -= tOffX * gs;
-              //y -= tOffY * gs;
 
               //log.info("offset x:"+x+",y:"+y);
 
