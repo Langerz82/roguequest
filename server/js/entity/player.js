@@ -1020,10 +1020,10 @@ module.exports = Player = Character.extend({
   },
 
   saveSection: function () {
-    console.info("SAVING SECTION: "+self.savedSection);
-    if (++self.savedSection == 6) {
-      console.info("SAVED PLAYER!!!!!: "+self.name);
-      self.savedSection = 0;
+    console.info("SAVING SECTION: "+this.savedSection);
+    if (++this.savedSection == 6) {
+      console.info("SAVED PLAYER!!!!!: "+this.name);
+      this.savedSection = 0;
     }
   },
 
