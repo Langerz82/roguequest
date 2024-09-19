@@ -227,6 +227,29 @@ ItemTypes.isEquipment = function(kind) {
     return ItemTypes.isWeapon(kind) || ItemTypes.isArmor(kind);
 };
 
+ItemTypes.getSpriteCode = function (kind) {
+	var data = KindData[kind];
+	if (ItemTypes.isArmor(kind))
+	{
+		return kind;
+	}
+	if (ItemTypes.isWeapon(kind))
+	{
+		var type = data.type;
+		if (!type)
+			return 0;
+		if (type == "sword")
+			return 1;
+		if (type == "axe")
+			return 2;
+		if (type == "hammer")
+			return 12;
+		if (type == "bow")
+			return 50;
+	}
+	return 0;
+};
+
 ItemTypes.getEquipmentSlot = function (kind) {
 	if (ItemTypes.isWeapon(kind)) return 4;
 
