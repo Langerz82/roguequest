@@ -128,23 +128,16 @@ module.exports = Equipment = cls.Class.extend({
       return true;
     },
 
-    setItem: function (index, item)
-    {
-      var weaponFN = function (player) {
-        player.setRange();
-        //player.map.entities.pushNeighbours(player, new Messages.Looks(player));
-        var s1 = player.isArcher() ? player.sprites[2] : player.sprites[0];
-        var s2 = player.sprites[1];
-        player.map.entities.pushNeighbours(player, new Messages.setSprite(player, s1, s2));
-      };
+    setItem: function (index, item) {
+      this._setItem(index, item);
+    },
 
+    _setItem: function (index, item)
+    {
       var player = this.owner;
       if (!item) {
         this.rooms[index] = null;
         item = {slot: index, itemKind: -1};
-        if (index == this.weaponSlot) {
-          weaponFN(player);
-        }
       }
       else {
         if (!this.checkItem(index, item))
@@ -152,10 +145,6 @@ module.exports = Equipment = cls.Class.extend({
 
         this.rooms[index] = item;
         item.slot = index;
-
-        if (index == this.weaponSlot) {
-          weaponFN(player);
-        }
       }
       player.map.entities.pushToPlayer(player, new Messages.ItemSlot(2, [item]));
       return true;
@@ -259,6 +248,14 @@ module.exports = Equipment = cls.Class.extend({
       itemString += "]";
       if (!isItems) return "[]";
       return itemString;
-    }
+    },
+
+    getWeapon: function () {
+      return this.rooms[4];
+    },
+
+    getArmor: function () {
+      return this.rooms[1];
+    },
 
 });

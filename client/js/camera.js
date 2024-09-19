@@ -78,37 +78,29 @@ define(['entity/entity'], function(Entity) {
         },
 
         setRealCoords: function() {
-          var ts = this.tilesize;
           var mc = game.mapContainer;
           var fe = this.focusEntity;
 
           var hgw = ~~(this.screenX / 2);
           var hgh = ~~(this.screenY / 2);
-          log.info("camera: hgw="+hgw+",hgh="+hgh);
+          //log.info("camera: hgw="+hgw+",hgh="+hgh);
 
           if (!fe)
             return;
 
-          var x = this.x = fe.x - hgw;
-          var y = this.y = fe.y - hgh;
+          var x = fe.x - hgw;
+          var y = fe.y - hgh;
 
-          this.x = this.x.clamp(mc.gcsx, mc.gcex);
-          this.y = this.y.clamp(mc.gcsy, mc.gcey);
+          this.x = x.clamp(mc.gcsx, mc.gcex);
+          this.y = y.clamp(mc.gcsy, mc.gcey);
 
           this.rx = x;
           this.ry = y;
 
-          var gcsx = 0;
-          var gcex = mc.gcex;
-          var gcsy = 0;
-          var gcey = mc.gcey;
-
-          var tMinX=gcsx, tMaxX=gcex, tMinY=gcsy, tMaxY=gcey;
-
-          tMinX+=this.wOffX;
-          tMinY+=this.wOffY;
-          tMaxX-=this.wOffX;
-          tMaxY-=this.wOffY;
+          var tMinX=this.wOffX,
+              tMaxX=mc.gcex+this.wOffX,
+              tMinY=this.wOffY,
+              tMaxY=mc.gcey+this.wOffY;
 
           this.scrollX = (x > tMinX && x <= tMaxX);
           this.scrollY = (y > tMinY && y <= tMaxY);
@@ -133,8 +125,8 @@ define(['entity/entity'], function(Entity) {
           var tw = -r.hOffX;
           var th = -r.hOffY;
 
-          var tx = ((x-this.x) + tw) / ts;
-          var ty = ((y-this.y) + th) / ts;
+          var tx = (x-this.x + tw) / ts;
+          var ty = (y-this.y + th) / ts;
 
           return [tx,ty];
         },

@@ -3207,6 +3207,29 @@ ItemTypes.isEquipment = function(kind) {
     return ItemTypes.isWeapon(kind) || ItemTypes.isArmor(kind);
 };
 
+ItemTypes.getSpriteCode = function (kind) {
+	var data = KindData[kind];
+	if (ItemTypes.isArmor(kind))
+	{
+		return kind;
+	}
+	if (ItemTypes.isWeapon(kind))
+	{
+		var type = data.type;
+		if (!type)
+			return 0;
+		if (type == "sword")
+			return 1;
+		if (type == "axe")
+			return 2;
+		if (type == "hammer")
+			return 12;
+		if (type == "bow")
+			return 50;
+	}
+	return 0;
+};
+
 ItemTypes.getEquipmentSlot = function (kind) {
 	if (ItemTypes.isWeapon(kind)) return 4;
 
@@ -20488,37 +20511,29 @@ define('camera',['entity/entity'], function(Entity) {
         },
 
         setRealCoords: function() {
-          var ts = this.tilesize;
           var mc = game.mapContainer;
           var fe = this.focusEntity;
 
           var hgw = ~~(this.screenX / 2);
           var hgh = ~~(this.screenY / 2);
-          log.info("camera: hgw="+hgw+",hgh="+hgh);
+          //log.info("camera: hgw="+hgw+",hgh="+hgh);
 
           if (!fe)
             return;
 
-          var x = this.x = fe.x - hgw;
-          var y = this.y = fe.y - hgh;
+          var x = fe.x - hgw;
+          var y = fe.y - hgh;
 
-          this.x = this.x.clamp(mc.gcsx, mc.gcex);
-          this.y = this.y.clamp(mc.gcsy, mc.gcey);
+          this.x = x.clamp(mc.gcsx, mc.gcex);
+          this.y = y.clamp(mc.gcsy, mc.gcey);
 
           this.rx = x;
           this.ry = y;
 
-          var gcsx = 0;
-          var gcex = mc.gcex;
-          var gcsy = 0;
-          var gcey = mc.gcey;
-
-          var tMinX=gcsx, tMaxX=gcex, tMinY=gcsy, tMaxY=gcey;
-
-          tMinX+=this.wOffX;
-          tMinY+=this.wOffY;
-          tMaxX-=this.wOffX;
-          tMaxY-=this.wOffY;
+          var tMinX=this.wOffX,
+              tMaxX=mc.gcex+this.wOffX,
+              tMinY=this.wOffY,
+              tMaxY=mc.gcey+this.wOffY;
 
           this.scrollX = (x > tMinX && x <= tMaxX);
           this.scrollY = (y > tMinY && y <= tMaxY);
@@ -20543,8 +20558,8 @@ define('camera',['entity/entity'], function(Entity) {
           var tw = -r.hOffX;
           var th = -r.hOffY;
 
-          var tx = ((x-this.x) + tw) / ts;
-          var ty = ((y-this.y) + th) / ts;
+          var tx = (x-this.x + tw) / ts;
+          var ty = (y-this.y + th) / ts;
 
           return [tx,ty];
         },
@@ -32352,8 +32367,8 @@ function(InfoManager, HoveringInfo, BubbleManager,
 
           if (entity instanceof Player)
           {
-            entity.sprite[0] = parseInt(data[1]);
-            entity.sprite[1] = parseInt(data[2]);
+            entity.sprites[0] = parseInt(data[1]);
+            entity.sprites[1] = parseInt(data[2]);
 
             entity.setArmorSprite();
             entity.setWeaponSprite();
@@ -34354,10 +34369,14 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
                 game.gamepad = new GamePad(self);
 
-                setInterval(function () {
-                  if (self.gamepad)
-                    self.gamepad.interval();
-                }, 16);
+                self.tickCycle = function () {
+                  if(self.requestAnimFrame) {
+                    requestAnimationFrame(self.tick);
+                  } else {
+                    self.tick();
+                  }
+                };
+                self.tickCycle();
             },
 
             tick: function() {
@@ -34365,18 +34384,17 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               self.currentTime = getTime();
 
-
               if (!self.started || self.isStopped) {
-                if(self.requestAnimFrame)
-                  requestAnimationFrame(self.tick.bind(self));
+                setTimeout(self.tickCycle,12);
                 return;
               }
 
-              setTimeout(() => {
-                requestAnimationFrame(self.tick);
-              }, 12);
+              setTimeout(self.tickCycle,12);
 
               self.updateTime = self.currentTime;
+
+              if (self.gamepad)
+                self.gamepad.interval();
 
               //app.keyheld();
               self.updater.update();
@@ -34387,19 +34405,6 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
         			}
 
               self.renderer.renderFrame();
-
-              /*var nextFrameCheck = function () {
-                var delta = getTime() - self.currentTime;
-                if (delta >= G_UPDATE_INTERVAL) {
-                  self.tick();
-                } else {
-                  requestAnimationFrame(nextFrameCheck);
-                }
-              };
-
-              if(self.requestAnimFrame) {
-                requestAnimationFrame(nextFrameCheck);
-              }*/
             },
 
             start: function() {
@@ -34811,7 +34816,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
                 game.processInput(pos[0], pos[1], true);
                 return true;
-              }
+              };
 
               var entity = p.dialogueEntity;
               if (entity && p.isNextTooEntity(entity) && p.isFacingEntity(entity)) {
@@ -34823,9 +34828,11 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 return;
 
               log.info("makePlayerInteractNextTo");
-              var ts = this.tilesize;
+              //var ts = this.tilesize;
 
               this.ignorePlayer = true;
+
+
 
               //var targetFound = false;
 
@@ -34834,8 +34841,6 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               }
 
               var target = p.target;
-
-
               if (target && p.isNextTooEntity(target) && p.isFacingEntity(target)) {
                 if (processTarget()) return;
               }
@@ -35739,7 +35744,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
             	///log.info("x="+pos.x+",y="+pos.y);
 
-              var entity = (p.hasTarget() && !this.clickMove) ?
+              var entity = p.hasTarget() ?
                 p.target : this.getEntityAt(px, py);
 
               if (!entity && this.renderer.mobile) {

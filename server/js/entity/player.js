@@ -116,9 +116,6 @@ module.exports = Player = Character.extend({
         this.packetHandler = new PacketHandler(user, main, this, connection, worldServer, this.map);
     		this.playerController = new PlayerController(this);
 
-      	//this.futureX = -1;
-      	//this.futureY = -1;
-
       	this.onWelcomeReady = false;
 
       	this.tut = {};
@@ -133,13 +130,9 @@ module.exports = Player = Character.extend({
 
       	this.spawnsList = {};
 
-      	//this.appearances = new Array(AppearanceData.Data.length);
-
       	this.lastAction = Date.now();
 
         this.knownIds = [];
-
-        //this.checkStopDanger = false;
 
         this.sx = 0;
         this.sy = 0;
@@ -148,18 +141,13 @@ module.exports = Player = Character.extend({
 
         this.moveOrientation = 0;
 
-        //this.questStatus = {};
-
-        /*setInterval(function () {
-          self.save();
-        }, PLAYER_SAVE_INTERVAL);*/
-
-        this.savedPlayer = false;
+        /*this.savedPlayer = false;
         this.savedQuests = false;
         this.savedInventory = false;
         this.savedEquipment = false;
-        this.savedBank = false;
+        this.savedBank = false;*/
         this.savedAll = false;
+        this.savedSection = 0;
 
         this.achievements = [];
         this.completeQuests = {};
@@ -179,18 +167,14 @@ module.exports = Player = Character.extend({
 
     getState: function() {
       var basestate = this._getBaseState();
-      var sprite1 = this.sprites[0], sprite2 = this.getWeaponSprite();
-      if (this.isArcher()) {
-        sprite1 = this.sprites[2];
-        //sprite2 = this.sprites[3];
-      }
+      var sprite1 = this.getSprite(0), sprite2 = this.getSprite(1);
 
       var state = [this.level.base,
         this.stats.hp,
         this.stats.hpMax,
         0,
         sprite1, sprite2,
-  	    this.colors[0], this.colors[1]];
+  	    0, 0];
 
       return basestate.concat(state);
     },
@@ -628,6 +612,10 @@ module.exports = Player = Character.extend({
         var sendMessage;
         DBH.getItems(self, 2, function(eItems) {
               self.equipment = new Equipment(self, 2, eItems);
+              self.equipment.setItem = function (index, item) {
+                this._setItem(index, item);
+                this.owner.setRange();
+              };
               self.itemStore[2] = self.equipment;
         DBH.getItems(self, 1, function(bItems) {
               self.bank = new Bank(self, 48, bItems);
@@ -668,10 +656,6 @@ module.exports = Player = Character.extend({
                 self.gold[0],
                 self.gold[1],
                 self.user.gems,
-                //self.sprites[0],
-                //self.sprites[1],
-                //self.sprites[2],
-                //self.sprites[3],
                 self.stats.attack,
                 self.stats.defense,
                 self.stats.health,
@@ -691,8 +675,8 @@ module.exports = Player = Character.extend({
             self.setRange();
 
 
-            sendMessage.push(self.isArcher() ? self.sprites[2] : self.sprites[0]);
-            sendMessage.push(self.getWeaponSprite());
+            sendMessage.push(self.getSprite(0));
+            sendMessage.push(self.getSprite(1));
             //sendMessage.push(self.isArcher() ? self.sprites[3] : self.sprites[1]);
 
             //console.info("inventory=" +JSON.stringify(self.inventory.rooms));
@@ -1035,6 +1019,14 @@ module.exports = Player = Character.extend({
     return true;
   },
 
+  saveSection: function () {
+    console.info("SAVING SECTION: "+self.savedSection);
+    if (++self.savedSection == 6) {
+      console.info("SAVED PLAYER!!!!!: "+self.name);
+      self.savedSection = 0;
+    }
+  },
+
   save: function () {
     var self = this;
 
@@ -1045,45 +1037,9 @@ module.exports = Player = Character.extend({
     DBH.saveQuests(this, this.quests);
     DBH.saveAchievements(this);
 
-    if (this.inventory)
-      this.inventory.save(this);
-    if (this.equipment)
-      this.equipment.save(this);
-    if (this.bank)
-      this.bank.save(this);
-
-    self.playerSaved = setInterval(function () {
-      if (!self.savedPlayer)
-        return;
-      if (!self.savedQuests)
-        return;
-      if (!self.savedAchievements)
-        return;
-      if (!self.savedInventory)
-        return;
-      if (!self.savedEquipment)
-        return;
-      if (!self.savedBank)
-        return;
-
-      self.savedAll = true;
-      clearInterval(self.playerSaved);
-    }, G_UPDATE_INTERVAL);
-
-    if (!SAVING_SERVER) {
-      self.playerSaveReset = setInterval(function () {
-        if (self.savedAll) {
-          self.savedPlayer = false;
-          self.savedQuests = false;
-          self.savedInventory = false;
-          self.savedEquipment = false;
-          self.savedBank = false;
-          self.savedAchievements = false;
-          self.savedAll = false;
-          clearInterval(self.playerSaveReset);
-        }
-      }, G_ROUNDTRIP);
-    }
+    this.inventory.save(this);
+    this.equipment.save(this);
+    this.bank.save(this);
   },
 
   isArcher: function () {
@@ -1340,21 +1296,18 @@ module.exports = Player = Character.extend({
       store2.putItem(rs1);
       store1.setItem(slot[1], null);
     }
+
+    if(slot[0] == 2 || slot2[0] == 2) {
+      this.broadcastSprites();
+    }
   },
 
-  storeItem: function (slot, slot2) {
-    this.swapItem(slot, slot2);
-  },
-
-  handleEquip: function (slot, slot2) {
-    console.info("handleEquip");
-
-
-    //var item = this.itemStore[slot[0]].rooms[slot[1]];
-    //if (!item)
-      //return;
-
-    this.swapItem(slot, slot2);
+  broadcastSprites: function () {
+    var s1 = this.getSprite(0);
+    this.setSprite(0, s1);
+    var s2 = this.getSprite(1);
+    this.setSprite(1, s2);
+    this.packetHandler.broadcast(new Messages.setSprite(this, s1, s2), false);
   },
 
   handleStoreEmpty: function (slot, item) {
@@ -1430,50 +1383,60 @@ module.exports = Player = Character.extend({
             ~~(Math.abs(this.y - pos[1])/G_TILESIZE) <= ~~(G_SCREEN_HEIGHT/2));
   },
 
-  getWeapon: function () {
-    var weapon = this.equipment.rooms[4];
-    return weapon;
-  },
-
   hasWeaponType: function (type) {
     type = type || "any";
     if (type == "any")
         return true;
 
-    var weapon = this.getWeapon();
+    var weapon = this.equipment.getWeapon();
     if (!weapon)
       return false;
 
-    var weaponData = ItemTypes.KindData[weapon.itemKind];
+    var data = this.getItemData(weapon.itemKind);
     if (type) {
-      return weaponData.type == type;
+      return data.type == type;
     }
     return ItemTypes.isHarvestWeapon(weapon.itemKind);
   },
 
   getWeaponType : function () {
-    //return "axe"; // TODO - remove.
-
-    var weapon = this.getWeapon();
+    var weapon = this.equipment.getWeapon();
     if (!weapon)
       return null;
-    var weaponData = ItemTypes.KindData[weapon.itemKind];
-    return weaponData.type;
+    var data = ItemTypes.KindData[weapon.itemKind];
+    return data.type;
   },
 
-  getWeaponSprite: function () {
-    var type = this.getWeaponType();
-    if (!type)
-      return 0;
-    if (type == "sword")
-      return 1;
-    if (type == "axe")
-      return 2;
-    if (type == "hammer")
-      return 12;
-    if (type == "bow")
-      return 50;
-    return 0;
+  // type 0=Armor, 1=Weapon
+  setSprite: function (type, id) {
+    if (type == 0) {
+      if (this.isArcher())
+        this.sprites[2] = id;
+      else
+        this.sprites[0] = id;
+    }
+    if (type == 1)
+    {
+      if (this.isArcher())
+        this.sprites[3] = id;
+      else
+        this.sprites[1] = id;
+    }
+  },
+
+  // type 0=Armor, 1=Weapon
+  getSprite: function (type) {
+    var item = null;
+    if (type != 0) {
+      item = this.equipment.getWeapon();
+    }
+    else {
+      item = this.equipment.getArmor();
+    }
+    if (item) {
+      return ItemTypes.getSpriteCode(item.itemKind);
+    }
+    return (type == 0) ? 77 : 0;
   },
 
   _harvest: function (x, y, callback, duration) {

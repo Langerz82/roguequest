@@ -97,40 +97,23 @@ var Map = cls.Class.extend({
 
     loadTileGrid: function(tiles) {
         var self = this;
-        this.tile = [];
-        //var tileIndex = 0;
-        //console.log(JSON.stringify(collisions));
+        this.tile = new Array(this.height*this.width);
         for(var j, i = 0; i < this.height; i++) {
-            this.tile[i] = [];
             for(j = 0; j < this.width; j++) {
-                this.tile[i][j] = tiles[i * this.width+j];
+                this.tile[i*this.width+j] = tiles[i * this.width+j];
             }
         }
-
-
-        //console.info("Collision Grid Loaded");
-        //if (this.index == 0)
-          //console.info(JSON.stringify(self.grid));
     },
 
     loadCollisionGrid: function(collisions) {
         var self = this;
-        this.grid = [];
-        //var tileIndex = 0;
-        //console.log(JSON.stringify(collisions));
+        this.grid = new Uint8Array(this.height*this.width);
         for(var j, i = 0; i < this.height; i++) {
-            this.grid[i] = [];
             for(j = 0; j < this.width; j++) {
-                this.grid[i][j] = (collisions[i * this.width+j] == 1 ? true : false);
+                this.grid[i*this.width+j] = (collisions[i * this.width+j] == 1 ? true : false);
             }
         }
-
-
-        //console.info("Collision Grid Loaded");
-        //if (this.index == 0)
-          //console.info(JSON.stringify(self.grid));
     },
-
 
 
     GroupIdToGroupPosition: function (id) {
@@ -255,6 +238,8 @@ var Map = cls.Class.extend({
 
       if (this.index == 1) {
         var area = new Area(0, 512, 512, 30, 30, this, true, -1);
+        //var pos = {x: (1024-45)*16, y: (1024-45)*16};
+        //var pos = {x: (45)*16, y: (45)*16};
         var	pos = this.entities.spaceEntityRandomApart(2,area._getRandomPositionInsideArea.bind(area,100));
         console.info("getRandomStartingPosition - x:"+pos.x+",y:"+pos.y);
         return pos;

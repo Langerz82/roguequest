@@ -1185,8 +1185,8 @@ function(InfoManager, HoveringInfo, BubbleManager,
 
           if (entity instanceof Player)
           {
-            entity.sprite[0] = parseInt(data[1]);
-            entity.sprite[1] = parseInt(data[2]);
+            entity.sprites[0] = parseInt(data[1]);
+            entity.sprites[1] = parseInt(data[2]);
 
             entity.setArmorSprite();
             entity.setWeaponSprite();

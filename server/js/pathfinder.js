@@ -13,12 +13,12 @@ module.exports = Pathfinder = Class.extend({
   },
 
   initBlankGrid_: function() {
-      for(var i=0; i < this.height; i += 1) {
+      /*for(var i=0; i < this.height; i += 1) {
           this.blankGrid[i] = [];
           for(var j=0; j < this.width; j += 1) {
               this.blankGrid[i][j] = 0;
           }
-      }
+      }*/
   },
 
   isPathTicksTooFast: function (entity, path, startTime) {
@@ -245,7 +245,9 @@ module.exports = Pathfinder = Class.extend({
 		//console.info(JSON.stringify(subend));
 		//console.info("minX="+minX+",maxX="+maxX+",minY="+minY+",maxY="+maxY);
 
-		var crop = [];
+    var width = maxX - minX;
+    var height = maxY - minY;
+		var crop = new Uint8Array(height);
 		for(var i = minY; i <= maxY; ++i) {
 			crop.push(grid[i].slice(minX, maxX));
 		}

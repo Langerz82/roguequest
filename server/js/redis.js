@@ -547,6 +547,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         .hset(uKey, "looks", hexLooks)
         .hset(uKey, "gems", player.user.gems)
         .exec(function(err, replies) {
+          player.saveSection();
         });
     },
 
@@ -751,8 +752,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
     if (!store)
       return;
 
-    client.hset(pKey, sTypeNew, store.toStringJSON());
-  },
+    client.hset(pKey, sTypeNew, store.toStringJSON(),
+      function(err, replies) {
+        player.saveSection();
+    });
+},
 
 // ITEMS - END. End of Item Functions.
 
@@ -783,7 +787,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
     if (!hasQuests) questString = "[]";
 
     //client.hset(pKey, "quests2", questKey.join(","));
-    client.hset(pKey, "newquests2", questString);
+    client.hset(pKey, "newquests2", questString,
+      function(err, replies) {
+            player.saveSection();
+    });
+
     this.deleteOldQuests(player);
   },
 
@@ -849,49 +857,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
         callback(player);
     });
   },
-
-  /*loadQuestsOld: function(player, callback) {
-    console.info("loadQuest");
-    var pKey = "p:" + player.name;
-    var multi = client.multi();
-    var indexes;
-
-    client.hget(pKey, "quests2", function (err, data) {
-        if (err || !data) {
-          callback(player);
-          return;
-        }
-        console.info(JSON.stringify(data));
-        indexes = data.split(',');
-        console.info(JSON.stringify(indexes));
-        var indexLen = indexes.length;
-        for (var i=0; i < indexLen; ++i)
-        {
-          if (!indexes[i]) continue;
-          multi.hget(pKey, "q_"+indexes[i]);
-        }
-        multi.exec(function (e,val2) {
-          if (err || !val2) {
-            callback(player);
-            return;
-          }
-          for (var j=0; j < val2.length; ++j)
-          {
-            var rec = val2[j].split(',');
-            console.info(JSON.stringify(val2[j]));
-            var quest = new Quest(rec.splice(0,8));
-            if (rec.length > 0)
-              quest.object = getQuestObject(rec.splice(0,6));
-            if (rec.length > 0)
-              quest.object2 = getQuestObject(rec.splice(0,6));
-
-            player.quests.push(quest);
-          }
-          callback(player);
-        });
-    });
-  },*/
-
 // QUESTS - END.
 
 
@@ -904,7 +869,10 @@ saveAchievements: function(player) {
   {
       data += achievement.toRedis(achievement).join(',') + ",";
   }
-  client.hset(pKey, "achievements", data);
+  client.hset(pKey, "achievements", data,
+    function(err, replies) {
+      player.saveSection();
+  });
 },
 
 loadAchievements: function(player, callback) {

@@ -216,8 +216,8 @@ module.exports = PacketHandler = Class.extend({
 
     this.connection.onClose(function() {
       console.info("Player: " + self.player.name + " has exited the world.");
-      if (self.player.user.loadedPlayer)
-        self.player.save();
+      //if (self.player.user.loadedPlayer)
+        //self.player.save();
 
       if (players[self.player.name])
         players[self.player.name] = 0;
@@ -858,32 +858,15 @@ module.exports = PacketHandler = Class.extend({
     var appearance = this.player.user.looks[id];
     if (appearance == 1) {
       if (type == 0) {
-        if (p.isArcher())
-          p.sprites[2] = id;
-        else
-          p.sprites[0] = id;
+        p.setSprite(0, id);
       }
-      /*if (type == 1) {
-        if (p.isArcher())
-          p.sprites[3] = id;
-        else
-          p.sprites[1] = id;
-      }*/
     }
 
-
-    //this.broadcast(new Messages.Looks(this.player), true);
-
-    var s1 = p.isArcher() ? p.sprites[2] : p.sprites[0];
-    var s2 = p.sprites[1];
+    var s1 = p.getSprite(0);
+    var s2 = p.getSprite(1);
     this.broadcast(new Messages.setSprite(p, s1, s2));
-
-    // TODO - Update Look to players.
   },
 
-  /*handleLooks: function() {
-    this.sendPlayer(new Messages.LoadLooks(this.player));
-  },*/
 
 // param 1 - action type.
 // type 0 eat.
@@ -931,7 +914,7 @@ module.exports = PacketHandler = Class.extend({
     }
     else if (action === 1) {
       this.player.tut.equip = true;
-      this.player.handleEquip(slot, slot2);
+      this.player.swapItem(slot, slot2);
     }
     else if (action === 2) { // move item.
       this.player.swapItem(slot, slot2);
@@ -940,7 +923,7 @@ module.exports = PacketHandler = Class.extend({
       this.player.handleStoreEmpty(slot, item);
     }
     else if (action === 4) { // store item.
-      this.player.storeItem(slot, slot2);
+      this.player.swapItem(slot, slot2);
     }
 
     /*if (slot[0] == 0 || slot2[0] == 0) {
@@ -1458,25 +1441,11 @@ module.exports = PacketHandler = Class.extend({
         }
 
         self.entities.addPlayer(p);
-        //p.forceStop();
-        //self.handleMoveEntity(Date.now(),p.id,2,1,p.x,p.y);
-        /*p.setPosition(pos.x, pos.y);
-        p.sx = pos.x;
-        p.sy = pos.y;
-        p.ex = -1;
-        p.ey = -1;*/
+
         p.ex = p.sx = pos.x;
         p.ey = p.sy = pos.y;
         p.setPosition(pos.x, pos.y);
         p.move([Date.now(),3,1,pos.x,pos.y]);
-        //self.handleMoveEntity([Date.now(),p.id,2,0,p.x,p.y]);
-        /*p.setPosition(pos.x, pos.y);
-        p.sx = pos.x;
-        p.sy = pos.y;
-        p.ex = -1;
-        p.ey = -1;*/
-
-        //p.mapSubIndex = mapSubIndex;
 
         console.info("trying to send.");
         self.send([Types.Messages.SC_TELEPORT_MAP, mapId, 1, p.x, p.y]);
@@ -1484,7 +1453,6 @@ module.exports = PacketHandler = Class.extend({
 
       pos = map.enterCallback(p);
       finishTeleportMaps(mapId)
-
     }
     else if (status == 1) {
       p.mapStatus = 2;

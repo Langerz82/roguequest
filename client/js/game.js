@@ -507,10 +507,14 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
                 game.gamepad = new GamePad(self);
 
-                setInterval(function () {
-                  if (self.gamepad)
-                    self.gamepad.interval();
-                }, 16);
+                self.tickCycle = function () {
+                  if(self.requestAnimFrame) {
+                    requestAnimationFrame(self.tick);
+                  } else {
+                    self.tick();
+                  }
+                };
+                self.tickCycle();
             },
 
             tick: function() {
@@ -518,18 +522,17 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               self.currentTime = getTime();
 
-
               if (!self.started || self.isStopped) {
-                if(self.requestAnimFrame)
-                  requestAnimationFrame(self.tick.bind(self));
+                setTimeout(self.tickCycle,12);
                 return;
               }
 
-              setTimeout(() => {
-                requestAnimationFrame(self.tick);
-              }, 12);
+              setTimeout(self.tickCycle,12);
 
               self.updateTime = self.currentTime;
+
+              if (self.gamepad)
+                self.gamepad.interval();
 
               //app.keyheld();
               self.updater.update();
@@ -540,19 +543,6 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
         			}
 
               self.renderer.renderFrame();
-
-              /*var nextFrameCheck = function () {
-                var delta = getTime() - self.currentTime;
-                if (delta >= G_UPDATE_INTERVAL) {
-                  self.tick();
-                } else {
-                  requestAnimationFrame(nextFrameCheck);
-                }
-              };
-
-              if(self.requestAnimFrame) {
-                requestAnimationFrame(nextFrameCheck);
-              }*/
             },
 
             start: function() {
@@ -964,7 +954,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
                 game.processInput(pos[0], pos[1], true);
                 return true;
-              }
+              };
 
               var entity = p.dialogueEntity;
               if (entity && p.isNextTooEntity(entity) && p.isFacingEntity(entity)) {
@@ -976,9 +966,11 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 return;
 
               log.info("makePlayerInteractNextTo");
-              var ts = this.tilesize;
+              //var ts = this.tilesize;
 
               this.ignorePlayer = true;
+
+
 
               //var targetFound = false;
 
@@ -987,8 +979,6 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               }
 
               var target = p.target;
-
-
               if (target && p.isNextTooEntity(target) && p.isFacingEntity(target)) {
                 if (processTarget()) return;
               }
@@ -1892,7 +1882,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
             	///log.info("x="+pos.x+",y="+pos.y);
 
-              var entity = (p.hasTarget() && !this.clickMove) ?
+              var entity = p.hasTarget() ?
                 p.target : this.getEntityAt(px, py);
 
               if (!entity && this.renderer.mobile) {
