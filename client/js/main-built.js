@@ -23005,10 +23005,7 @@ define('map',['detect', 'mapworker'], function(Detect, worker) {
       //log.debug(JSON.stringify(this.collision));
       this.collision = new Array(this.height);
       for (var j, i = 0; i < this.height; i++) {
-        this.collision[i] = new Array(this.width).fill(false);
-        for (j = 0; j < this.width; j++) {
-          this.collision[i][j] = (this.collisionData[i * this.width + j] == 1 ? true : false);
-        }
+        this.collision[i] = this.collisionData.slice(i * this.width, ((i+1) * this.width) );
       }
       log.debug("Collision grid generated.");
     },
@@ -23016,13 +23013,13 @@ define('map',['detect', 'mapworker'], function(Detect, worker) {
     _generateTileGrid: function() {
       this.tile = new Array(this.height);
       for (var i = 0; i < this.height; i++) {
-        this.tile[i] = this.tileData.slice(i*this.width, (i+1)*this.width);
+        this.tile[i] = this.tileData.slice(i * this.width, ((i+1) * this.width) );
       }
       log.debug("tile grid generated.");
     },
 
     isColliding: function(gx, gy) {
-      return (this.collision[gy][gx] === true);
+      return (this.collision[gy][gx] === 1);
     },
 
   });

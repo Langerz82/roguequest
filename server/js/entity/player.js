@@ -746,24 +746,6 @@ module.exports = Player = Character.extend({
       				//self.send(sendMessage);
               self.connection.sendUTF8(sendMessage.join(","));
 
-              /*if (self.level <= 20)
-          		{
-          			self.tutChat("TUTMOVE",2,"move");
-          			self.tutChat("TUTPORTAL",4,"portal");
-          		}
-          		else
-          		{
-          			self.tut.move = true;
-          			self.tut.portal = true;
-          			self.tut.attack = true;
-          			self.tut.attack2 = true;
-          		  self.tut.buy = true;
-          		  self.tut.buy2 = true;
-          			self.tut.equip = true;
-          			self.tut.stats = true;
-          			//self.tutMap = true;
-          		}*/
-
       		    self.hasEnteredGame = true;
 
       			}
@@ -1274,9 +1256,6 @@ module.exports = Player = Character.extend({
 
     if (rs2)
     {
-      //if (slot[0] == 2 && !this.validateEquip(rs2, slot[1]))
-        //return;
-
       if (this.inventory.combineItem(rs1, rs2) == -1) {
         var tmp = rs2;
         if (store2.checkItem(slot2[1], rs1) && store1.checkItem(slot[1], rs2))
@@ -1392,9 +1371,8 @@ module.exports = Player = Character.extend({
     if (!weapon)
       return false;
 
-    var data = this.getItemData(weapon.itemKind);
     if (type) {
-      return data.type == type;
+      return this.getWeaponType() == type;
     }
     return ItemTypes.isHarvestWeapon(weapon.itemKind);
   },
@@ -1433,6 +1411,7 @@ module.exports = Player = Character.extend({
     else {
       item = this.equipment.getArmor();
     }
+
     if (item) {
       return ItemTypes.getSpriteCode(item.itemKind);
     }
@@ -1476,9 +1455,6 @@ module.exports = Player = Character.extend({
           p._abortHarvest(x, y);
           return;
         }
-
-
-        else
 
         if (callback)
           callback(p);

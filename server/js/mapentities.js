@@ -147,9 +147,9 @@ var MapEntities = cls.Class.extend({
 		    self = this;
 			console.info("pathinggrid height:"+map.height+", width:"+map.width);
 
-		var grid = new Array(map.height);
+		var grid = new Uint8Array(map.height);
 		for(var i=0; i < map.height; i += 1) {
-			grid[i] = new Array(map.width);
+			grid[i] = new Uint8Array(map.width);
 			for(var j=0; j < map.width; j += 1) {
         if (map.grid[i][j])
           grid[i][j] = 1;
@@ -158,7 +158,7 @@ var MapEntities = cls.Class.extend({
 			}
 		}
 		self.entitygrid = grid.slice(0);
-    self.pathingGrid = grid.slice(0);
+    //self.pathingGrid = grid.slice(0);
 
 		console.info("Initialized the pathing grid with static colliding cells.");
     },

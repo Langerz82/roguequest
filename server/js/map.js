@@ -96,25 +96,18 @@ var Map = cls.Class.extend({
     },
 
     loadTileGrid: function(tiles) {
-        var self = this;
-        this.tile = new Array(this.height*this.width);
-        for(var j, i = 0; i < this.height; i++) {
-            for(j = 0; j < this.width; j++) {
-                this.tile[i*this.width+j] = tiles[i * this.width+j];
-            }
+        this.tile = new Array(this.height);
+        for(var i = 0; i < this.height; i++) {
+            this.tile[i] = tiles.slice(i * this.width, ((i+1) * this.width) );
         }
     },
 
     loadCollisionGrid: function(collisions) {
-        var self = this;
-        this.grid = new Uint8Array(this.height*this.width);
-        for(var j, i = 0; i < this.height; i++) {
-            for(j = 0; j < this.width; j++) {
-                this.grid[i*this.width+j] = (collisions[i * this.width+j] == 1 ? true : false);
-            }
+        this.grid = new Array(this.height);
+        for(var i = 0; i < this.height; i++) {
+            this.grid[i] = collisions.slice(i * this.width, ((i+1) * this.width) );
         }
     },
-
 
     GroupIdToGroupPosition: function (id) {
         var posArray = id.split('-');
@@ -281,24 +274,8 @@ var Map = cls.Class.extend({
     },
 
     isCollidingGrid: function (x, y) {
-      return this.grid[y][x] === true;
+      return this.grid[y][x] === 1;
     },
-
-    /*isCollidingGrid: function (x, y, x2, y2) {
-    	//console.info("x="+x+",y="+y);
-        if (this.isOutOfBounds(x, y) || this.grid[y][x] === true) {
-            return true;
-        }
-        if (x2 && y2)
-        {
-          if (this.isOutOfBounds(x2, y2)) {
-              return true;
-          }
-        	return this.grid[y2][x2] === true ||
-        			this.grid[y][x2] === true || this.grid[y2][x] === true;
-        }
-
-    },*/
 
     /**
      * Returns true if the given position is located within the dimensions of the map.
