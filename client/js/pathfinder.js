@@ -117,7 +117,7 @@ define(['lib/astar'], function(AStar) {
           maxY = Math.min(grid.length-1, maxY);
           var crop = new Array(maxY - minY);
     			for(var j=0, i = minY; i <= maxY; ++i) {
-    				crop[j++] = grid[i].slice(minX, maxX);
+    				crop[j++] = new Uint8Array(grid[i].slice(minX, maxX));
     			}
 
     			return {

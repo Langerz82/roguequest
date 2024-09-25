@@ -18924,21 +18924,15 @@ function(UserClient, Player, AppearanceData) {
             this.walk();
 
             this.keyMove = true;
+            if (this.key_move_callback)
+            {
+              this.key_move_callback(state);
+            }
           }
           if (!state)
           {
-            if (orientation != this.orientation)
-            {
-              //this.changedOrientation = false;
-              return;
-            }
             this.forceStop();
           }
-          if (this.key_move_callback)
-          {
-            this.key_move_callback(state);
-          }
-
         };
 
         player.setArmorSprite = function (sprite) {
@@ -23002,11 +22996,11 @@ define('map',['detect', 'mapworker'], function(Detect, worker) {
     },
 
     _generateCollisionGrid: function() {
-      //log.debug(JSON.stringify(this.collision));
       this.collision = new Array(this.height);
       for (var j, i = 0; i < this.height; i++) {
         this.collision[i] = this.collisionData.slice(i * this.width, ((i+1) * this.width) );
       }
+      delete this.collisionData;
       log.debug("Collision grid generated.");
     },
 
@@ -23015,6 +23009,7 @@ define('map',['detect', 'mapworker'], function(Detect, worker) {
       for (var i = 0; i < this.height; i++) {
         this.tile[i] = this.tileData.slice(i * this.width, ((i+1) * this.width) );
       }
+      delete this.tileData;
       log.debug("tile grid generated.");
     },
 
@@ -25086,7 +25081,7 @@ define('pathfinder',['lib/astar'], function(AStar) {
           maxY = Math.min(grid.length-1, maxY);
           var crop = new Array(maxY - minY);
     			for(var j=0, i = minY; i <= maxY; ++i) {
-    				crop[j++] = grid[i].slice(minX, maxX);
+    				crop[j++] = new Uint8Array(grid[i].slice(minX, maxX));
     			}
 
     			return {

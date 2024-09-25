@@ -253,21 +253,15 @@ function(UserClient, Player, AppearanceData) {
             this.walk();
 
             this.keyMove = true;
+            if (this.key_move_callback)
+            {
+              this.key_move_callback(state);
+            }
           }
           if (!state)
           {
-            if (orientation != this.orientation)
-            {
-              //this.changedOrientation = false;
-              return;
-            }
             this.forceStop();
           }
-          if (this.key_move_callback)
-          {
-            this.key_move_callback(state);
-          }
-
         };
 
         player.setArmorSprite = function (sprite) {

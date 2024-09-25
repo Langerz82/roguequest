@@ -135,11 +135,11 @@ define(['detect', 'mapworker'], function(Detect, worker) {
     },
 
     _generateCollisionGrid: function() {
-      //log.debug(JSON.stringify(this.collision));
       this.collision = new Array(this.height);
       for (var j, i = 0; i < this.height; i++) {
         this.collision[i] = this.collisionData.slice(i * this.width, ((i+1) * this.width) );
       }
+      delete this.collisionData;
       log.debug("Collision grid generated.");
     },
 
@@ -148,6 +148,7 @@ define(['detect', 'mapworker'], function(Detect, worker) {
       for (var i = 0; i < this.height; i++) {
         this.tile[i] = this.tileData.slice(i * this.width, ((i+1) * this.width) );
       }
+      delete this.tileData;
       log.debug("tile grid generated.");
     },
 
