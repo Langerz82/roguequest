@@ -260,6 +260,8 @@ function(UserClient, Player, AppearanceData) {
           }
           if (!state)
           {
+            if (orientation != this.orientation)
+              return;
             this.forceStop();
           }
         };
