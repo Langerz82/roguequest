@@ -85,10 +85,10 @@ footer, header, hgroup, menu, nav, section {
     font-family: 'GraphicPixel';
     color: #e3e3e3;
     position: absolute;
-    width: 450px;
-    height: 45%;
+    width: 25%;
+    height: 25%;
     left: 0;
-    top: 45%;
+    top: 65%;
     padding: 10px;
     overflow-y: hidden;
     overflow-x: hidden;
@@ -98,6 +98,9 @@ footer, header, hgroup, menu, nav, section {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    background-color: rgba(0, 0, 0, 0.30);
+    border-radius: 16px / 16px;
+    margin: 3px;
   }
 
   #chatLog p {

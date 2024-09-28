@@ -36370,11 +36370,16 @@ define('main',['app', 'entrypoint', 'data/langdata', 'util',
             });*/
 
             $('#chatbutton').click(function() {
-                if($('#chatbutton').hasClass('active')) {
+                if($('#chatbox').hasClass('active')) {
+                    app.hideChat();
+                } else {
+                    app.showChat();
+                }
+                /*if($('#chatbutton').hasClass('active')) {
                     app.showChat();
                 } else {
                     app.hideChat();
-                }
+                }*/
             });
 
             /*$('#instructions').click(function() {
