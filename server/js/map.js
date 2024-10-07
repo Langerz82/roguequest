@@ -97,16 +97,19 @@ var Map = cls.Class.extend({
 
     loadTileGrid: function(tiles) {
         this.tile = new Array(this.height);
-        for(var i = 0; i < this.height; i++) {
-            this.tile[i] = tiles.slice(i * this.width, ((i+1) * this.width) );
+        for(var i = 0; i < this.height; ++i) {
+            var line = tiles.slice(i * this.width, ((i+1) * this.width) );
+            this.tile[i] = new Array(line);
         }
+        delete tiles;
     },
 
     loadCollisionGrid: function(collisions) {
         this.grid = new Array(this.height);
-        for(var i = 0; i < this.height; i++) {
+        for(var i = 0; i < this.height; ++i) {
             this.grid[i] = collisions.slice(i * this.width, ((i+1) * this.width) );
         }
+        delete collisions;
     },
 
     GroupIdToGroupPosition: function (id) {

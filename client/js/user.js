@@ -73,13 +73,9 @@ function(UserClient, Player, AppearanceData) {
         this.playerSum[ps.index] = ps;
         var player = new Player(0, 1, 0, 0, ps.name);
         player.user = this;
-        //player.nextFsm = "IDLE";
         player.keyMove = false;
-        player.nextOrientation = 0;
 
         player.setItems();
-
-        //player.moveAttempts = 0;
 
         player.forceStop = function () {
           if (this.keyMove && this.key_move_callback)
@@ -107,98 +103,35 @@ function(UserClient, Player, AppearanceData) {
           orientation = orientation || this.orientation;
           var self = this;
 
-          //if (this.keyMove)
-            //return false;
-
           this.harvestOff();
           this.setOrientation(orientation || 0);
 
           this.forceStop();
           this.fsm = "ATTACK";
           this.animate("atk", this.atkSpeed, 1, function () {
-            //self.fsm = "IDLE";
             self.idle(self.orientation);
-            //this.freeze = false;
-            //self.attacking = false;
-            //self.fsm = "IDLE";
             self.forceStop();
           });
-
-          //this.attacking = true;
-          //this.freeze = true;
           return true;
         },
-
-        player.canMove = function (orientation) {
-          orientation = orientation || this.orientation;
-          var pos = this.nextMove(this.x,this.y,orientation);
-          if (orientation == 0)
-            return true;
-          return game.moveCharacter(this, pos[0], pos[1]);
-        };
 
         player.sendMove = function (state) {
           if (state || this.sentMove != state) {
             game.client.sendMoveEntity(this, state);
             this.sentMove = state;
           }
-          /*if (this.sentMove && state==0) {
-            game.client.sendMoveEntity(this, 0);
-            this.sentMove = false;
-            return;
-          }
-
-          if (!this.sentMove && state==1) {
-            game.client.sendMoveEntity(this, 1);
-            this.sentMove = true;
-            return;
-          }*/
         };
 
-        /*player.isInputDevice = function () {
-          return (game.joystick || game.keyboard || game.gamepad.navActive() || game.clickMove);
-        };*/
-
-        /*player.followPath = function(path) {
-          this._followPath(path);
-
-          if(!this.isInputDevice())
-          {
-            this.nextStep();
-          }
-        };*/
-
         player.moveTo_ = function(x, y, callback) {
-          //var ts = G_TILESIZE;
           var self = this;
-          //var parent = self._super;
 
-
-          //clearTimeout(self.moveTimeout);
-          /*if (this.freeze || this.isMovingPath())
-            return;
-
-          if (this.keyMove || this.isMoving()) {
-
-          }*/
-          /*if (this.isMovingPath()) {
-            //this.forceStop();
-            return;
-          }*/
-
-          //
           if (this.fsm == "MOVEPATH") {
             return;
           }
 
-          //this.walk();
           if (this.fsm == "ATTACK") {
             return;
           }
-
-          //try { throw new Error(); } catch(err) { console.error(this.fsm); }
-          //if (this.freeze)
-          //  return;
 
           this.forceStop();
           this.harvestOff();
@@ -211,15 +144,17 @@ function(UserClient, Player, AppearanceData) {
           clearTimeout(this.moveTimeout);
           this.fsm = "MOVEPATH";
           this.moveTimeout = setTimeout(function() {
-            //clearTimeout(self.moveTimeout);
             self.freeze = false;
             self.walk();
             self.fsm = "MOVEPATH";
+
           }, G_LATENCY);
           this.walk();
           return this._moveTo(x, y, callback);
         };
 
+
+        // TODO - FIX BUG Player sometimes jams and moves across with the wrong orientation.
         player.move = function (orientation, state) {
           var self = this;
 
@@ -230,39 +165,36 @@ function(UserClient, Player, AppearanceData) {
             return;
           }
 
+          if (this.fsm == "MOVEPATH") {
+            return;
+          }
+
           if (state && orientation != Types.Orientations.NONE)
           {
-            if (this.fsm == "MOVEPATH") {
-              return;
-            }
-
-            if (this.keyMove) {
-              if (orientation == this.orientation) {
+            if (this.keyMove && orientation == this.orientation) {
                 return;
-              } /*else {
-                this.changedOrientation = true;
-              }*/
             }
 
+            this.setOrientation(orientation);
             this.harvestOff();
             this.forceStop();
 
             this.fsm = "MOVING";
 
-            this.setOrientation(orientation);
             this.walk();
 
             this.keyMove = true;
-            if (this.key_move_callback)
-            {
-              this.key_move_callback(state);
-            }
           }
           if (!state)
           {
-            if (orientation != this.orientation)
+            if (orientation != this.orientation && this.isMoving()) {
               return;
+            }
             this.forceStop();
+          }
+          if (this.key_move_callback)
+          {
+            this.key_move_callback(state);
           }
         };
 
@@ -270,9 +202,6 @@ function(UserClient, Player, AppearanceData) {
           if (!sprite)
           {
             var id = this.sprites[0];
-            /*if (this.isArcher()) {
-              id = this.sprites[2];
-            }*/
             sprite = game.sprites[AppearanceData[id].sprite];
           }
           this._setArmorSprite(sprite);
@@ -282,9 +211,6 @@ function(UserClient, Player, AppearanceData) {
           if (!sprite)
           {
             var id = this.sprites[1];
-            /*if (this.isArcher()) {
-              id = this.sprites[3];
-            }*/
             sprite = game.sprites[AppearanceData[id].sprite];
           }
           this._setWeaponSprite(sprite);
@@ -292,7 +218,6 @@ function(UserClient, Player, AppearanceData) {
 
         game.addPlayerCallbacks(player);
 
-        //player.pClass = parseInt(ps.pClass);
         return player;
       },
   });

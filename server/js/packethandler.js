@@ -1351,11 +1351,13 @@ module.exports = PacketHandler = Class.extend({
     }*/
     if (!this.entities.pathfinder.checkValidPath(path)) {
       console.warn("handleMovePath: checkValidPath false.");
+      p.resetMove(p.x,p.y);
       return;
     }
 
     if (!this.entities.pathfinder.isValidPath(p.map.grid, path)) {
       console.warn("handleMovePath: no valid path.");
+      p.resetMove(p.x,p.y);
       return;
     }
 

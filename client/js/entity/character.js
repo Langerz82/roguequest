@@ -10,9 +10,9 @@ define(['./entitymoving', '../transition', '../timer', 'data/mobdata', 'data/npc
         this.orientation = Types.Orientations.DOWN;
 
         // Speeds
-        this.atkSpeed = 75;
+        this.atkSpeed = 70;
 
-        this.setAttackRate(75);
+        this.setAttackRate(70);
 
         // Combat
         this.target = null;

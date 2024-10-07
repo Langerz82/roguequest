@@ -1564,6 +1564,14 @@ module.exports = Player = Character.extend({
     }, duration);
   },
 
+  resetMove: function (x,y) {
+    this.setPosition(x, y);
+    this.sendCurrentMove();
+    this.forceStop();
+    this.ex = -1;
+    this.ey = -1;
+  },
+
   pushToPlayer: function (msg) {
     this.map.entities.pushToPlayer(this, msg);
   }

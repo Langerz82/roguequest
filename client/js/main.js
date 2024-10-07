@@ -468,10 +468,14 @@ define(['app', 'entrypoint', 'data/langdata', 'util',
             });
 
             $(document).keyup(function(e) {
-                moveKeys(e.which, false);
+                moveKeys(e, e.which, false);
             });
 
-            var moveKeys = function (key, bool) {
+            //var keyMoves = {};
+            //var pMove = 0;
+            var moveKeys = function (e, key, bool) {
+              //if (bool && keyMoves[key] == bool)
+                //return;
               var p = game.player;
               var gameKeys = p && game.started && !$('#chatbox').hasClass('active');
               if (gameKeys) {
@@ -479,31 +483,44 @@ define(['app', 'entrypoint', 'data/langdata', 'util',
                       case Types.Keys.LEFT:
                       case Types.Keys.A:
                       case Types.Keys.KEYPAD_4:
+                          //if (pMove == key)
+                            //return;
                           game.player.move(Types.Orientations.LEFT, bool);
+                          //keyMoves[key] = bool;
+                          //pMove = (!bool) ? key : 0;
                           break;
                       case Types.Keys.RIGHT:
                       case Types.Keys.D:
                       case Types.Keys.KEYPAD_6:
+                        //if (pMove == key)
+                          //return;
                           game.player.move(Types.Orientations.RIGHT, bool);
+                          //keyMoves[key] = bool;
+                          //pMove = (!bool) ? key : 0;
                           break;
                       case Types.Keys.UP:
                       case Types.Keys.W:
                       case Types.Keys.KEYPAD_8:
                           game.player.move(Types.Orientations.UP, bool);
+                          //keyMoves[key] = bool;
                           break;
                       case Types.Keys.DOWN:
                       case Types.Keys.S:
                       case Types.Keys.KEYPAD_2:
                           game.player.move(Types.Orientations.DOWN, bool);
+                          //keyMoves[key] = bool;
                           break;
                   }
               }
             };
 
-            $(document).keydown(function(e) {
-                //if (e.repeat) { return; }
 
-                console.warn("$(document).keydown");
+            $(document).keydown(function(e) {
+                /*if (e.repeat) {
+                  return;
+                }*/
+
+                //console.warn("$(document).keydown");
                 var key = e.which,
                     $chat = $('#chatinput');
 
@@ -519,7 +536,7 @@ define(['app', 'entrypoint', 'data/langdata', 'util',
                     }
                 }
 
-                moveKeys(e.which, true);
+                moveKeys(e, e.which, true);
 
                 var p = game.player;
                 var gameKeys = p && game.started && !$('#chatbox').hasClass('active');

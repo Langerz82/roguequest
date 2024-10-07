@@ -128,9 +128,9 @@ module.exports = PlayerController = Class.extend({
         console.info("player, sx:"+p.sx+",sy:"+p.sy);
         console.info("player, ex:"+p.ex+",ey:"+p.ey);
 
-        p.setPosition(p.sx, p.sy);
-        p.sendCurrentMove();
+        p.resetMove(p.sx,p.sy);
       }
+
       //p.sendCurrentMove();
       //console.info("p.x:"+p.x+",p.y="+p.y);
       attackFunc(p);

@@ -245,12 +245,12 @@ module.exports = Pathfinder = Class.extend({
 		//console.info(JSON.stringify(subend));
 		//console.info("minX="+minX+",maxX="+maxX+",minY="+minY+",maxY="+maxY);
 
-    var width = maxX - minX;
-    var height = maxY - minY;
-		var crop = new Uint8Array(height);
-		for(var i = minY; i <= maxY; ++i) {
-			crop.push(grid[i].slice(minX, maxX));
-		}
+    maxX = Math.min(grid[0].length-1, maxX);
+    maxY = Math.min(grid.length-1, maxY);
+    var crop = new Array(maxY - minY);
+    for(var j=0, i = minY; i <= maxY; ++i) {
+      crop[j++] = grid[i].slice(minX, maxX);
+    }
 
 		return {
 			crop: crop,
