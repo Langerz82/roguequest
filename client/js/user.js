@@ -84,7 +84,7 @@ function(UserClient, Player, AppearanceData) {
           }
           this.keyMove = false;
           this.freeze = false;
-          clearTimeout(this.moveTimeout);
+          //clearTimeout(this.moveTimeout);
           this._forceStop();
 
           this.idle();
@@ -98,10 +98,21 @@ function(UserClient, Player, AppearanceData) {
             return false;
         };
 
+        player.lookAtEntity = function (entity) {
+          if (this.isMoving())
+            this.forceStop();
+
+          this._lookAtEntity(entity);
+        };
+
         // Note - freeze might be needed disable for now.
         player.hit = function(orientation) {
           orientation = orientation || this.orientation;
           var self = this;
+
+          if (this.fsm == "MOVEPATH") {
+            return;
+          }
 
           this.harvestOff();
           this.setOrientation(orientation || 0);
@@ -113,7 +124,7 @@ function(UserClient, Player, AppearanceData) {
             self.forceStop();
           });
           return true;
-        },
+        };
 
         player.sendMove = function (state) {
           if (state || this.sentMove != state) {
@@ -138,17 +149,17 @@ function(UserClient, Player, AppearanceData) {
 
           log.info("background - free delay =" + G_LATENCY);
 
-          this.freeze = true;
+          //this.freeze = true;
 
           //this.idle();
-          clearTimeout(this.moveTimeout);
+          //clearTimeout(this.moveTimeout);
           this.fsm = "MOVEPATH";
-          this.moveTimeout = setTimeout(function() {
-            self.freeze = false;
-            self.walk();
-            self.fsm = "MOVEPATH";
+          /*this.moveTimeout = setTimeout(function() {
+            //self.freeze = false;
+            //self.walk();
+            //self.fsm = "MOVEPATH";
 
-          }, G_LATENCY);
+          }, G_LATENCY);*/
           this.walk();
           return this._moveTo(x, y, callback);
         };

@@ -7223,6 +7223,10 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
 
   // Orientation Code.
   lookAtEntity: function(entity) {
+    _lookAtEntity(entity);
+  },
+
+  _lookAtEntity: function(entity) {
       if (entity) {
           this.orientation = this.getOrientationTo([entity.x, entity.y]);
       }
@@ -7762,6 +7766,10 @@ define('entity/character',['./entitymoving', '../transition', '../timer', 'data/
 
     // Orientation Code.
     lookAtEntity: function(entity) {
+      _lookAtEntity(entity);
+    },
+    
+    _lookAtEntity: function(entity) {
        log.info("lookAtEntity");
        if (entity) {
            log.info("lookAtEntity "+entity.id);
@@ -18755,7 +18763,7 @@ function(UserClient, Player, AppearanceData) {
           }
           this.keyMove = false;
           this.freeze = false;
-          clearTimeout(this.moveTimeout);
+          //clearTimeout(this.moveTimeout);
           this._forceStop();
 
           this.idle();
@@ -18769,10 +18777,21 @@ function(UserClient, Player, AppearanceData) {
             return false;
         };
 
+        player.lookAtEntity = function (entity) {
+          if (this.isMoving())
+            this.forceStop();
+
+          this._lookAtEntity(entity);
+        };
+
         // Note - freeze might be needed disable for now.
         player.hit = function(orientation) {
           orientation = orientation || this.orientation;
           var self = this;
+
+          if (this.fsm == "MOVEPATH") {
+            return;
+          }
 
           this.harvestOff();
           this.setOrientation(orientation || 0);
@@ -18784,7 +18803,7 @@ function(UserClient, Player, AppearanceData) {
             self.forceStop();
           });
           return true;
-        },
+        };
 
         player.sendMove = function (state) {
           if (state || this.sentMove != state) {
@@ -18809,17 +18828,17 @@ function(UserClient, Player, AppearanceData) {
 
           log.info("background - free delay =" + G_LATENCY);
 
-          this.freeze = true;
+          //this.freeze = true;
 
           //this.idle();
-          clearTimeout(this.moveTimeout);
+          //clearTimeout(this.moveTimeout);
           this.fsm = "MOVEPATH";
-          this.moveTimeout = setTimeout(function() {
-            self.freeze = false;
-            self.walk();
-            self.fsm = "MOVEPATH";
+          /*this.moveTimeout = setTimeout(function() {
+            //self.freeze = false;
+            //self.walk();
+            //self.fsm = "MOVEPATH";
 
-          }, G_LATENCY);
+          }, G_LATENCY);*/
           this.walk();
           return this._moveTo(x, y, callback);
         };
@@ -34780,6 +34799,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               }
 
               if (target && p.isNextToo(target)) {
+                if (p.isMoving())
+                  p.forceStop();
                 p.lookAtEntity(target);
                 if (processTarget()) return;
               }
@@ -34891,6 +34912,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 log.info("CANNOT REACH TARGET!!");
                 return;
               } else {
+                if (p.isMoving())
+                  p.forceStop();
                 p.lookAtEntity(p.target);
               }
               log.info("CAN REACH TARGET!!");

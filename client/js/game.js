@@ -999,6 +999,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               }
 
               if (target && p.isNextToo(target)) {
+                if (p.isMoving())
+                  p.forceStop();
                 p.lookAtEntity(target);
                 if (processTarget()) return;
               }
@@ -1110,6 +1112,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 log.info("CANNOT REACH TARGET!!");
                 return;
               } else {
+                if (p.isMoving())
+                  p.forceStop();
                 p.lookAtEntity(p.target);
               }
               log.info("CAN REACH TARGET!!");

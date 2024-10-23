@@ -581,6 +581,10 @@ define(['./entity', '../transition', '../timer'], function(Entity, Transition, T
 
   // Orientation Code.
   lookAtEntity: function(entity) {
+    _lookAtEntity(entity);
+  },
+
+  _lookAtEntity: function(entity) {
       if (entity) {
           this.orientation = this.getOrientationTo([entity.x, entity.y]);
       }
