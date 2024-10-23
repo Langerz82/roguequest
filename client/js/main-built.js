@@ -7223,7 +7223,7 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
 
   // Orientation Code.
   lookAtEntity: function(entity) {
-    _lookAtEntity(entity);
+    this._lookAtEntity(entity);
   },
 
   _lookAtEntity: function(entity) {
@@ -7766,9 +7766,9 @@ define('entity/character',['./entitymoving', '../transition', '../timer', 'data/
 
     // Orientation Code.
     lookAtEntity: function(entity) {
-      _lookAtEntity(entity);
+      this._lookAtEntity(entity);
     },
-    
+
     _lookAtEntity: function(entity) {
        log.info("lookAtEntity");
        if (entity) {
@@ -31721,51 +31721,6 @@ function(InfoManager, HoveringInfo, BubbleManager,
                 log.debug("Entity was destroyed: "+entity.id);
             }
         });
-
-        /*client.onPlayerMoveToItem(function(map, playerId, itemId) {
-            var player, item;
-
-            if(playerId !== game.playerId) {
-                player = game.getEntityById(playerId);
-                item = game.getEntityById(itemId);
-
-                if(player && item) {
-                    game.makeCharacterGoTo(player, item.x, item.y);
-                }
-            }
-        });*/
-
-        /*client.onEntityAttack(function(attackerId, targetId) {
-
-            if (game.player.id === attackerId) // sanity
-            {
-              return;
-            }
-
-            var attacker = game.getEntityById(parseInt(attackerId)),
-                target = game.getEntityById(parseInt(targetId));
-
-            log.info("onEntityAttack = target.id:"+targetId);
-
-            if (attacker && target) {
-              attacker.lookAtEntity(target);
-              attacker.hit();
-            }
-        });*/
-
-
-        /*client.onCharacterChangePoints(function (data) {
-          var id = parseInt(data[0]);
-          var hp = parseInt(data[1]);
-          var hpMax = parseInt(data[2]);
-          var hpMod = parseInt(data[3]);
-          var ep = parseInt(data[4]);
-          var epMax = parseInt(data[5]);
-          var epMod = parseInt(data[6]);
-        */
-        //this.change_points_callback
-        // entity1_id, entity2_id, damage, HP, maxHp, crit, effects[]
-
 
         client.onCharacterDamage(function(data) {
             data.parseInt();

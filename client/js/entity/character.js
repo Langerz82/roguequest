@@ -345,9 +345,9 @@ define(['./entitymoving', '../transition', '../timer', 'data/mobdata', 'data/npc
 
     // Orientation Code.
     lookAtEntity: function(entity) {
-      _lookAtEntity(entity);
+      this._lookAtEntity(entity);
     },
-    
+
     _lookAtEntity: function(entity) {
        log.info("lookAtEntity");
        if (entity) {
