@@ -2,7 +2,7 @@
 formerly Retro RPG Online 2
 
 ## PLAY FOR FREE NOW AT:
-https://www.roguequest.net/play/index.html
+https://www.landofmana.com/play/index.html
 
 ## UPDATES:
 ### 18/07/2024 - NOTICE
