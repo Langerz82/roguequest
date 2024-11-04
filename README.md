@@ -179,9 +179,11 @@ Items and Quests may have been wiped for current accounts. This was needed as th
 * Preliminary party system added. To create a party in chat enter /party [username], /leader [username], and you can leave the party in the menu >> social window.
 * Also improved some of the loading system, so it downloads and loads faster. For older users on Chrome press Ctrl+F5 to reload the cache.
 
-### 18/09/2023 - New Version. Various changes to re-factor of code, please report all bugs in Github issues, thanks.
+### 18/09/2023 - New Version. 
+Various changes to re-factor of code, please report all bugs in Github issues, thanks.
 
-### 07/09/2023 - New version released. To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
+### 07/09/2023 - New version released. 
+To play the latest version in chrome for existing users please press CTRL+F5 to reload the cache.
 If that does not work, click on chrome://settings/privacy, and select Clear Browsing Data, then tick ONLY Cached images and files then select Clear Data.
 
 If anything needs changing let me know.
