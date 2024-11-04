@@ -1,5 +1,5 @@
-# Rogue Quest - Beta.
-formerly Retro RPG Online 2
+# Land of Mana - Beta.
+formerly Retro RPG Online 2/Rogue Quest
 
 ## PLAY FOR FREE NOW AT:
 https://www.landofmana.com/play/index.html
