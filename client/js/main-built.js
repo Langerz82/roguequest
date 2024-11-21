@@ -33913,13 +33913,6 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 this.previousDelta = 0;
                 this.animFrame = (typeof(requestAnimFrame) !== "undefined");
 
-                //this.gameTick = setInterval(this.tick, this.updateTick);
-                if (this.animFrame)
-                  requestAnimFrame(this.tick.bind(this));
-                else {
-                  this.gameTick = setInterval(this.tick, G_UPDATE_INTERVAL);
-                }
-
                 this.spritesReady = false;
 
                 this.unknownEntities = [];
@@ -33932,19 +33925,9 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 this.dialogueWindow = $("#npcDialog");
                 this.npcText = $("#npcText");
 
-                this.requestAnimFrame = typeof(requestAnimFrame) !== "undefined";
-
                 setInterval(function() {
                 	self.removeObsoleteEntities();
                 },30000);
-
-                /*setInterval(function() {
-                	if (self.unknownEntities.length > 0)
-                	{
-                		self.client.onEntityList(self.unknownEntities);
-                		self.unknownEntities = [];
-                	}
-                }, GROUNDTRIP);*/
 
             },
 
@@ -34065,13 +34048,6 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 }
                 this.setSpriteScale(this.renderer.scale);
             },
-
-            /*spritesLoaded: function() {
-                if(_.any(this.sprites, function(sprite) { return !sprite.isLoaded; })) {
-                    return false;
-                }
-                return true;
-            },*/
 
             setCursor: function(name, orientation) {
                 if(name in this.cursors) {
@@ -34233,43 +34209,29 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 //self.renderer.resizeCanvases();
 
                 setTimeout(function () {
-                    //self.renderer.calcZoom();
-                    //self.renderer.rescale();
                     self.renderer.rescale();
                     self.renderer.resizeCanvases();
                 },1500); // Slight Delay For On-Screen Keybaord to minimize.
 
-                /*setInterval(function() {
-                  if (!self.camera)
-                    return;
-
-                  self.camera.forEachInScreen(function(entity,id) {
-                      if(!entity || entity.isDead)
-                      {
-                        self.camera.entities[id] = null;
-                        delete self.camera.entities[id];
-                      }
-                  });
-
-                  self.camera.forEachInOuterScreen(function(entity,id) {
-                      if(!entity || entity.isDead)
-                      {
-                        self.camera.outEntities[id] = null;
-                        delete self.camera.outEntities[id];
-                      }
-                  });
-                }, 8192);*/
 
                 game.gamepad = new GamePad(self);
 
-                self.tickCycle = function () {
-                  if(self.requestAnimFrame) {
-                    requestAnimationFrame(self.tick);
-                  } else {
-                    self.tick();
-                  }
-                };
-                self.tickCycle();
+                this.gameTick = setInterval(self.tick, G_UPDATE_INTERVAL);
+
+                if (this.animFrame)
+                  requestAnimFrame(this.render.bind(this));
+                else {
+                  this.renderTick = setInterval(this.render, G_UPDATE_INTERVAL);
+                }
+            },
+
+            render: function () {
+              var self = game;
+
+              self.renderer.renderFrame();
+
+              if (self.animFrame)
+                requestAnimationFrame(self.render.bind(self));
             },
 
             tick: function() {
@@ -34278,26 +34240,20 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               self.currentTime = getTime();
 
               if (!self.started || self.isStopped) {
-                setTimeout(self.tickCycle,12);
                 return;
               }
-
-              setTimeout(self.tickCycle,12);
 
               self.updateTime = self.currentTime;
 
               if (self.gamepad)
                 self.gamepad.interval();
 
-              //app.keyheld();
               self.updater.update();
 
         			if (self.mapStatus >= 2)
         			{
         				self.updateCursorLogic();
         			}
-
-              self.renderer.renderFrame();
             },
 
             start: function() {
