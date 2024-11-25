@@ -95,6 +95,7 @@ Types = {
       CS_WHO: 34,
       CS_SKILL: 35,
       CS_SHORTCUT: 36,
+      CS_REQUEST: 37,
 
       SC_ERROR: 100,
       SC_WORLDS: 101,

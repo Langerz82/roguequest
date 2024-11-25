@@ -95,6 +95,7 @@ Types = {
       CS_WHO: 34,
       CS_SKILL: 35,
       CS_SHORTCUT: 36,
+      CS_REQUEST: 37,
 
       SC_ERROR: 100,
       SC_WORLDS: 101,
@@ -136,7 +137,7 @@ Types = {
       SC_SET_SPRITE: 137,
       SC_SET_ANIMATION: 138,
       SC_BLOCK_MODIFY: 139,
-      SC_PLAYERINFO: 140      
+      SC_PLAYERINFO: 140
     },
 
     Orientations: {
