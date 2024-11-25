@@ -5,6 +5,9 @@ formerly Retro RPG Online 2/Rogue Quest
 https://www.landofmana.com/play/index.html
 
 ## UPDATES:
+### 25/11/2024
+I am still working on this code. If you like this game give the project a Star/Like. Haha!!
+
 ### 18/07/2024 - NOTICE
 As I am no longer working on this code, I have provided the source to the Client and Server, see the js directory in client and server.
 
