@@ -506,7 +506,7 @@ var MapEntities = cls.Class.extend({
       var mob = new Mob(++self.entityCount, kind, x, y, self.map, area);
       mob.mobAI = this.mobAI;
 
-      mob.onMove(self.server.onMobMoveCallback.bind(self.server));
+      //mob.onMove(self.server.onMobMoveCallback.bind(self.server));
       this.mobCallback.setCallbacks(mob);
 
       this.addEntity(mob);

@@ -134,11 +134,11 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 					this.handlers[Types.Messages.SC_DIALOGUE] = this.dialogue_callback;
 					this.handlers[Types.Messages.SC_STATINFO] = this.statInfo_callback;
 					this.handlers[Types.Messages.SC_TELEPORT_MAP] = this.teleportmap_callback;
-					this.handlers[Types.Messages.BI_BLOCK_MODIFY] = this.block_callback;
+					this.handlers[Types.Messages.SC_BLOCK_MODIFY] = this.block_callback;
 					this.handlers[Types.Messages.SC_PARTY] = this.party_callback;
 					this.handlers[Types.Messages.SC_LOOKS] = this.looks_callback;
-					this.handlers[Types.Messages.BI_PLAYERINFO] = this.playerinfo_callback;
-					this.handlers[Types.Messages.BI_HARVEST] = this.harvest_callback;
+					this.handlers[Types.Messages.SC_PLAYERINFO] = this.playerinfo_callback;
+					this.handlers[Types.Messages.SC_HARVEST] = this.harvest_callback;
 
 					this.handlers[Types.Messages.SC_SET_SPRITE] = this.set_sprite_callback;
 					this.handlers[Types.Messages.SC_SET_ANIMATION] = this.set_animation_callback;
@@ -601,7 +601,7 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
         },
 
 				sendPlayerInfo: function () {
-					this.sendMessage([Types.Messages.BI_PLAYERINFO]);
+					this.sendMessage([Types.Messages.CS_REQUEST, 2]);
 				},
 
         sendAuctionOpen: function(type) {
@@ -618,10 +618,10 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
         },
 
         sendStoreEnchant: function(type, index) { // type 1 = Inventory, 2 = Equipment.
-            this.sendMessage([Types.Messages.CS_STOREENCHANT, type, index]);
+            this.sendMessage([Types.Messages.CS_STORE_MODITEM, 1, type, index]);
         },
         sendStoreRepair: function(type, index) { // type 1 = Inventory, 2 = Equipment.
-            this.sendMessage([Types.Messages.CS_STOREREPAIR, type, index]);
+            this.sendMessage([Types.Messages.CS_STORE_MODITEM, 0, type, index]);
         },
 
         /*sendBankStore: function(itemSlot) {
@@ -638,11 +638,15 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
         	this.sendMessage([Types.Messages.CS_MAP_STATUS, mapId, status]);
         },
         sendPlayerRevive: function () {
-        	this.sendMessage([Types.Messages.CS_PLAYER_REVIVE]);
+        	this.sendMessage([Types.Messages.CS_REQUEST, 1]);
         },
         sendColorTint: function(type, value) {
         	this.sendMessage([Types.Messages.CS_COLOR_TINT, type, value]);
         },
+
+				sendAppearanceList: function() {
+					this.sendMessage([Types.Messages.CS_REQUEST, 0]);
+				},
 
 				sendAppearanceUnlock: function(index, buy) {
 					buy = buy || 0;
@@ -653,10 +657,6 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 					this.sendMessage([Types.Messages.CS_LOOKUPDATE, type, id]);
 				},
 
-				/*sendLooks: function () {
-					this.sendMessage([Types.Messages.CS_LOADLOOKS]);
-				},*/
-
 				sendAddStat: function(statType, points) {
 					this.sendMessage([Types.Messages.CS_STATADD, statType, points]);
 				},
@@ -666,7 +666,7 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 				},
 
 				sendBlock: function (type, id, x, y) {
-					this.sendMessage([Types.Messages.BI_BLOCK_MODIFY, type, id, x, y]);
+					this.sendMessage([Types.Messages.CS_BLOCK_MODIFY, type, id, x, y]);
 				},
 
 				sendPartyInvite: function(name, status) { // 0 for request, 1, for yes, 2 for no.
@@ -689,7 +689,7 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
         },
 
 				sendHarvest: function(x, y) {
-            this.sendMessage([Types.Messages.BI_HARVEST, x, y]);
+            this.sendMessage([Types.Messages.CS_HARVEST, x, y]);
         },
 
 				sendHarvestEntity: function(entity) {

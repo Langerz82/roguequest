@@ -85,8 +85,8 @@ module.exports = MobAI = Class.extend({
     mob.attackingMode = true;
     //mob.setTarget(player);
     //mob.setFreeze(G_LATENCY);
-  	ws.handleMobHate(mob, player, 1);
-  	ws.createAttackLink(mob, player);
+  	mob.handleMobHate(player, 1);
+  	//mob.createAttackLink(player);
     mob.setAiState(mobState.AGGRO);
     mob.attackTimer = Date.now();
     mob.freeze = false;

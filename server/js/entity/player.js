@@ -1240,11 +1240,11 @@ module.exports = Player = Character.extend({
       return;
 
     // If its not a consumable and wants to move into consumable inventory section, abort.
-    if (!ItemTypes.isConsumableItem(rs1.itemKind) && slot2[0] == 0 && slot2[1] >= 0 && slot2[1] < 6)
-      return;
+    //if (!ItemTypes.isConsumableItem(rs1.itemKind) && slot2[0] == 0 && slot2[1] >= 0 && slot2[1] < 6)
+      //return;
     // If its a consumable and wants to move into consumable inventory section, abort.
-    if (ItemTypes.isConsumableItem(rs1.itemKind) && slot2[0] == 0 && slot2[1] < 0 && slot2[1] >= 6)
-      return;
+    //if (ItemTypes.isConsumableItem(rs1.itemKind) && slot2[0] == 0 && slot2[1] < 0 && slot2[1] >= 6)
+      //return;
 
     var room2 = store2.rooms;
     var rs2 = null;

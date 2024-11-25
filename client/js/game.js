@@ -1715,8 +1715,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   if (entity2.isDead || entity2.isDying)
                     continue;
 
-                  if (!entity2.isWithin(entity.x,entity.y, G_TILESIZE-1) &&
-                      entity2.isWithin(x, y, G_TILESIZE-1))
+                  if (!entity2.isWithin(entity) &&
+                      entity2.isWithin({x:x, y:y}))
                     return true;
                 }
                 return false;

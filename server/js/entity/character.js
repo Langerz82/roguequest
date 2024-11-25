@@ -262,6 +262,18 @@ module.exports = Character = EntityMoving.extend({
     this.attackCooldown = new Timer(rate);
   },
 
+  createAttackLink: function(target)
+  {
+      if (this.hasTarget())
+      {
+          this.removeTarget();
+      }
+      this.setTarget(target);
+
+      target.addAttacker(this);
+      this.addAttacker(target);
+  },
+
 /*******************************************************************************
  * END - Attack Functions.
  ******************************************************************************/

@@ -273,23 +273,25 @@ define(['../timer'], function(Timer) {
           return this.fadingTimer.getRatio(time);
         },
 
-        isWithin: function (x, y, dist)
-        {
+        isNextToo: function (x,y,dist) {
           dist = dist || G_TILESIZE;
-          var dx = Math.abs(this.x - x);
-          var dy = Math.abs(this.y - y);
-          //if (dx + dy > dist) return false;
-          if (dx <= dist && dy <= dist)
-            return true;
-          return false;
+          return (Math.abs(this.x-x) <= dist && Math.abs(this.y-y) <= dist);
+        },
+
+        isNextTooEntity: function (entity) {
+            return this.isNextToo(entity.x, entity.y);
+        },
+
+        isWithin: function (entity) {
+          return this.isNextToo(entity.x,entity.y, (G_TILESIZE >> 1));
+        },
+
+        isTouching: function (entity) {
+          return this.isNextToo(entity.x,entity.y, (G_TILESIZE-1));
         },
 
         isOver: function (x, y) {
-            return this.isWithin(x, y, G_TILESIZE >> 1);
-        },
-
-        isTouching: function (x, y) {
-            return this.isWithin(x, y, G_TILESIZE);
+            return this.isNextToo(x, y, (G_TILESIZE >> 1));
         },
 
         isOverlapping: function() {

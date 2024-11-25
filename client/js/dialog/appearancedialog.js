@@ -281,7 +281,7 @@ define(['./dialog', '../tabbook', '../tabpage', 'data/appearancedata', '../pageN
         },
 
         open: function() {
-            game.client.sendAppearanceUnlock(-1);
+            game.client.sendAppearanceList();
         },
 
 
@@ -524,7 +524,7 @@ define(['./dialog', '../tabbook', '../tabpage', 'data/appearancedata', '../pageN
             this.rescale();
 
             this.storeFrame.open();
-            game.client.sendAppearanceUnlock(-1);
+            game.client.sendAppearanceList();
             //game.client.sendLooks();
 
             $('#storeDialog .frameheadingtext').text('LOOKS');

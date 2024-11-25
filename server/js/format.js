@@ -24,13 +24,16 @@ var Types = require('../shared/js/gametypes');
             this.questMax = 999;
 
             this.formats[Types.Messages.BI_SYNCTIME] = [['n',this.dateMin,this.dateMax]],
+
+// USER LOGIN PACKETS
             this.formats[Types.Messages.CS_CREATE_USER] = [['s',2,this.usernameMax],['s',this.hashLen,this.hashLen]],
             this.formats[Types.Messages.CS_LOGIN_USER] = [['s',2,this.usernameMax],['s',this.hashLen,this.hashLen]],
             this.formats[Types.Messages.CS_REMOVE_USER] = [['s',2,this.usernameMax],['s',this.hashLen,this.hashLen]],
             this.formats[Types.Messages.CS_CREATE_PLAYER] = [['n',0,9],['s',2,this.playerMax]],
             this.formats[Types.Messages.CS_LOGIN_PLAYER] = [['n',0,9],['n',0,16]],
+// END USER LOGIN PACKETS
 
-            this.formats[Types.Messages.CS_APPEARANCEUNLOCK] = [['n',-1,255],['n',0,this.gemMax]],
+            this.formats[Types.Messages.CS_APPEARANCEUNLOCK] = [['n',0,255],['n',0,this.gemMax]],
             this.formats[Types.Messages.CS_ATTACK] = [['n',this.dateMin,this.dateMax],['n',0,this.entityIdMax],['n',0,4],['n',-1,50]],
             this.formats[Types.Messages.CS_AUCTIONBUY] = [['n',0,1000],['n',0,3]],
             this.formats[Types.Messages.CS_AUCTIONDELETE] = [['n',0,1000],['n',0,3]],
@@ -40,31 +43,30 @@ var Types = require('../shared/js/gametypes');
             this.formats[Types.Messages.CS_BANKSTORE] = [['n',0,this.inventoryMax]],
             this.formats[Types.Messages.CS_CHAT] = [['s',1,256]],
             this.formats[Types.Messages.CS_COLOR_TINT] = [['n',0,1],['s',6,6]],
-            this.formats[Types.Messages.BI_BLOCK_MODIFY] = [['n',0,1],['n',0,this.entityIdMax],['n',0,this.coordMax],['n',0,this.coordMax]],
-            this.formats[Types.Messages.CS_INVENTORY] = [['n',0,3],['n',-1,1],['n',-1,this.inventoryMax],['n',0,1]],
-            this.formats[Types.Messages.CS_LOADLOOKS] = [],
+            this.formats[Types.Messages.CS_BLOCK_MODIFY] = [['n',0,1],['n',0,this.entityIdMax],['n',0,this.coordMax],['n',0,this.coordMax]],
             this.formats[Types.Messages.CS_LOOKUPDATE] = [['n',0,1],['n',0,999]],
             this.formats[Types.Messages.CS_LOOT] = [['n',0,this.entityIdMax],['n',0,this.coordMax],['n',0,this.coordMax]],
             this.formats[Types.Messages.CS_MOVE] = [['n',this.dateMin,this.dateMax],['n',0,this.entityIdMax],['n',0,2],['n',0,4],['n',0,this.coordMax],['n',0,this.coordMax]],
-            this.formats[Types.Messages.CS_PLAYER_REVIVE] = [],
-            this.formats[Types.Messages.BI_SEND_BANK] = [],
-            this.formats[Types.Messages.BI_SEND_INVENTORY] = [],
             this.formats[Types.Messages.CS_GOLD] = [['n',0,1],['n',0,this.goldMax],['n',0,1]],
             this.formats[Types.Messages.CS_STATADD] = [['n',1,5],['n',1,1]],
             this.formats[Types.Messages.CS_STOREBUY] = [['n',1,3],['n',0,this.itemKindMax],['n',0,10]],
             this.formats[Types.Messages.CS_CRAFT] = [['n',0,this.itemKindMax],['n',0,10]],
-            this.formats[Types.Messages.CS_STOREENCHANT] = [['n',0,2],['n',0,this.inventoryMax]],
-            this.formats[Types.Messages.CS_STOREREPAIR] = [['n',0,2],['n',0,this.inventoryMax]],
+            this.formats[Types.Messages.CS_STORE_MODITEM] = [['n',0,2],['n',0,2],['n',0,this.inventoryMax]],
             this.formats[Types.Messages.CS_STORESELL] = [['n',0,2],['n',0,this.inventoryMax]],
             this.formats[Types.Messages.CS_TALKTONPC] = [['n',5,6],['n',0,this.entityIdMax]],
             this.formats[Types.Messages.CS_TELEPORT_MAP] = [['n',0,9],['n',0,1],['n',-1,this.coordMax],['n',-1,this.coordMax]],
             this.formats[Types.Messages.CS_SKILL] = [['n',0,50],['n',0,this.entityIdMax]],
             this.formats[Types.Messages.CS_SHORTCUT] = [['n',0,7],['n',0,2],['n',0,this.itemKindMax]],
             this.formats[Types.Messages.CS_PARTY] = [['n',0,4],['so',0,this.playerMax],['no',0,3]],
-            this.formats[Types.Messages.BI_PLAYERINFO] = [],
-            this.formats[Types.Messages.BI_HARVEST] = [['n',0,this.coordMax],['n',0,this.coordMax]],
+            this.formats[Types.Messages.CS_HARVEST] = [['n',0,this.coordMax],['n',0,this.coordMax]],
             this.formats[Types.Messages.CS_USE_NODE] = [['n',0,this.entityIdMax]],
-            this.formats[Types.Messages.CS_QUEST] = [['n',0,this.entityIdMax],['n',0,this.questMax],['n',0,2]]
+            this.formats[Types.Messages.CS_QUEST] = [['n',0,this.entityIdMax],['n',0,this.questMax],['n',0,2]],
+
+// NOTE - The following need no paramateres so they are grouped into 1 packet type.
+// CS_APPEARANCELIST
+// CS_PLAYER_REVIVE
+// CS_PLAYERINFO
+            this.formats[Types.Messages.CS_REQUEST] = [['n',0,2]]
         },
 
         checkFormat: function (type, message, format, ignoreLength) {

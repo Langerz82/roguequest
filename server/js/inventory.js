@@ -51,12 +51,12 @@ module.exports = Inventory = cls.Class.extend({
         return a;
     },
 
-    hasRoomConsumable: function () {
+    /*hasRoomConsumable: function () {
       return this.hasRoom(0,6);
-    },
+    },*/
 
     hasRoom: function(start, end) {
-        start = (typeof start === "undefined") ? 6 : start;
+        start = start || 0;
         end = end || this.maxNumber;
         for(var i=start; i<end; i++) {
             if(!this.rooms[i]){
@@ -92,7 +92,7 @@ module.exports = Inventory = cls.Class.extend({
 
     getEmptyIndex: function(start, end) {
         if (typeof start === "undefined")
-          start = 6;
+          start = 0;
         end = end || this.maxNumber;
         for(var index = start; index < end; index++) {
             if(!this.rooms[index]) {
@@ -103,12 +103,10 @@ module.exports = Inventory = cls.Class.extend({
     },
 
     putItem: function(item) {
-      var maxNumber = 48;
-      var consume = ItemTypes.isConsumableItem(item.itemKind);
-      var loot = ItemTypes.isLootItem(item.itemKind);
-      var craft = ItemTypes.isCraftItem(item.itemKind);
-      if(consume)
-        maxNumber = 6;
+      var kind = item.itemKind;
+      var consume = ItemTypes.isConsumableItem(kind);
+      var loot = ItemTypes.isLootItem(kind);
+      var craft = ItemTypes.isCraftItem(kind);
       if (consume || loot || craft)
       {
         for(var i in this.rooms){
@@ -138,11 +136,12 @@ module.exports = Inventory = cls.Class.extend({
       var slot = item.slot;
       var slot2 = item2.slot;
 
-      if (item2.itemNumber < this.maxStack) {
+      maxStack = this.maxStack;
+      if (item2.itemNumber < maxStack) {
         item2.itemNumber += item.itemNumber;
-        if (item2.itemNumber > this.maxStack) {
-          item.itemNumber = item2.itemNumber - this.maxStack;
-          item2.itemNumber = Math.min(item2.itemNumber, this.maxStack);
+        if (item2.itemNumber > maxStack) {
+          item.itemNumber = item2.itemNumber - maxStack;
+          item2.itemNumber = Math.min(item2.itemNumber, maxStack);
         } else {
           item = null;
         }
@@ -151,24 +150,13 @@ module.exports = Inventory = cls.Class.extend({
         item2 = null;
       }
 
-      //if (item)
       this.setItem(slot, item);
-      //if (item2)
       this.setItem(slot2, item2);
       return slot2;
     },
 
     _putItem: function(item){
-    	var i=0;
-      var maxNumber = 48;
-      if(ItemTypes.isConsumableItem(item.itemKind)) {
-        maxNumber = 6;
-      }
-      else {
-        i = 6;
-      }
-
-      i = this.getEmptyIndex(i,maxNumber);
+      i = this.getEmptyIndex();
       if (i < 0)
       {
         if (this.owner instanceof Player)
@@ -184,8 +172,6 @@ module.exports = Inventory = cls.Class.extend({
     checkItem: function (index, item) {
       if (!item) return true;
 
-      if (index < 6 && !ItemTypes.isConsumableItem(item.itemKind))
-        return false;
       return true;
     },
 
@@ -259,7 +245,7 @@ module.exports = Inventory = cls.Class.extend({
     	var i = 0;
     	var index = -1;
     	var item = null;
-      var len = this.rooms.length
+      var len = this.rooms.length;
     	while(i < len)
     	{
     		index = ~~(Utils.randomRange(0,len-1));

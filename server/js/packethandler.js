@@ -58,8 +58,8 @@ module.exports = PacketHandler = Class.extend({
       self.user.lastPacketTime = Date.now();
 
       switch (action) {
-        case Types.Messages.BI_PLAYERINFO:
-          self.handlePlayerInfo(message);
+        case Types.Messages.CS_REQUEST:
+          self.handleRequest(message);
           break;
 
         case Types.Messages.CS_WHO:
@@ -101,17 +101,12 @@ module.exports = PacketHandler = Class.extend({
           //console.info("Player: " + self.player.name + " store buy: " + message[1] + " " + message[2] + " " + message[3]);
           self.handleCraft(message);
           break;
-
         case Types.Messages.CS_APPEARANCEUNLOCK:
           self.handleAppearanceUnlock(message);
           break;
         case Types.Messages.CS_LOOKUPDATE:
           self.handleLookUpdate(message);
           break;
-        //case Types.Messages.CS_LOADLOOKS:
-          //self.handleLooks();
-          //break;
-
         case Types.Messages.CS_AUCTIONSELL:
           //console.info("Player: " + self.player.name + " auction sell: " + message[0]);
           self.handleAuctionSell(message);
@@ -132,13 +127,9 @@ module.exports = PacketHandler = Class.extend({
           self.handleAuctionDelete(message);
           break;
 
-        case Types.Messages.CS_STOREENCHANT:
+        case Types.Messages.CS_STORE_MODITEM:
           //console.info("Player: " + self.player.name + " store enchant: " + message[0]);
-          self.handleStoreEnchant(message);
-          break;
-        case Types.Messages.CS_STOREREPAIR:
-          //console.info("Player: " + self.player.name + " store repair: " + message[0]);
-          self.handleStoreRepair(message);
+          self.handleStoreModItem(message);
           break;
 
         /*case Types.Messages.CS_BANKSTORE:
@@ -173,9 +164,9 @@ module.exports = PacketHandler = Class.extend({
         //case Types.Messages.CS_SEND_BANK:
           //self.handleSendBank(message);
           //break;
-        case Types.Messages.CS_PLAYER_REVIVE:
+        /*case Types.Messages.CS_PLAYER_REVIVE:
           self.handleRevive(message);
-          break;
+          break;*/
         /*case Types.Messages.CS_COLOR_TINT:
           self.handleColorTint(message);
           break;*/
@@ -191,7 +182,7 @@ module.exports = PacketHandler = Class.extend({
         case Types.Messages.CS_SHORTCUT:
           self.handleShortcut(message);
           break;
-        case Types.Messages.BI_BLOCK_MODIFY:
+        case Types.Messages.CS_BLOCK_MODIFY:
           self.handleBlock(message);
           break;
 
@@ -199,7 +190,7 @@ module.exports = PacketHandler = Class.extend({
           self.handleParty(message);
           break;
 
-        case Types.Messages.BI_HARVEST:
+        case Types.Messages.CS_HARVEST:
           self.handleHarvest(message);
           break;
 
@@ -268,7 +259,7 @@ module.exports = PacketHandler = Class.extend({
   },
 
   sendPlayer: function (message) {
-    this.map.entities.pushToPlayer(this.player, message);
+    this.entities.pushToPlayer(this.player, message);
   },
 
   onExit: function(callback) {
@@ -307,6 +298,14 @@ module.exports = PacketHandler = Class.extend({
         self.timeout();
       },35000);
   },*/
+
+  sendToPlayer: function (player, message) {
+    this.map.entities.pushToPlayer(player, message);
+  },
+
+  send: function(message) {
+    this.connection.send(message);
+  },
 
   handleChat: function(message) {
     var self = this;
@@ -358,7 +357,6 @@ module.exports = PacketHandler = Class.extend({
     var npcId = parseInt(message[1]);
 
     npc = this.entities.getEntityById(npcId);
-
     if (!npc.isNextTooEntity(this.player)) {
       console.info("player not close enough to NPC!");
       return;
@@ -423,8 +421,11 @@ module.exports = PacketHandler = Class.extend({
   },
 
   handleAuctionBuy: function(message) {
-    var auctionIndex = parseInt(message[0]);
+    var auctionIndex = parseInt(message[0]),
+        type = parseInt(message[1]);
     if (auctionIndex < 0 || auctionIndex >= this.server.auction.auctions.length)
+      return;
+    if (type < 0 || type > 3)
       return;
 
     var auction = this.server.auction.auctions[auctionIndex];
@@ -432,12 +433,6 @@ module.exports = PacketHandler = Class.extend({
       return;
     if (auction.playerName == this.player.name)
       return;
-
-    var type = parseInt(message[1]);
-    if (type < 0 || type > 3)
-      return;
-
-    var self = this;
 
     var price = auction.price;
     if (price < 0)
@@ -450,18 +445,18 @@ module.exports = PacketHandler = Class.extend({
       return;
     }
 
-    if (!self.player.inventory.hasRoom()) {
+    if (!this.player.inventory.hasRoom()) {
       this.sendPlayer(new Messages.Notify("SHOP","SHOP_NOSPACE"));
       return;
     }
 
     var itemKind = auction.item.itemKind;
-    self.player.inventory.putItem(auction.item);
-    self.player.modifyGold(-price);
+    this.player.inventory.putItem(auction.item);
+    this.player.modifyGold(-price);
     var itemName = ItemTypes.KindData[itemKind].name;
-    self.sendPlayer(new Messages.Notify("SHOP","SHOP_SOLD", [itemName]));
+    this.sendPlayer(new Messages.Notify("SHOP","SHOP_SOLD", [itemName]));
 
-    var auctionPlayer = self.server.getPlayerByName(auction.playerName);
+    var auctionPlayer = this.server.getPlayerByName(auction.playerName);
     if (auctionPlayer)
       auctionPlayer.modifyGold(price);
     else
@@ -469,168 +464,139 @@ module.exports = PacketHandler = Class.extend({
 
     this.server.auction.remove(auctionIndex);
     this.server.auction.list(this.player, type);
-
   },
 
   handleAuctionDelete: function(message) {
-    var auctionIndex = parseInt(message[0]);
+    var auctionIndex = parseInt(message[0]),
+        type = parseInt(message[1]);
     if (auctionIndex < 0 || auctionIndex >= this.server.auction.auctions.length)
       return;
+    if (type < 0 || type > 3)
+      return;
+
     var auction = this.server.auction.auctions[auctionIndex];
     if (!auction)
       return;
 
-    var type = parseInt(message[1]);
-    if (type < 0 || type > 3)
-      return;
-
-    var self = this;
-
-    if (!self.player.inventory.hasRoom()) {
-      self.sendPlayer(new Messages.Notify("SHOP", "SHOP_NOSPACE"));
+    if (!this.player.inventory.hasRoom()) {
+      this.sendPlayer(new Messages.Notify("SHOP", "SHOP_NOSPACE"));
       return;
     }
 
     var itemKind = auction.item.itemKind;
-    self.player.inventory.putItem(auction.item);
+    this.player.inventory.putItem(auction.item);
     var itemName = ItemTypes.KindData[itemKind].name;
-    self.sendPlayer(new Messages.Notify("SHOP","SHOP_REMOVED", [itemName]));
+    this.sendPlayer(new Messages.Notify("SHOP","SHOP_REMOVED", [itemName]));
     this.server.auction.remove(auctionIndex);
     this.server.auction.list(this.player, type);
   },
 
-  handleStoreEnchant: function(message) {
-    var type = parseInt(message[0]),
-        itemIndex = parseInt(message[1]);
+  handleStoreModItem: function (msg) {
+      var modType = parseInt(msg[0]),
+          type = parseInt(msg[1]),
+          itemIndex = parseInt(msg[2]);
 
-    //console.info("type=" + type + ",invNumber=" + inventoryNumber1);
-    if (type == 0 && (itemIndex >= 6) && (itemIndex < this.player.inventory.maxNumber)) {
-      var item = this.player.inventory.rooms[itemIndex];
-      //console.info("item=" + JSON.stringify(item));
-      this._enchantItem(type, item, itemIndex);
-    }
-    if (type == 2 && itemIndex >= 0 && itemIndex < this.player.equipment.maxNumber) {
-      var item = this.player.equipment.rooms[itemIndex];
-      if (item) {
+      //console.info("type=" + type + ",invNumber=" + inventoryNumber1);
+      if (type == 0 || type == 2) {
+        var itemStore = this.player.itemStore[type];
+        if (itemIndex < 0 && itemIndex >= itemStore.maxNumber)
+          return;
+        var item = this.player.itemStore[type].rooms[itemIndex];
         //console.info("item=" + JSON.stringify(item));
-        this._enchantItem(type, item, itemIndex);
+        if (modType == 0)
+          this._repairItem(type, item, itemIndex);
+        if (modType == 1)
+          this._enchantItem(type, item, itemIndex);
       }
-    }
-  },
-
-  handleStoreRepair: function(message) {
-    //console.info("handleStoreRepair");
-    var type = parseInt(message[0]),
-      itemIndex = parseInt(message[1]);
-    //console.info("type=" + type + ",invNumber=" + itemIndex);
-    if (type == 0 && (itemIndex >= 6) && (itemIndex < this.player.inventory.maxNumber)) {
-      var item = this.player.inventory.rooms[itemIndex];
-      if (item) {
-        //console.info("item=" + JSON.stringify(item));
-        this._repairItem(type, item, itemIndex);
-      }
-    }
-    if (type == 2 && itemIndex >= 0 && itemIndex < this.player.equipment.maxNumber) {
-      var item = this.player.equipment.rooms[itemIndex];
-      if (item) {
-        //console.info("item=" + JSON.stringify(item));
-        this._repairItem(type, item, itemIndex);
-      }
-    }
   },
 
   _repairItem: function(type, item, index) {
     var itemKind = null,
       price = 0;
 
-    if (item && item.itemKind) {
-      if (!ItemTypes.isEquipment(item.itemKind))
-        return;
+    if (!(item && item.itemKind))
+      return;
 
-      if (item.itemDurability == item.itemDurabilityMax)
-        return;
+    if (!ItemTypes.isEquipment(item.itemKind))
+      return;
 
-      price = ~~(ItemTypes.getRepairPrice(item));
-      if (price <= 0)
-        return;
+    if (item.itemDurability == item.itemDurabilityMax)
+      return;
 
-      goldCount = this.player.gold[0];
-      //console.info("goldCount="+goldCount+",price="+price);
-      if (goldCount < price) {
-        this.sendPlayer(new Messages.Notify("SHOP","SHOP_NOGOLD"));
-        return;
-      }
+    price = ~~(ItemTypes.getRepairPrice(item));
+    if (price <= 0)
+      return;
 
-      //var degrade = ~~((item.itemDurabilityMax - item.itemDurability) / 10);
-
-      item.itemDurabilityMax -= 10;
-      item.itemDurability = item.itemDurabilityMax;
-      if (item.itemDurabilityMax <= 0) {
-        item = null;
-        if (type == 0) {
-          this.player.inventory.makeEmptyItem(index);
-        } else if (type == 2) {
-          this.player.equipment.makeEmptyItem(index);
-        }
-      } else {
-        console.info("itemNumber=" + item.itemNumber);
-        this.player.modifyGold(-price);
-      }
-      item.slot = index;
-
-      this.sendPlayer(new Messages.ItemSlot(type, [item]));
-      //this.sendPlayer(new Messages.Gold(this.player));
-      var itemName = ItemTypes.KindData[item.itemKind].name;
-      this.sendPlayer(new Messages.Notify("SHOP","SHOP_REPAIRED", [itemName]));
+    goldCount = this.player.gold[0];
+    //console.info("goldCount="+goldCount+",price="+price);
+    if (goldCount < price) {
+      this.sendPlayer(new Messages.Notify("SHOP","SHOP_NOGOLD"));
+      return;
     }
+
+    item.itemDurabilityMax -= 50;
+    item.itemDurability = item.itemDurabilityMax;
+    if (item.itemDurabilityMax <= 0) {
+      item = null;
+      this.player.itemStore[type].makeEmptyItem(index);
+    } else {
+      console.info("itemNumber=" + item.itemNumber);
+      this.player.modifyGold(-price);
+    }
+    item.slot = index;
+
+    this.sendPlayer(new Messages.ItemSlot(type, [item]));
+    var itemName = ItemTypes.KindData[item.itemKind].name;
+    this.sendPlayer(new Messages.Notify("SHOP","SHOP_REPAIRED", [itemName]));
   },
 
   _enchantItem: function(type, item, index) {
     var itemKind = null,
       price = 0;
 
-    if (item && item.itemKind) {
-      if (!ItemTypes.isEquipment(item.itemKind))
-        return;
+    if (!(item && item.itemKind))
+      return;
 
-      price = ItemTypes.getEnchantPrice(item);
-      if (price <= 0)
-        return;
+    if (!ItemTypes.isEquipment(item.itemKind))
+      return;
 
-      goldCount = this.player.gold[0];
-      //console.info("goldCount="+goldCount+",price="+price);
-      if (goldCount < price) {
-        this.sendPlayer(new Messages.Notify("SHOP", "SHOP_NOGOLD"));
-        return;
-      }
+    price = ItemTypes.getEnchantPrice(item);
+    if (price <= 0)
+      return;
 
-      item.itemExperience = ItemTypes.itemExpForLevel[item.itemNumber - 1];
-      item.itemNumber++;
-
-      item.slot = index;
-
-      this.sendPlayer(new Messages.ItemSlot(type, [item]));
-      console.info("itemNumber=" + item.itemNumber);
-      this.player.modifyGold(-price);
-      //this.sendPlayer(new Messages.Gold(this.player));
-      var itemName = ItemTypes.KindData[item.itemKind].name;
-      this.sendPlayer(new Messages.Notify("SHOP", "SHOP_ENCHANTED", [itemName]));
+    goldCount = this.player.gold[0];
+    //console.info("goldCount="+goldCount+",price="+price);
+    if (goldCount < price) {
+      this.sendPlayer(new Messages.Notify("SHOP", "SHOP_NOGOLD"));
+      return;
     }
+
+    item.itemExperience = ItemTypes.itemExpForLevel[item.itemNumber - 1];
+    item.itemNumber++;
+
+    item.slot = index;
+
+    this.sendPlayer(new Messages.ItemSlot(type, [item]));
+    console.info("itemNumber=" + item.itemNumber);
+    this.player.modifyGold(-price);
+    var itemName = ItemTypes.KindData[item.itemKind].name;
+    this.sendPlayer(new Messages.Notify("SHOP", "SHOP_ENCHANTED", [itemName]));
 
   },
 
   handleBankStore: function(message) {
     var itemIndex = parseInt(message[0]);
 
-    if ((itemIndex >= 6) && (itemIndex < this.player.inventory.maxNumber)) {
-      var item = this.player.inventory.rooms[itemIndex];
+    var p = this.player;
+    if (itemIndex >= 0 && itemIndex < p.inventory.maxNumber) {
+      var item = p.inventory.rooms[itemIndex];
       //console.info("bankitem: " + JSON.stringify(item));
       if (item && item.itemKind) {
-        var slot = this.player.bank.getEmptyIndex();
+        var slot = p.bank.getEmptyIndex();
         //console.info("slot=" + slot);
         if (slot >= 0) {
-          this.player.bank.putItem(item);
-          this.player.inventory.takeOutItems(itemIndex, item.itemNumber);
+          p.bank.putItem(item);
+          p.inventory.takeOutItems(itemIndex, item.itemNumber);
         }
       }
     }
@@ -639,18 +605,18 @@ module.exports = PacketHandler = Class.extend({
   handleBankRetrieve: function(message) {
     var bankIndex = parseInt(message[0]);
 
-    if ((bankIndex >= 0) && (bankIndex < this.player.bank.maxNumber)) {
-      var item = this.player.bank.rooms[bankIndex];
-
+    var p = this.player;
+    if (bankIndex >= 0 && bankIndex < p.bank.maxNumber) {
+      var item = p.bank.rooms[bankIndex];
       if (item && item.itemKind) {
-        var slot = this.player.inventory.getEmptyIndex();
+        var slot = p.inventory.getEmptyIndex();
         if (slot >= 0) {
-          this.player.inventory.putItem(item);
-          this.player.bank.takeOutItems(bankIndex, item.itemNumber);
+          p.inventory.putItem(item);
+          p.bank.takeOutItems(bankIndex, item.itemNumber);
         }
       }
     }
-    this.sendPlayer(new Messages.Gold(this.player));
+    this.sendPlayer(new Messages.Gold(p));
   },
 
   handleStoreBuy: function(message) {
@@ -696,9 +662,9 @@ module.exports = PacketHandler = Class.extend({
           return;
         this.player.modifyGold(-price);
         this.sendPlayer(new Messages.Notify("SHOP", "SHOP_BUY", [itemName]));
-        if (!this.player.tut.equip) {
+        /*if (!this.player.tut.equip) {
           this.player.tutChat("TUTORIAL_EQUIP", 10, "equip");
-        }
+        }*/
       } else {
         this.sendPlayer(new Messages.Notify("SHOP", "SHOP_NOSPACE"));
       }
@@ -760,7 +726,6 @@ module.exports = PacketHandler = Class.extend({
     if (itemData.craft.length == 0)
       return;
 
-
     for (var it of craftData.i)
     {
         if (!this.player.inventory.hasItems(it[0],it[1]*itemCount)) {
@@ -795,11 +760,6 @@ module.exports = PacketHandler = Class.extend({
   handleAppearanceUnlock: function(message) {
     var appearanceIndex = parseInt(message[0]);
     var priceClient = parseInt(message[1]);
-
-    if (appearanceIndex == -1) {
-      this.server.looks.sendLooks(this.player);
-      return;
-    }
 
     if (appearanceIndex < 0 || appearanceIndex >= AppearanceData.Data.length)
       return;
@@ -932,7 +892,6 @@ module.exports = PacketHandler = Class.extend({
   },
 
   handleLoot: function(message) {
-    var self = this;
     console.info("handleLoot");
 
     item = this.entities.getEntityById(parseInt(message[0]));
@@ -944,7 +903,7 @@ module.exports = PacketHandler = Class.extend({
     var x = parseInt(message[1]),
         y = parseInt(message[2]);
 
-    if (!(Math.abs(self.player.x-x) <= G_TILESIZE && Math.abs(self.player.y-y) <= G_TILESIZE)) {
+    if (!this.player.isNextToo(x,y)) {
       console.info("Player is not close enough to item.")
       return;
     }
@@ -953,11 +912,8 @@ module.exports = PacketHandler = Class.extend({
     if (item.enemyDrop)
       console.info("enemyDrop");
 
-    //if (item.room.enemyDrop)
-      //console.info("enemyDrop2");
-
     if (item instanceof Item) {
-      if (self.player.inventory.putItem(item.room) >= 0) {
+      if (this.player.inventory.putItem(item.room) >= 0) {
         this.server.taskHandler.processEvent(this.player, PlayerEvent(EventType.LOOTITEM, item, 1));
         this.broadcast(item.despawn(), false);
         this.entities.removeEntity(item);
@@ -973,13 +929,6 @@ module.exports = PacketHandler = Class.extend({
     //console.info("handleAttack, freeze: "+(G_ROUNDTRIP + (time - Date.now())));
     if (p.isDying || p.isDead)
       return;
-
-    /*if (!(p.sx == -1 && p.sy == -1)) {
-      p.setPosition(p.sx,p.sy);
-      p.ex = p.sx;
-      p.ey = p.sy;
-      p.forceStopMove();
-    }*/
 
     //this.player.attackQueue.push(message);
     if (p.movement.inProgress) {
@@ -1009,12 +958,12 @@ module.exports = PacketHandler = Class.extend({
 
   handleHitEntity: function(sEntity, message) { // 8
     console.info("handleHitEntity");
-    var self = this;
+    //var self = this;
 
     console.info("message: "+JSON.stringify(message));
-    var targetId = parseInt(message[1]);
-    var orientation = parseInt(message[2]);
-    var skillId = parseInt(message[3]);
+    var targetId = parseInt(message[1]),
+        orientation = parseInt(message[2]),
+        skillId = parseInt(message[3]);
 
     if (targetId < 0) {
       console.warn("invalid targetId");
@@ -1067,16 +1016,14 @@ module.exports = PacketHandler = Class.extend({
     sEntity.setOrientation(orientation);
     sEntity.engage(tEntity);
 
-    if (sEntity == self.player) {
+    if (sEntity == this.player) {
       //sEntity.lookAtEntity(tEntity);
       if (!sEntity.canReach(tEntity)) {
         console.info("Player not close enough!");
         console.info("p.x:" + sEntity.x + ",p.y:" + sEntity.y);
         console.info("e.x:" + tEntity.x + ",e.y:" + tEntity.y);
         console.info("dx:"+Math.abs(sEntity.x-tEntity.x)+",dy:"+Math.abs(sEntity.y-tEntity.y));
-
         return;
-
       }
 
       if (!sEntity.attackedTime.isOver()) {
@@ -1088,7 +1035,6 @@ module.exports = PacketHandler = Class.extend({
 
       sEntity.lastAction = Date.now();
     }
-
 
     sEntity.isBlocking = false;
 
@@ -1112,7 +1058,7 @@ module.exports = PacketHandler = Class.extend({
     if (sEntity.effectHandler) {
       sEntity.effectHandler.interval(3,0);
     }
-    var damageObj = self.calcDamage(sEntity, tEntity, null, 0); // no skill
+    var damageObj = this.calcDamage(sEntity, tEntity, null, 0); // no skill
     if (sEntity.effectHandler) {
       sEntity.effectHandler.interval(4, damageObj.damage);
       for (var skillEffect in sEntity.effectHandler.skillEffects)
@@ -1120,11 +1066,11 @@ module.exports = PacketHandler = Class.extend({
         for (var target in skillEffect.targets) {
           var damage = target.mod.damage;
           target.mod.damage = 0;
-          self.dealDamage(sEntity, target, damage, 0);
+          this.dealDamage(sEntity, target, damage, 0);
         }
       }
     }
-    self.dealDamage(sEntity, tEntity, damageObj.damage, damageObj.crit);
+    this.dealDamage(sEntity, tEntity, damageObj.damage, damageObj.crit);
 
     if (sEntity.attackTimer)
       sEntity.attackTimer = Date.now();
@@ -1135,7 +1081,6 @@ module.exports = PacketHandler = Class.extend({
   },
 
   calcDamage: function(sEntity, tEntity, skill, attackType) {
-    var self = this;
     var damageObj = {
       damage: 0,
       crit: 0,
@@ -1163,18 +1108,16 @@ module.exports = PacketHandler = Class.extend({
 
 // TODO - Fix entity vars.
   dealDamage: function(sEntity, tEntity, dmg, crit) {
-    var self = this;
-
     if (!tEntity) return;
 
     if (tEntity instanceof Mob)
       this.entities.mobAI.aggroPlayer(tEntity, sEntity);
 
-    self.server.handleDamage(tEntity, sEntity, -dmg, crit);
+    this.server.handleDamage(tEntity, sEntity, -dmg, crit);
     if (sEntity instanceof Player)
       sEntity.weaponDamage += dmg;
 
-    self.server.handleHurtEntity(tEntity, sEntity);
+    this.server.handleHurtEntity(tEntity, sEntity);
     console.info("DAMAGE OCCURED "+dmg);
     //console.info("dmg="+dmg);
     if (tEntity instanceof Mob) {
@@ -1209,22 +1152,20 @@ module.exports = PacketHandler = Class.extend({
         return;
     }
 
-    var p = this.player;
-    p.shortcuts[slot] = [slot, type, shortcutId];
+    this.player.shortcuts[slot] = [slot, type, shortcutId];
   },
 
   handleSkill: function(message) {
-    var self = this;
-    var skillId = parseInt(message[0]);
-    var targetId = parseInt(message[1]);
-    var x = parseInt(message[2]);
-    var y = parseInt(message[3]);
-    var p = this.player;
+    var skillId = parseInt(message[0]),
+        targetId = parseInt(message[1]),
+        x = parseInt(message[2]),
+        y = parseInt(message[3]),
+        p = this.player;
 
-    if (skillId < 0 || skillId >= this.player.skills.length)
+    if (skillId < 0 || skillId >= p.skills.length)
       return;
 
-    var skill = this.player.skills[skillId];
+    var skill = p.skills[skillId];
 
     // Perform the skill.
     var target;
@@ -1240,24 +1181,20 @@ module.exports = PacketHandler = Class.extend({
     if (!skill.isReady())
       return;
 
-    var level = skill.skillLevel + 1;
+    //var level = skill.skillLevel + 1;
 
     //console.info ("skill.skillLevel="+skill.skillLevel);
     //console.info ("type="+type);
 
-    this.player.effectHandler.cast(skillId, targetId, x, y);
+    p.effectHandler.cast(skillId, targetId, x, y);
 
     skill.tempXP = Math.min(skill.tempXP++,1);
 
-
-
-
-    self.handleSkillEffects(self.player, target);
+    this.handleSkillEffects(p, target);
   },
 
   handleSkillEffects: function (source, target)
   {
-    var self = this;
     var effects = [];
     if (!source.effects)
       return;
@@ -1267,7 +1204,7 @@ module.exports = PacketHandler = Class.extend({
       if (v == 1)
         effects.push(parseInt(k));
     }
-    self.entities.pushToPlayer(source, new Messages.SkillEffects(source, effects));
+    this.entities.pushToPlayer(source, new Messages.SkillEffects(source, effects));
     effects = [];
 
     if (!target) return;
@@ -1277,7 +1214,7 @@ module.exports = PacketHandler = Class.extend({
       if (v == 1)
         effects.push(parseInt(k));
     }
-    self.entities.pushToPlayer(source, new Messages.SkillEffects(target, effects));
+    this.entities.pushToPlayer(source, new Messages.SkillEffects(target, effects));
 
   },
 
@@ -1377,8 +1314,8 @@ module.exports = PacketHandler = Class.extend({
   handleTeleportMap: function(msg) {
     console.info("handleTeleportMap");
     var self = this;
-    var mapId = parseInt(msg[0]);
-    var status = parseInt(msg[1]);
+    var mapId = parseInt(msg[0]),
+        status = parseInt(msg[1]);
     console.info("status="+status);
     var x = parseInt(msg[2]), y = parseInt(msg[3]);
     var p = this.player;
@@ -1387,7 +1324,6 @@ module.exports = PacketHandler = Class.extend({
       x = -1;
       y = -1;
     }
-
 
     var mapInstanceId = null;
     var mapName = null;
@@ -1470,36 +1406,15 @@ module.exports = PacketHandler = Class.extend({
     p.knownIds = [];
 
     this.entities.processWho(p);
-
-    this.player.setPosition(x,y);
-    //self.handleMoveEntity([Date.now(), self.player.id, 0, true, x, y]);
-
+    p.setPosition(x,y);
     this.entities.pushNeighbours(p, new Messages.Spawn(p), p);
-
-    /*if (this.player.tut.move) {
-      this.player.tut.portal = true;
-    }*/
   },
 
   handleClearMap: function() {
-    var self = this;
-
     this.player.clearTarget();
 
     this.server.handlePlayerVanish(this.player);
     this.entities.removeEntity(this.player);
-  },
-
-  handleRevive: function(data) {
-    var p = this.player;
-    if (p.isDead == true) {
-      console.info("handled Revive!!");
-      p.revive();
-      this.entities.pushNeighbours(p, new Messages.Spawn(p), p);
-      // TODO
-      var msg = new Messages.Move(p, p.orientation, 2, p.x, p.y);
-      this.sendPlayer(msg);
-    }
   },
 
   /*handleColorTint: function(data) {
@@ -1519,10 +1434,11 @@ module.exports = PacketHandler = Class.extend({
 
   handleStatAdd: function(message) {
     var self = this;
-    var attribute = parseInt(message[0]);
-    var points = parseInt(message[1]);
+    var attribute = parseInt(message[0]),
+        points = parseInt(message[1]);
+    var p = this.player;
 
-    if (points < 0 || points > this.player.stats.free)
+    if (points < 0 || points > p.stats.free)
       return;
 
 // TODO - remove energy stat.
@@ -1531,30 +1447,31 @@ module.exports = PacketHandler = Class.extend({
 
     switch (attribute) {
       case 1:
-        this.player.stats.attack += points;
+        p.stats.attack += points;
         break;
       case 2:
-        this.player.stats.defense += points;
+        p.stats.defense += points;
         break;
       case 3:
-        this.player.stats.health += points;
+        p.stats.health += points;
         break;
-      //case 4:
+      case 4:
+        return;
         //this.player.stats.energy += points;
         //break;
-      case 5:
-        this.player.stats.luck += points;
+      case 4:
+        p.stats.luck += points;
         break;
     }
-    this.player.stats.free -= points;
-    this.player.resetBars();
-    this.sendPlayer(new Messages.StatInfo(this.player));
+    p.stats.free -= points;
+    p.resetBars();
+    this.sendPlayer(new Messages.StatInfo(p));
   },
 
   handleGold: function (message) {
-    var type = parseInt(message[0]);
-    var gold = parseInt(message[1]);
-    var type2 = parseInt(message[2]);
+    var type = parseInt(message[0]),
+        gold = parseInt(message[1]),
+        type2 = parseInt(message[2]);
 
     if (gold < 0)
       return;
@@ -1588,21 +1505,22 @@ module.exports = PacketHandler = Class.extend({
   },
 
   handleBlock: function (msg) {
-    var type = parseInt(msg[0]);
-    var id = parseInt(msg[1]);
-    var x = parseInt(msg[2]);
-    var y = parseInt(msg[3]);
+    var type = parseInt(msg[0]),
+        id = parseInt(msg[1]),
+        x = parseInt(msg[2]),
+        y = parseInt(msg[3]);
+
     var p = this.player;
 
     var block = this.map.entities.getEntityById(id);
     if (!block || !(block instanceof Block))
       return;
-    if (!this.player.isNextTooEntity(block))
+    if (!p.isNextTooEntity(block))
       return;
 
     if (type == 0) // pickup
     {
-      this.player.holdingBlock = block;
+      p.holdingBlock = block;
     }
     else if (type == 1) //place
     {
@@ -1614,13 +1532,45 @@ module.exports = PacketHandler = Class.extend({
 
       block.setPosition(x, y);
       block.update(this.player);
-      this.player.holdingBlock = null;
+      p.holdingBlock = null;
     }
     var msg = new Messages.BlockModify(block, p.id, type);
     this.entities.pushNeighbours(p, msg, p);
   },
 
-  handlePlayerInfo: function (message) {
+  handleRequest: function (msg) {
+    var type = parseInt(msg);
+
+    switch (type) {
+      case 0: // CS_APPEARANCELIST
+        this.handlePlayerInfo(msg);
+        break;
+      case 1: // CS_PLAYER_REVIVE
+        this.handleRevive(msg);
+        break;
+      case 2: // CS_PLAYERINFO
+        this.handlePlayerInfo(msg);
+        break;
+    }
+  },
+
+  handleAppearanceList: function (msg) {
+    this.server.looks.sendLooks(this.player);
+  },
+
+  handleRevive: function(msg) {
+    var p = this.player;
+    if (p.isDead == true) {
+      console.info("handled Revive!!");
+      p.revive();
+      this.entities.pushNeighbours(p, new Messages.Spawn(p), p);
+      // TODO
+      var msg = new Messages.Move(p, p.orientation, 2, p.x, p.y);
+      this.sendPlayer(msg);
+    }
+  },
+
+  handlePlayerInfo: function (msg) {
     this.sendPlayer(new Messages.PlayerInfo(this.player));
   },
 
@@ -1805,14 +1755,6 @@ module.exports = PacketHandler = Class.extend({
     var id=parseInt(msg[0]);
     var entity = this.entities.getEntityById(id);
     this.player.onHarvestEntity(entity);
-  },
-
-  sendToPlayer: function (player, message) {
-    this.map.entities.pushToPlayer(player, message);
-  },
-
-  send: function(message) {
-    this.connection.send(message);
   },
 
 });

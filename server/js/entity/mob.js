@@ -528,7 +528,24 @@ module.exports = Mob = Character.extend({
       this.resetHP();
       this.setAiState(mobState.IDLE);
       this.resetPosition();
-    }
+    },
+
+    handleMobHate: function(tEntity, hatePoints)
+    {
+        console.info("handleMobHate");
+        if (tEntity && tEntity instanceof Player)
+        {
+            this.increaseHateFor(tEntity, hatePoints);
+
+            if (this.stats.hp > 0)
+            {
+              var hEntity = this.getMostHated();
+              if (hEntity)
+                this.createAttackLink(hEntity);
+            }
+        }
+    },
+
 });
 
 module.exports = Mob;

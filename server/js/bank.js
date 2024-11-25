@@ -87,7 +87,6 @@ module.exports = Bank = cls.Class.extend({
     },
 
     putItem: function(item) {
-      var maxNumber = 96;
       var consume = ItemTypes.isConsumableItem(item.itemKind);
       var loot = ItemTypes.isLootItem(item.itemKind);
       var craft = ItemTypes.isCraftItem(item.itemKind);

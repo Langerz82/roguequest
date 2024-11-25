@@ -32,7 +32,7 @@ var cls = require("./lib/class"),
     util = require("util"),
     Pathfinder = require("./pathfinder"),
     NotifyData = require("./data/notificationdata.js"),
-    Products = require("../shared/data/products.json"),
+    //Products = require("../shared/data/products.json"),
     Updater = require("./updater"),
     Auction = require("./auction"),
     Looks = require("./looks"),
@@ -99,9 +99,7 @@ module.exports = World = cls.Class.extend(
              }
         });
 
-        self.bets = [];
-
-        self.products = JSON.parse(JSON.stringify(Products));
+        //self.products = JSON.parse(JSON.stringify(Products));
 
         self.auction = new Auction();
         self.looks = new Looks();
@@ -113,14 +111,12 @@ module.exports = World = cls.Class.extend(
          */
         self.onPlayerConnect(function(player)
         {
-            player.map = self.maps[1];
-
-            //var pos = player.map.enterCallback(player);
-            //player.setPosition(pos.x, pos.y);
         });
 
         self.onPlayerEnter(function(player)
         {
+            player.map = self.maps[1];
+
             console.info("Player: " + player.name + " has entered the " + player.map.name + " map.");
 
             player.map.entities.pushBroadcast(new Messages.Notify("MAP", "MAP_ENTERED", [player.name, player.map.name]), true);
@@ -132,56 +128,12 @@ module.exports = World = cls.Class.extend(
                   if (c instanceof Mob)
                     c.forgetPlayer(player.id);
                 });
-                //player.map.entities.pushBroadcast(new Messages.ChangePoints(player, 0, 0), player);
             });
-
-            //console.info(JSON.stringify(player.map));
-            //player.map.entities.pushRelevantEntityListTo(player);
-
-            var move_callback = function(p)
-            {
-                //console.info("move_callback");
-                //if (self.uselessDebugging)
-                    //console.info("Player: " + player.name + " position set to: " + x + " " + y);
-
-                //player.flagPVP(self.map.isPVP(x, y));
-
-                /*player.forEachAttacker(function(mob)
-                {
-                    if (mob.target == null)
-                        player.removeAttacker(mob);
-
-                    if (mob.target)
-                        var target = mob.map.entities.getEntityById(mob.target.id);
-                    if (target && target instanceof Mob)
-                    {
-                        //console.info("id=" + mob.id + ",x=" + x + ",y=" + y);
-                        console.info("aggroRange=" + mob.aggroRange);
-                        self.moveEntity(mob, pos.x, pos.y);
-
-                    }
-                });*/
-                //player.map.entities.pushBroadcast(new Messages.Spawn(player), player.id);
-                //zone_callback(player);
-            };
-
-
-            player.packetHandler.onMove(move_callback.bind(player));
-
-            //player.packetHandler.onZone(zone_callback);
-
 
             player.packetHandler.onBroadcast(function(message, ignoreSelf)
             {
-                //console.info("onBroadcast");
                 player.map.entities.pushBroadcast(message, ignoreSelf ? player.id : null);
             });
-
-            /*player.packetHandler.onBroadcastToZone(function(message, ignoreSelf)
-            {
-                //console.info("onBroadcastToZone");
-                player.map.entities.pushToGroup(player.group, message, ignoreSelf ? player.id : null);
-            });*/
 
             player.packetHandler.onExit(function()
             {
@@ -200,29 +152,10 @@ module.exports = World = cls.Class.extend(
                     self.removed_callback();
             });
 
-            //player.map.entities.handleEntityGroupMembership(player);
-            //player.map.entities.pushRelevantEntitySpawnTo(player);
-
             if (self.added_callback)
                 self.added_callback();
 
         });
-
-        self.onEntityAttack(function(attacker)
-        {
-            if (!attacker.target)
-                return;
-
-            //var target = attacker.map.entities.getEntityById(attacker.target.id);
-            /*if (target && attacker.type == "mob") {
-                var pos = self.findPositionNextTo(attacker, target);
-                //attacker.follow(target);
-                self.moveEntity(attacker, pos.x, pos.y);
-            }*/
-            //if (attacker instanceof Pet)
-            //    attacker.hit();
-        });
-
 
         self.onRegenTick(function()
         {
@@ -238,7 +171,6 @@ module.exports = World = cls.Class.extend(
                             if (!character.isDead && !character.hasFullHealth() && !character.isAttacked())
                             {
                                 var packet = character.modHealthBy(Math.floor(character.stats.hpMax / 8));
-                                //character.map.entities.pushNeighbours(character, packet);
                             }
                         }
                     });
@@ -251,7 +183,6 @@ module.exports = World = cls.Class.extend(
                             {
                                 //console.info("stats="+JSON.stringify(character.stats));
                                 var packet = character.modHealthBy(Math.floor(character.stats.hpMax / 8));
-                                //character.map.entities.pushNeighbours(character, packet);
                             }
                         }
                     });
@@ -282,19 +213,6 @@ module.exports = World = cls.Class.extend(
 
     stop: function ()
     {
-      /*for (mapId in self.maps)
-      {
-          var map = self.maps[mapId];
-          if (map && map.entities && map.entities.players &&
-              Object.keys(map.entities.players).length > 0)
-          {
-            for (pId in map.entities.players)
-            {
-              var p = map.entities.players[pId];
-              p.save();
-            }
-          }
-      }*/
       this.save();
     },
 
@@ -323,14 +241,6 @@ module.exports = World = cls.Class.extend(
     update: function () {
       var self = this;
 
-      /*if ((Date.now() - this.lastUpdateTime) < ~~(G_UPDATE_INTERVAL)) {
-        //self.update();
-        console.info("world update skipped. "+(Date.now() - this.lastUpdateTime));
-        setImmediate(self.update.bind(self));
-        //setTimeout(self.update.bind(self));
-        return;
-      }*/
-
       this.lastUpdateTime = Date.now();
       //console.info("world update called.");
       for (mapId in self.maps)
@@ -343,18 +253,12 @@ module.exports = World = cls.Class.extend(
               map.updater.update();
           }
       }
-
-      //self.update();
-      //setTimeout(function () { self.update(self) }, G_UPDATE_INTERVAL - (Date.now() - this.lastUpdateTime));
-      //setImmediate(self.update.bind(self));
     },
 
     run: function()
     {
         var self = this;
 
-        //self.update();
-        //process.nextTick(function () { self.update.bind(self); });
         setInterval(function () {
           self.update();
         }, G_UPDATE_INTERVAL);
@@ -372,24 +276,7 @@ module.exports = World = cls.Class.extend(
               }
           };
         };
-
         setInterval(processPackets, 16);
-
-
-        //self.update();
-        /*setInterval(function ()
-        {
-          for (mapId in self.maps)
-          {
-              var map = self.maps[mapId];
-              if (map && map.ready && map.entities && map.updater &&
-                  Object.keys(map.entities.players).length > 0)
-              {
-                  map.entities.processPackets();
-                  map.updater.update();
-              }
-          }
-        }, G_UPDATE_INTERVAL);*/
 
         setInterval(function()
         {
@@ -424,30 +311,6 @@ module.exports = World = cls.Class.extend(
             }
         }, 60000);
 
-        /*setInterval(function()
-        {
-            for (mapId in self.maps)
-            {
-                var map = self.maps[mapId];
-                if (map && map.ready && map.entities &&
-                    Object.keys(map.entities.npcplayers).length > 0)
-                {
-					          for (npcId in map.entities.npcplayers)
-                    {
-                        var npc = map.entities.npcplayers[npcId];
-                        //console.info("npc="+JSON.stringify(npc));
-                        //console.info("npc.controller"+npc.activeController);
-                        if (npc instanceof NpcStatic)
-                        {
-                          npc.activeController.randomMove();
-                          npc.activeController.checkMove(Date.now());
-                        }
-                    }
-
-                }
-            }
-        }, 64);*/
-
         setInterval(function()
         {
             if (self.regen_callback)
@@ -455,22 +318,6 @@ module.exports = World = cls.Class.extend(
                 self.regen_callback();
             }
         }, 10000);
-
-        setInterval(function()
-        {
-            if (self.exp_callback)
-            {
-                self.exp_callback();
-            }
-        }, 60000);
-
-        setInterval(function()
-        {
-            if (self.pvp_regen_callback)
-            {
-                self.pvp_regen_callback();
-            }
-        }, 300000);
 
         setInterval(function()
         {
@@ -599,24 +446,6 @@ module.exports = World = cls.Class.extend(
         });
     },
 
-    handleMobHate: function(sEntity, tEntity, hatePoints)
-    {
-        console.info("handleMobHate");
-        if (sEntity && tEntity &&
-            tEntity instanceof Player &&
-            sEntity instanceof Mob)
-        {
-            sEntity.increaseHateFor(tEntity, hatePoints);
-
-            if (sEntity.stats.hp > 0)
-            {
-              var hEntity = sEntity.getMostHated();
-              if (hEntity)
-                this.createAttackLink(sEntity, hEntity);
-            }
-        }
-    },
-
     handleDropItem: function (entity, attacker)
     {
       var itemLoot = this.getLootItem(attacker, entity, 0);
@@ -681,7 +510,6 @@ module.exports = World = cls.Class.extend(
 
           this.handlePlayerVanish(entity);
       }
-
     },
 
     handleHurtEntity: function(entity, attacker)
@@ -693,8 +521,6 @@ module.exports = World = cls.Class.extend(
 
         if (entity.stats.hp <= 0)
         {
-
-
           if (entity instanceof Mob) {
               entity.onKilled(function (attacker, damage) {
                 if (attacker instanceof Player) {
@@ -714,20 +540,6 @@ module.exports = World = cls.Class.extend(
         }
     },
 
-
-    handlePickpocket: function(source, target)
-    {
-        //console.info("handlePickpocket");
-        var item = this.getDroppedOrStolenItem(source, target, 1);
-        if (item instanceof ItemRoom && source.inventory.hasRoom())
-        {
-            //console.info("item stolen");
-            //console.info("item id: "+item.id);
-            //console.info(JSON.stringify(item));
-            source.inventory.putItem(item);
-        }
-    },
-
     handleItemDespawn: function(item)
     {
         if (item)
@@ -739,7 +551,7 @@ module.exports = World = cls.Class.extend(
                 {
                     //item.map.entities.pushToAdjacentGroups(item.group, new Messages.Blink(item));
                 },
-                blinkingDuration: 8000,
+                blinkingDuration: 10000,
                 despawnCallback: function()
                 {
                     item.map.entities.itemDespawn(item);
@@ -887,16 +699,6 @@ module.exports = World = cls.Class.extend(
       return null;
     },
 
-    moveEntity: function(entity, x, y)
-    {
-        var self = this;
-        if (entity)
-        {
-            entity.setPosition(x, y);
-            //entity.map.entities.handleEntityGroupMembership(entity);
-        }
-    },
-
     onInit: function(callback)
     {
         this.init_callback = callback;
@@ -932,22 +734,15 @@ module.exports = World = cls.Class.extend(
         this.pvp_regen_callback = callback;
     },
 
-    onExpTick: function(callback)
-    {
-        this.exp_callback = callback;
-    },
-
     onEntityAttack: function(callback)
     {
         this.attack_callback = callback;
     },
 
-    onMobMoveCallback: function(mob)
+    /*onMobMoveCallback: function(mob)
     {
         var self = this;
-        //mob.map.entities.handleEntityGroupMembership(mob);
-        //mob.map.entities.pushBroadcast(mob.getLastMove());
-    },
+    },*/
 
     pushWorld: function(message)
     {
@@ -972,51 +767,9 @@ module.exports = World = cls.Class.extend(
       for (var id in self.maps)
       {
           var map = self.maps[id];
-          /*if (map.entities) {
-            for(var p in map.entities.players) {
-                if (p)
-                  count++;
-            }
-          }*/
           count += Object.keys(map.entities.players).length;
       }
       return count;
-    },
-
-    createAttackLink: function(attacker, target)
-    {
-        if (attacker.hasTarget())
-        {
-            attacker.removeTarget();
-        }
-        attacker.setTarget(target);
-
-        target.addAttacker(attacker);
-        attacker.addAttacker(target);
-    },
-
-    addParty: function(player1, player2)
-    {
-        var party = new Party(player1, player2);
-        this.party.push(party);
-        return party;
-    },
-
-    removeParty: function(party)
-    {
-        this.party = _.reject(this.party, function(el)
-        {
-            return el === party;
-        });
-        delete party;
-    },
-
-    getEntityByName: function (name) {
-      for (var player of players) {
-        if (player.name.toLowerCase() === name.toLowerCase())
-          return player;
-      }
-      return null;
     },
 
 });

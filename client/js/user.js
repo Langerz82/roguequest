@@ -126,6 +126,14 @@ function(UserClient, Player, AppearanceData) {
           return true;
         };
 
+        player.canMove = function (orientation) {
+          orientation = orientation || this.orientation;
+          var pos = this.nextMove(this.x,this.y,orientation);
+          if (orientation == 0)
+            return true;
+          return game.moveCharacter(this, pos[0], pos[1]);
+        };
+
         player.sendMove = function (state) {
           if (state || this.sentMove != state) {
             game.client.sendMoveEntity(this, state);
@@ -149,17 +157,7 @@ function(UserClient, Player, AppearanceData) {
 
           log.info("background - free delay =" + G_LATENCY);
 
-          //this.freeze = true;
-
-          //this.idle();
-          //clearTimeout(this.moveTimeout);
           this.fsm = "MOVEPATH";
-          /*this.moveTimeout = setTimeout(function() {
-            //self.freeze = false;
-            //self.walk();
-            //self.fsm = "MOVEPATH";
-
-          }, G_LATENCY);*/
           this.walk();
           return this._moveTo(x, y, callback);
         };
@@ -186,7 +184,13 @@ function(UserClient, Player, AppearanceData) {
                 return;
             }
 
+            if (!this.canMove(orientation)) {
+              //this.forceStop();
+              return;
+            }
+
             this.setOrientation(orientation);
+
             this.harvestOff();
             this.forceStop();
 

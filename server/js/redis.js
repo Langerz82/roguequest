@@ -620,13 +620,17 @@ module.exports = DatabaseHandler = cls.Class.extend({
     return sType;
   },
 
+  getItemsStoreCount: function (type) {
+    if (type == 1) return 96;
+    if (type == 2) return 5;
+    return 48;
+  },
+
   getItems:function (player, type, callback) {
     var self = this;
     var pKey = "p:" + player.name;
 
-    var maxNumber = 48;
-    if (type == 2) maxNumber = 5;
-
+    var maxNumber = this.getItemsStoreCount(type);
     var sType = this.getStoreTypeNew(type);
 
     client.hget(pKey, sType, function (err, data) {
@@ -730,9 +734,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
   {
     var pKey = "p:" + player.name;
 
-    var maxNumber = 48;
-    if (type == 2) maxNumber = 5;
-
+    var maxNumber = this.getItemsStoreCount(type);
     var sType = this.getStoreType(type);
     var sTypeNew = this.getStoreTypeNew(type);
     var multi = client.multi();

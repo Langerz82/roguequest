@@ -224,35 +224,25 @@ module.exports = Entity = cls.Class.extend({
 				this.orientation = Types.Orientations.DOWN;
 	    },
 
+      isNextToo: function (x,y,dist) {
+        dist = dist || G_TILESIZE;
+        return (Math.abs(this.x-x) <= dist && Math.abs(this.y-y) <= dist);
+      },
+
       isNextTooEntity: function (entity) {
           return this.isNextToo(entity.x, entity.y);
       },
 
-      isNextToo: function (x,y,o) {
-        var o = o || this.orientation;
-        var ts = G_TILESIZE;
-        //console.info("isNextToo:");
-        //console.info("dx:"+Math.abs(this.x-x));
-        //console.info("dy:"+Math.abs(this.y-y));
-        return (Math.abs(this.x-x) <= ts && Math.abs(this.y-y) <= ts);
-      },
-
-		/*drop: function (item,x,y) {
-			console.info(JSON.stringify(item));
-			console.info("drop x:"+x+",y:"+y);
-			if (item) {
-				console.info("drop x:"+x+",y:"+y);
-				return new Messages.Spawn(item);
-			}
-		}*/
       isWithin: function (entity) {
-        return ((Math.abs(entity.x-this.x) < (G_TILESIZE >> 1)) &&
-                (Math.abs(entity.y-this.y) < (G_TILESIZE >> 1)));
+        return this.isNextToo(entity.x,entity.y, (G_TILESIZE >> 1));
       },
 
       isTouching: function (entity) {
-        return ((Math.abs(entity.x-this.x) < G_TILESIZE) &&
-                (Math.abs(entity.y-this.y) < G_TILESIZE));
+        return this.isNextToo(entity.x,entity.y, (G_TILESIZE-1));
+      },
+
+      isOver: function (x, y) {
+          return this.isNextToo(x, y, (G_TILESIZE >> 1));
       },
 
       getSpriteName: function (spriteNum) {

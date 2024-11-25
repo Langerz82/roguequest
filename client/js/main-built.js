@@ -3525,92 +3525,86 @@ SkillEffects = {
 
 Types = {
     Messages: {
-      //BI_HEARTBEAT: 0,
-      BI_SYNCTIME: 100,
+      BI_SYNCTIME: 200,
 
       CS_CREATE_USER: 1,
       CS_LOGIN_USER: 2,
       CS_CREATE_PLAYER: 3,
       CS_LOGIN_PLAYER: 4,
       CS_REMOVE_USER: 5,
-      //CS_ZONE: 10,
-      CS_ITEMSLOT: 10,
-      CS_APPEARANCEUNLOCK: 11,
-      CS_ATTACK: 12,
-      CS_AUCTIONBUY: 13,
-      CS_AUCTIONDELETE: 14,
-      CS_AUCTIONOPEN: 15,
-      CS_AUCTIONSELL: 16,
-      CS_BANKRETRIEVE: 17,
-      CS_BANKSTORE: 18,
-      CS_CHAT: 19,
-      CS_COLOR_TINT: 20,
-      BI_BLOCK_MODIFY: 21,
-      CS_GOLD: 22,
-      CS_PARTY: 23,
-      BI_HARVEST: 24,
-      CS_USE_NODE: 25,
-      CS_LOADLOOKS: 26,
-      CS_LOOKUPDATE: 27,
-      CS_LOOT: 28,
-      CS_MOVE: 29,
-      CS_MOVEPATH: 30,
-      CS_PLAYER_REVIVE: 31,
-      CS_QUEST: 32,
-      //CS_ACHIEVEMENT: 33,
-      BI_SEND_BANK: 34,
-      BI_SEND_INVENTORY: 35,
-      CS_STATADD: 36,
-      CS_STOREBUY: 37,
-      CS_STOREENCHANT: 38,
-      CS_STOREREPAIR: 39,
-      CS_STORESELL: 40,
-      CS_TALKTONPC: 41,
-      CS_CRAFT: 42,
-      CS_TELEPORT_MAP: 43,
-      CS_WHO: 44,
-      CS_SKILL: 45,
-      CS_SHORTCUT: 46,
+      CS_ITEMSLOT: 6,
+      CS_APPEARANCEUNLOCK: 7,
+      CS_ATTACK: 8,
+      CS_AUCTIONBUY: 9,
+      CS_AUCTIONDELETE: 10,
+      CS_AUCTIONOPEN: 11,
+      CS_AUCTIONSELL: 12,
+      CS_BANKRETRIEVE: 13,
+      CS_BANKSTORE: 14,
+      CS_CHAT: 15,
+      CS_COLOR_TINT: 16,
+      CS_BLOCK_MODIFY: 17,
+      CS_GOLD: 18,
+      CS_PARTY: 19,
+      CS_HARVEST: 20,
+      CS_USE_NODE: 21,
+      CS_LOOKUPDATE: 22,
+      CS_LOOT: 23,
+      CS_MOVE: 24,
+      CS_MOVEPATH: 25,
+      CS_QUEST: 26,
+      CS_STATADD: 27,
+      CS_STOREBUY: 28,
+      CS_STORE_MODITEM: 29,
+      CS_STORESELL: 30,
+      CS_TALKTONPC: 31,
+      CS_CRAFT: 32,
+      CS_TELEPORT_MAP: 33,
+      CS_WHO: 34,
+      CS_SKILL: 35,
+      CS_SHORTCUT: 36,
 
-      SC_ERROR: 60,
-      SC_WORLDS: 61,
-      SC_VERSION: 62,
-      SC_PLAYER_SUM: 63,
-      SC_PLAYER: 64,
-      SC_ACHIEVEMENT: 65,
-      SC_AUCTIONOPEN: 66,
-      SC_ITEMSLOT: 67,
-      SC_CHANGEPOINTS: 68,
-      SC_CHAT: 69,
-      SC_COLOR_TINT: 70,
-      SC_DAMAGE: 71,
-      SC_DESPAWN: 72,
-      SC_SWAPSPRITE: 73,
-      SC_APPEARANCE: 74,
-      SC_GOLD: 75,
-      SC_PARTY: 76,
-      BI_PLAYERINFO: 77,
-      SC_ITEMLEVELUP: 78,
-      SC_STAT: 79,
-      SC_LEVELUP: 80,
-      SC_LIST: 81,
-      SC_LOOKS: 82,
-      SC_LOG: 83,
-      //SC_LOOKUPDATE: 84,
-      SC_MOVE: 85,
-      SC_MOVEPATH: 86,
-      SC_NOTIFY: 87,
-      SC_QUEST: 88,
-      SC_SKILLEFFECTS: 89,
-      SC_SKILLLOAD: 90,
-      SC_SPAWN: 91,
-      SC_SPEECH: 92,
-      SC_STATINFO: 93,
-      SC_TELEPORT_MAP: 94,
-      SC_SKILL_XP: 95,
-      SC_DIALOGUE: 96,
-      SC_SET_SPRITE: 97,
-      SC_SET_ANIMATION: 98,
+      SC_ERROR: 100,
+      SC_WORLDS: 101,
+      SC_VERSION: 102,
+      SC_PLAYER_SUM: 103,
+      SC_PLAYER: 104,
+      SC_ACHIEVEMENT: 105,
+      SC_AUCTIONOPEN: 106,
+      SC_ITEMSLOT: 107,
+      SC_CHANGEPOINTS: 108,
+      SC_CHAT: 109,
+      SC_COLOR_TINT: 110,
+      SC_DAMAGE: 111,
+      SC_DESPAWN: 112,
+      SC_SWAPSPRITE: 113,
+      SC_APPEARANCE: 114,
+      SC_GOLD: 115,
+      SC_PARTY: 116,
+      SC_PLAYERINFO: 117,
+      SC_ITEMLEVELUP: 118,
+      SC_STAT: 119,
+      SC_LEVELUP: 120,
+      SC_LIST: 121,
+      SC_LOOKS: 122,
+      SC_LOG: 123,
+      SC_HARVEST: 124,
+      SC_MOVE: 125,
+      SC_MOVEPATH: 126,
+      SC_NOTIFY: 127,
+      SC_QUEST: 128,
+      SC_SKILLEFFECTS: 129,
+      SC_SKILLLOAD: 130,
+      SC_SPAWN: 131,
+      SC_SPEECH: 132,
+      SC_STATINFO: 133,
+      SC_TELEPORT_MAP: 134,
+      SC_SKILL_XP: 135,
+      SC_DIALOGUE: 136,
+      SC_SET_SPRITE: 137,
+      SC_SET_ANIMATION: 138,
+      SC_BLOCK_MODIFY: 139,
+      SC_PLAYERINFO: 140      
     },
 
     Orientations: {
@@ -6532,23 +6526,25 @@ define('entity/entity',['../timer'], function(Timer) {
           return this.fadingTimer.getRatio(time);
         },
 
-        isWithin: function (x, y, dist)
-        {
+        isNextToo: function (x,y,dist) {
           dist = dist || G_TILESIZE;
-          var dx = Math.abs(this.x - x);
-          var dy = Math.abs(this.y - y);
-          //if (dx + dy > dist) return false;
-          if (dx <= dist && dy <= dist)
-            return true;
-          return false;
+          return (Math.abs(this.x-x) <= dist && Math.abs(this.y-y) <= dist);
+        },
+
+        isNextTooEntity: function (entity) {
+            return this.isNextToo(entity.x, entity.y);
+        },
+
+        isWithin: function (entity) {
+          return this.isNextToo(entity.x,entity.y, (G_TILESIZE >> 1));
+        },
+
+        isTouching: function (entity) {
+          return this.isNextToo(entity.x,entity.y, (G_TILESIZE-1));
         },
 
         isOver: function (x, y) {
-            return this.isWithin(x, y, G_TILESIZE >> 1);
-        },
-
-        isTouching: function (x, y) {
-            return this.isWithin(x, y, G_TILESIZE);
+            return this.isNextToo(x, y, (G_TILESIZE >> 1));
         },
 
         isOverlapping: function() {
@@ -16882,11 +16878,11 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 					this.handlers[Types.Messages.SC_DIALOGUE] = this.dialogue_callback;
 					this.handlers[Types.Messages.SC_STATINFO] = this.statInfo_callback;
 					this.handlers[Types.Messages.SC_TELEPORT_MAP] = this.teleportmap_callback;
-					this.handlers[Types.Messages.BI_BLOCK_MODIFY] = this.block_callback;
+					this.handlers[Types.Messages.SC_BLOCK_MODIFY] = this.block_callback;
 					this.handlers[Types.Messages.SC_PARTY] = this.party_callback;
 					this.handlers[Types.Messages.SC_LOOKS] = this.looks_callback;
-					this.handlers[Types.Messages.BI_PLAYERINFO] = this.playerinfo_callback;
-					this.handlers[Types.Messages.BI_HARVEST] = this.harvest_callback;
+					this.handlers[Types.Messages.SC_PLAYERINFO] = this.playerinfo_callback;
+					this.handlers[Types.Messages.SC_HARVEST] = this.harvest_callback;
 
 					this.handlers[Types.Messages.SC_SET_SPRITE] = this.set_sprite_callback;
 					this.handlers[Types.Messages.SC_SET_ANIMATION] = this.set_animation_callback;
@@ -17349,7 +17345,7 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
         },
 
 				sendPlayerInfo: function () {
-					this.sendMessage([Types.Messages.BI_PLAYERINFO]);
+					this.sendMessage([Types.Messages.CS_REQUEST, 2]);
 				},
 
         sendAuctionOpen: function(type) {
@@ -17366,10 +17362,10 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
         },
 
         sendStoreEnchant: function(type, index) { // type 1 = Inventory, 2 = Equipment.
-            this.sendMessage([Types.Messages.CS_STOREENCHANT, type, index]);
+            this.sendMessage([Types.Messages.CS_STORE_MODITEM, 1, type, index]);
         },
         sendStoreRepair: function(type, index) { // type 1 = Inventory, 2 = Equipment.
-            this.sendMessage([Types.Messages.CS_STOREREPAIR, type, index]);
+            this.sendMessage([Types.Messages.CS_STORE_MODITEM, 0, type, index]);
         },
 
         /*sendBankStore: function(itemSlot) {
@@ -17386,11 +17382,15 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
         	this.sendMessage([Types.Messages.CS_MAP_STATUS, mapId, status]);
         },
         sendPlayerRevive: function () {
-        	this.sendMessage([Types.Messages.CS_PLAYER_REVIVE]);
+        	this.sendMessage([Types.Messages.CS_REQUEST, 1]);
         },
         sendColorTint: function(type, value) {
         	this.sendMessage([Types.Messages.CS_COLOR_TINT, type, value]);
         },
+
+				sendAppearanceList: function() {
+					this.sendMessage([Types.Messages.CS_REQUEST, 0]);
+				},
 
 				sendAppearanceUnlock: function(index, buy) {
 					buy = buy || 0;
@@ -17401,10 +17401,6 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 					this.sendMessage([Types.Messages.CS_LOOKUPDATE, type, id]);
 				},
 
-				/*sendLooks: function () {
-					this.sendMessage([Types.Messages.CS_LOADLOOKS]);
-				},*/
-
 				sendAddStat: function(statType, points) {
 					this.sendMessage([Types.Messages.CS_STATADD, statType, points]);
 				},
@@ -17414,7 +17410,7 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 				},
 
 				sendBlock: function (type, id, x, y) {
-					this.sendMessage([Types.Messages.BI_BLOCK_MODIFY, type, id, x, y]);
+					this.sendMessage([Types.Messages.CS_BLOCK_MODIFY, type, id, x, y]);
 				},
 
 				sendPartyInvite: function(name, status) { // 0 for request, 1, for yes, 2 for no.
@@ -17437,7 +17433,7 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
         },
 
 				sendHarvest: function(x, y) {
-            this.sendMessage([Types.Messages.BI_HARVEST, x, y]);
+            this.sendMessage([Types.Messages.CS_HARVEST, x, y]);
         },
 
 				sendHarvestEntity: function(entity) {
@@ -18805,6 +18801,14 @@ function(UserClient, Player, AppearanceData) {
           return true;
         };
 
+        player.canMove = function (orientation) {
+          orientation = orientation || this.orientation;
+          var pos = this.nextMove(this.x,this.y,orientation);
+          if (orientation == 0)
+            return true;
+          return game.moveCharacter(this, pos[0], pos[1]);
+        };
+
         player.sendMove = function (state) {
           if (state || this.sentMove != state) {
             game.client.sendMoveEntity(this, state);
@@ -18828,17 +18832,7 @@ function(UserClient, Player, AppearanceData) {
 
           log.info("background - free delay =" + G_LATENCY);
 
-          //this.freeze = true;
-
-          //this.idle();
-          //clearTimeout(this.moveTimeout);
           this.fsm = "MOVEPATH";
-          /*this.moveTimeout = setTimeout(function() {
-            //self.freeze = false;
-            //self.walk();
-            //self.fsm = "MOVEPATH";
-
-          }, G_LATENCY);*/
           this.walk();
           return this._moveTo(x, y, callback);
         };
@@ -18865,7 +18859,13 @@ function(UserClient, Player, AppearanceData) {
                 return;
             }
 
+            if (!this.canMove(orientation)) {
+              //this.forceStop();
+              return;
+            }
+
             this.setOrientation(orientation);
+
             this.harvestOff();
             this.forceStop();
 
@@ -25905,7 +25905,7 @@ define('dialog/appearancedialog',['./dialog', '../tabbook', '../tabpage', 'data/
         },
 
         open: function() {
-            game.client.sendAppearanceUnlock(-1);
+            game.client.sendAppearanceList();
         },
 
 
@@ -26148,7 +26148,7 @@ define('dialog/appearancedialog',['./dialog', '../tabbook', '../tabpage', 'data/
             this.rescale();
 
             this.storeFrame.open();
-            game.client.sendAppearanceUnlock(-1);
+            game.client.sendAppearanceList();
             //game.client.sendLooks();
 
             $('#storeDialog .frameheadingtext').text('LOOKS');
@@ -35470,8 +35470,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   if (entity2.isDead || entity2.isDying)
                     continue;
 
-                  if (!entity2.isWithin(entity.x,entity.y, G_TILESIZE-1) &&
-                      entity2.isWithin(x, y, G_TILESIZE-1))
+                  if (!entity2.isWithin(entity) &&
+                      entity2.isWithin({x:x, y:y}))
                     return true;
                 }
                 return false;

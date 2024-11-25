@@ -521,7 +521,7 @@ Messages.PlayerInfo = Message.extend({
         this.player = player;
     },
     serialize: function () {
-        return [Types.Messages.BI_PLAYERINFO,
+        return [Types.Messages.SC_PLAYERINFO,
           this.player.exp.base,
           this.player.exp.attack,
           this.player.exp.defense,
@@ -589,7 +589,7 @@ Messages.Harvest = Message.extend({
         this.gy = gy;
     },
     serialize: function () {
-        var arr = [Types.Messages.BI_HARVEST,
+        var arr = [Types.Messages.SC_HARVEST,
           this.id,
           this.action,
           this.gx,
