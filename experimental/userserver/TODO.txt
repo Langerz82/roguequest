@@ -1,0 +1,4 @@
+TODO
+FIXED - Fix the MoveQueue check to be in PlayerController.
+
+DONE - Replace getClosestSpot Manhatten distance with Hypotenuse.

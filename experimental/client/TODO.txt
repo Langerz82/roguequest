@@ -1,0 +1,78 @@
+TODO:
+
+FIX BUG Player sometimes jams and moves across with the wrong orientation.
+  user.js, player.move
+
+Add semi-transparent black to chat window.
+Adjust shortcut bar window.
+Equipping bow does not change animation.
+  - Slight bug when swapping to bow, Bow armor sprite does not swap.
+Chat button doesnt activate enter text prompt.
+
+
+Update shortcut equipment count when activating item.
+
+Harvest Entity sometimes does not remove Sword when destroying any.
+When NPC is targeted it's not shifting the target to an enemy next to the player.
+
+
+TEST - Also in enchant and repair make item deselected when Enchanting or repairing.
+TEST - Enchant and possibly Repair does not work for new equipment slots.
+
+
+NEED TEST - MAJOR FIX NEEDED: Craft Items can be duped swapping inventory slots.
+
+NEEDS TEST - Items in the Enchant that are not weapons or armor can be duped.
+TEST - You can swap a potion with a armor/weapon item, and they move into the shortcut slots.
+
+DONE - Sometimes the player when using auto-pathing wanders right off the screen.
+
+FIXED -Dropping Items jams the player when using direction keys and prob gamepad.
+DONE - Targeting NPC when nothing targetted looks for a near Mob, when it should just select the npc.
+
+
+COMPLETED:
+
+I think ok - Check messaging between clients.
+Not sure - Add auction price notify change in client.
+DONE - Smooth out key moves between clients.
+OK - Reduce size of dropped itemloot.
+done - Fix skills to scale with screen.
+done - Combat bar does not re-scale green bar width.
+done - Chatlog is hard to read on gamescale 2.
+done - Add username. not playername to store donations.
+test - Bubbles need adjustment.
+done - Tested stats change.
+Working - app.js:403 - Width and Height not clamping mouse properly.
+
+TODO:
+FIXED - Get equipment working so can equip/unequip etc.
+  NOTE-dragging to equipment does nothing otherwise working.
+  NOTE-Also bug in swapping items which has been fixed.
+
+FIXED - Character isnt in center of the screen.
+
+FIXED - Shortcuts key assignments and display in screen.
+
+Add Fatigue system to game to make use of energybar.
+
+Low priority - Entity sprite can go underneath some sprites and ordering is not preserved.
+
+IMPORTANT:
+
+FIXED - Spawning from TOwn to forest with keys does not work, needs to be implemented.
+FIXED - No gold is being added from Server.
+
+FIXED - Fix speech bubble alignment in renderer.
+  - Needs more test.
+
+Fixed in client needs rollout - Creating new character the default select Char is loading, not new char.
+
+Needs test - 4k Compatible display.
+
+Complete - WASD Keys for movement.
+  - Already done.
+
+FIXED - Fix Avatar Preview in HUD and in Looks Dialog. (Scale=2).
+
+TODO - Add attack and Target buttons for joystick mode.
