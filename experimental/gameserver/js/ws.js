@@ -290,13 +290,6 @@ WS.userConnection = Connection.extend({
         var connectString = config.protocol+'://'+config.user_address+':'+config.user_port;
         this._connection = io_client.connect(connectString, {reconnect: true});
 
-        this._connection.on('connect', function (socket) {
-            console.info('CONNECTING! YAYYYY');
-
-            if (self.connectionUserCallback)
-              self.connectionUserCallback(self);
-        });
-
         this._connection.on('message', function (msg) {
           console.info("m="+msg);
           var flag = msg.charAt(0);
@@ -329,6 +322,13 @@ WS.userConnection = Connection.extend({
               }
             }
           }
+        });
+
+        this._connection.on('connect', function (socket) {
+            console.info('CONNECTING! YAYYYY');
+
+            if (self.connectionUserCallback)
+              self.connectionUserCallback(self);
         });
 
         /*this._userConn.on('connection', function (socket) {

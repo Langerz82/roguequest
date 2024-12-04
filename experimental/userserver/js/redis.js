@@ -607,23 +607,28 @@ loadAchievements: function(playername, callback) {
     });
   },
 
-  saveAuctions: function(worldIndex, data) {
+  saveAuctions: function(worldIndex, data, callback) {
     console.info("redis - saveAuctions: "+JSON.stringify(data));
     client.del('s:auction');
+    client.del('s:auction'+worldIndex);
     var multi = client.multi();
-    for (var i = 0; i < Object.keys(data).length; ++i) {
+    for (var i = 0; i < data.length; ++i) {
         multi.hset('s:auction'+worldIndex, i, data[i]);
     }
-    multi.exec(function(err, replies) {
-      if (err)
-        console.error("saveAuctions: "+JSON.stringify(err));
+    multi.exec(function(err, data) {
+      if (err) {
+        console.error("redis - saveAuctions: "+JSON.stringify(err));
+        return;
+      }
+      if (callback)
+        callback();
     });
   },
 // END AUCTION DB CALLS.
 
 // START LOOKS DB CALLS.
   loadLooks: function (worldIndex, callback) {
-    client.hget("l:looks", "prices", function (err, data)
+    client.hget("l:looks"+worldIndex, "prices", function (err, data)
     {
       if (err || !data || data == "") {
         console.warn(err);
@@ -638,14 +643,17 @@ loadAchievements: function(playername, callback) {
     });
   },
 
-  saveLooks: function (worldIndex, looks) {
+  saveLooks: function (worldIndex, looks, callback) {
     console.info("redis - saveLooks: "+JSON.stringify(looks));
-    client.hset('l:looks', 'prices', looks.join(','), function(err, data) {
-      if (err || !data || data == "") {
-        console.warn(err);
-        console.warn(JSON.stringify(data));
+    client.del('l:looks');
+    client.del('l:looks'+worldIndex);
+    client.hset('l:looks'+worldIndex, 'prices', looks.join(","), function(err, data) {
+      if (err) {
+        console.warn("redis - saveLooks:" + JSON.stringify(err));
         return;
       }
+      if (callback)
+        callback();
     });
   },
 // END LOOKS DB CALLS.

@@ -66,6 +66,7 @@ mobState = {
 SAVING_SERVER = false;
 AUCTION_SAVED = false;
 PLAYERS_SAVED = false;
+LOOKS_SAVED = false;
 
 //GDATE = new Date();
 
@@ -211,14 +212,14 @@ function main(config) {
     server.userConn.onConnectUser(function (conn) {
       console.info("onConnectUser - Connected");
       this.send([GameTypes.UserMessages.WU_CONNECT_WORLD]);
-      var msg = new UserMessages.ServerInfo(world.name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
-      this.send(msg.serialize());
+      //var msg = new UserMessages.ServerInfo(world.name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
+      //this.send(msg.serialize());
 
       console.info("server.enterWorld");
       //console.info(JSON.stringify(conn));
       userHandler = new UserHandler(self, conn, world);
       world.userHandler = userHandler;
-
+      userHandler.sendWorldInfo(config);
       //world.hashChallenge = conn.hash;
       //world.world = world;
     });
@@ -269,12 +270,17 @@ function main(config) {
   /*server._ioServer.connect(1342, "localhost", function () {
     console.info("connected");
   })*/
+  var exit = function () {
+    var proc = process;
+    setTimeout(function () { proc.exit(0); }, 1000);
+  };
 
   var signalHandler = function () {
     closeServer();
-    sleep(250);
+    sleep(2000);
     checkSaved();
-    process.exit();
+    sleep(2000);
+    exit();
   };
 
   process.on('SIGINT', signalHandler)
@@ -390,21 +396,23 @@ function reloadAuction() {
 
 function checkSaved() {
   var allSaved = setInterval(function () {
-    if (PLAYERS_SAVED && AUCTION_SAVED)
+    if (PLAYERS_SAVED && AUCTION_SAVED && LOOKS_SAVED)
     {
       clearInterval(allSaved);
-      process.exit(1);
+      //process.exit(0);
     }
   }, 500);
-
 }
+
 var serverClosed = false;
 function closeServer() {
-  if (serverClosed)
-    return;
-  serverClosed = true;
-  readline.close();
   saveServer();
+  /*if (serverClosed)
+    return;
+  setTimeout(function () {
+    serverClosed = true;
+  }, 1000);*/
+  readline.close();
 }
 
 function sleep(ms) {
@@ -415,6 +423,9 @@ function saveServer() {
   console.log("saving server!")
   SAVING_SERVER = true;
   world.save();
+  console.log("saving server!")
+  sleep(1000);
+  console.log("saving server!")
 }
 
 function getWorldDistribution(worlds) {

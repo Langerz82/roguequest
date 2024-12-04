@@ -12,9 +12,8 @@ module.exports = AuctionRecord = cls.Class.extend({
     },
 
     save: function (index) {
-        var cols = [this.playerName,
-          this.price];
-        return cols.join(",") + "," + this.item.save();
+        return [this.playerName,
+          this.price].join(",") + "," + this.item.save();
     },
 
     toArray: function (index) {
@@ -34,15 +33,14 @@ module.exports = Auction = cls.Class.extend({
     load: function (data)
     {
       var self = this;
-      console.info("AUCTIONS LOAD");
+      console.info("auction - load: "+JSON.stringify(data));
 
       if (!data)
         return;
 
       auctions = [];
-      for (var i = 0; i < Object.keys(data).length; ++i) {
-        var rec = data[i];
-        var sData = rec.split(",");
+      for (var i = 0; i < Object.keys(data[0]).length; ++i) {
+        var sData = data[0][i].split(",");
         var record = new AuctionRecord(sData[0],
           parseInt(sData[1]),
           new ItemRoom(parseInt(sData[2]),
@@ -59,16 +57,13 @@ module.exports = Auction = cls.Class.extend({
 
     save: function ()
     {
-      console.info("AUCTION SAVED");
-
-      if (!this.auctions)
-        return;
+      console.info("auction - save: "+JSON.stringify(this.auctions));
 
       var data = [];
       var auctions = this.auctions;
-      for (var i = 0; i < Object.keys(auctions).length; ++i) {
-        if (auctions[i])
-          data.push(auctions[i].save(i));
+      for(var i in auctions) {
+        auction = auctions[i];
+        data.push(auction.save(i));
       }
 
       if (world.userHandler) {

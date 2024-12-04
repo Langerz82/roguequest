@@ -219,7 +219,9 @@ module.exports = World = cls.Class.extend(
           }
       }
       this.auction.save();
+      AUCTION_SAVED = true;
       this.looks.save();
+      LOOKS_SAVED = true;
     },
 
     update: function () {

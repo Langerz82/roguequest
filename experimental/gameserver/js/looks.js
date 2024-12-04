@@ -30,7 +30,7 @@ module.exports = Looks = cls.Class.extend({
       if (!data)
         this.reset();
 
-      this.prices = data.split(",");
+      this.prices = data;
     },
 
     save: function ()

@@ -12,9 +12,7 @@ var Message = cls.Class.extend({
 });
 
 UserMessages.SavePlayerAuctions = Message.extend({
-    init: function (userName, data, hash) {
-    	this.userName = userName;
-      this.hash = hash;
+    init: function (data) {
       this.data = data;
     },
     serialize: function () {

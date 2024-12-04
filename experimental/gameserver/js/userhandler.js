@@ -73,6 +73,13 @@ module.exports = UserHandler = cls.Class.extend({
               case Types.UserMessages.UW_LOAD_PLAYER_LOOKS:
                 self.handleLoadPlayerLooks(message);
                 return;
+              /*case Types.UserMessages.UW_SAVED_PLAYER_AUCTIONS:
+                self.handleSavedPlayerAuctions(message);
+                return;
+              case Types.UserMessages.UW_SAVED_PLAYER_LOOKS:
+                self.handleSavedPlayerLooks(message);
+                return;
+              */
 
             }
           //}
@@ -156,13 +163,23 @@ module.exports = UserHandler = cls.Class.extend({
       return true;
     },*/
 
+    /*handleSavedPlayerAuctions: function (msg) {
+      console.info("handleSavedPlayerAuctions: "+JSON.stringify(msg));
+      AUCTION_SAVED = true;
+    },
+
+    handleSavedPlayerLooks: function (msg) {
+      console.info("handleSavedPlayerLooks: "+JSON.stringify(msg));
+      LOOKS_SAVED = true;
+    },*/
+
     handleLoadPlayerAuctions: function (msg) {
       console.info("handleLoadPlayerAuctions: "+JSON.stringify(msg));
 
       if (!msg)
         return;
 
-      this.server.auctions.load(msg);
+      this.server.auction.load(msg);
     },
 
     handleLoadPlayerLooks: function (msg) {
@@ -352,6 +369,11 @@ module.exports = UserHandler = cls.Class.extend({
         this.connection.send(msg.serialize());
       else
         console.info("userHandler: sendToUserServer called without connection being set: "+JSON.stringify(msg.serialize()));
+    },
+
+    sendWorldInfo: function (config) {
+      var msg = new UserMessages.ServerInfo(this.server.name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
+      this.sendToUserServer( msg);
     },
 
     sendAuctionsData: function (data) {

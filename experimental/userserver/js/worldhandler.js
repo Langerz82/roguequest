@@ -97,17 +97,24 @@ module.exports = WorldHandler = cls.Class.extend({
       console.info("handleSavePlayerAuctions: "+JSON.stringify(msg));
 
       DBH.saveAuctions(this.worldIndex, msg);
+      /*DBH.saveAuctions(this.worldIndex, msg, function () {
+        self.send([Types.UserMessages.UW_SAVED_PLAYER_AUCTIONS]);
+      });*/
     },
 
     handleSavePlayerLooks: function (msg) {
+      var self = this;
       console.info("handleSavePlayerLooks: "+JSON.stringify(msg));
 
-      var data = msg.join(",");
-      DBH.saveLooks(this.worldIndex, data);
+      DBH.saveLooks(this.worldIndex, msg);
+      /*DBH.saveLooks(this.worldIndex, msg, function () {
+        self.send([Types.UserMessages.UW_SAVED_PLAYER_LOOKS]);
+      });*/
     },
 
     handleGameServerInfo: function (msg) {
       console.info("handleGameServerInfo: "+JSON.stringify(msg));
+      var self = this;
 
       var world = {
         name: msg[0],
@@ -142,6 +149,11 @@ module.exports = WorldHandler = cls.Class.extend({
 
       this.sendAuctionsToWorld(this.worldIndex);
       this.sendLooksToWorld(this.worldIndex);
+
+      /*setTimeout(function () {
+        self.sendAuctionsToWorld(self.worldIndex);
+        self.sendLooksToWorld(self.worldIndex);
+      }, 1000);*/
     },
 
     handleSaveUserInfo: function (msg) {
@@ -261,15 +273,26 @@ module.exports = WorldHandler = cls.Class.extend({
     sendAuctionsToWorld: function (worldindex) {
       var self = this;
       DBH.loadAuctions(worldindex, function (worldIndex, db_data) {
+        console.info("sendAuctionsToWorld: "+JSON.stringify(db_data));
         self.sendMessage( new UserMessages.PlayerAuctions(db_data));
       });
     },
+
+
 
     sendLooksToWorld: function (worldindex) {
       var self = this;
       DBH.loadLooks(worldindex, function (worldIndex, db_data) {
         self.sendMessage( new UserMessages.PlayerLooks(db_data));
       });
+    },
+
+    sendAuctionsSavedToWorld: function () {
+      this.send([UW_SAVED_PLAYER_AUCTIONS]);
+    },
+
+    sendLooksSavedToWorld: function () {
+      this.send([UW_SAVED_PLAYER_LOOKS]);
     },
 
     sendPlayerToWorld: function (user, username, playername) {
