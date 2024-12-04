@@ -4,14 +4,14 @@ var Types = require('../shared/js/gametypes');
 var Utils = require('./utils');
 //var Quest = require('./quest');
 
-var Messages = {};
-module.exports = Messages;
+var UserMessages = {};
+module.exports = UserMessages;
 
 var Message = cls.Class.extend({
 
 });
 
-Messages.WorldReady = Message.extend({
+UserMessages.WorldReady = Message.extend({
     init: function (user, protocol, address, port) {
     	this.user = user;
       this.protocol = protocol;
@@ -29,7 +29,27 @@ Messages.WorldReady = Message.extend({
     }
 });
 
-Messages.UserInfo = Message.extend({
+UserMessages.PlayerAuctions = Message.extend({
+    init: function (data) {
+      this.data = data;
+    },
+    serialize: function () {
+        var arr = [Types.UserMessages.UW_LOAD_PLAYER_AUCTIONS];
+        return arr.concat(this.data);
+    }
+});
+
+UserMessages.PlayerLooks = Message.extend({
+    init: function (data) {
+      this.data = data;
+    },
+    serialize: function () {
+        var arr = [Types.UserMessages.UW_LOAD_PLAYER_LOOKS];
+        return arr.concat(this.data);
+    }
+});
+
+UserMessages.UserInfo = Message.extend({
     init: function (userName, data, hash) {
     	this.userName = userName;
       this.hash = hash;
@@ -41,7 +61,7 @@ Messages.UserInfo = Message.extend({
     }
 });
 
-Messages.PlayerInfo = Message.extend({
+UserMessages.PlayerInfo = Message.extend({
     init: function (playerName, data) {
     	this.playerName = playerName;
       this.data = data;
@@ -52,7 +72,7 @@ Messages.PlayerInfo = Message.extend({
     }
 });
 
-Messages.PlayerQuests = Message.extend({
+UserMessages.PlayerQuests = Message.extend({
     init: function (playerName, data) {
     	this.playerName = playerName;
       this.data = data;
@@ -63,7 +83,7 @@ Messages.PlayerQuests = Message.extend({
     }
 });
 
-Messages.PlayerAchievements = Message.extend({
+UserMessages.PlayerAchievements = Message.extend({
     init: function (playerName, data) {
     	this.playerName = playerName;
       this.data = data;
@@ -74,7 +94,7 @@ Messages.PlayerAchievements = Message.extend({
     }
 });
 
-Messages.PlayerItems = Message.extend({
+UserMessages.PlayerItems = Message.extend({
     init: function (playerName, type, data) {
     	this.playerName = playerName;
       this.type = type;

@@ -163,8 +163,9 @@ module.exports = Player = Character.extend({
         this.loaded = 0;
     },
 
-    start: function (connection) {
+    start: function (worldHandler, connection) {
 
+      this.worldHandler = worldHandler;
       this.connection = connection;
       this.id = connection.id;
 
@@ -538,7 +539,7 @@ module.exports = Player = Character.extend({
       console.info("sendMessage");
       var i = 0;
       var sendMessage = [
-          Types.Messages.SC_PLAYER,
+          Types.Messages.WC_PLAYER,
           0,
           Date.now(),
           self.id,
@@ -635,8 +636,8 @@ module.exports = Player = Character.extend({
       var len = Object.keys(self.shortcuts).length;
       sendMessage.push(len);
       var sc;
-      for(var sc in self.shortcuts) {
-        sc = self.shortcuts[sc];
+      for(var id in self.shortcuts) {
+        sc = self.shortcuts[id];
         if (sc) {
           sendMessage.push(parseInt(sc[0]));
           sendMessage.push(parseInt(sc[1]));
@@ -736,7 +737,7 @@ module.exports = Player = Character.extend({
         }
 
         if (db_player.completeQuests)
-          self.completeQuests = db_player.completeQuests;
+          self.completeQuests = (db_player.completeQuests) ? db_player.completeQuests : {};
         //self.stats.hpMax = self.getHpMax();
         //self.stats.epMax = self.getEpMax();
         self.setHP();
@@ -753,7 +754,22 @@ module.exports = Player = Character.extend({
         }
         self.skillHandler.setSkills(self, db_player.skills);
 
-        self.shortcuts = db_player.shortcuts;
+        // Needs to convert shortcut into optimum data structure while
+        // remaining compatibiltity with old structures.
+        if (Array.isArray()) {
+          for (var shortcut of db_player.shortcuts)
+          {
+            if (shortcut)
+              self.shortcuts[shortcut[0]] = shortcut;
+          }
+        } else {
+          for (var sid in db_player.shortcuts)
+          {
+            var shortcut = db_player.shortcuts[sid];
+            if (shortcut)
+              self.shortcuts[sid] = shortcut;
+          }
+        }
 
         self.attackTimer = Date.now();
         self.server.connect_callback(self);
@@ -1014,104 +1030,6 @@ module.exports = Player = Character.extend({
     }
   },
 
-  loadPlayerUserInfo: function (userName, callback) {
-
-    var data = [
-      this.user.gems,
-      Utils.BinToHex(this.user.looks)];
-
-    if (callback)
-      callback(userName, data);
-  },
-
-  loadPlayerInfo: function (playerName, callback) {
-    var player = this;
-    var stats = [
-      player.stats.attack,
-      player.stats.defense,
-      player.stats.health,
-      player.stats.energy,
-      player.stats.luck,
-      player.stats.free];
-
-    var exps = [
-      Utils.NaN2Zero(player.exp.base),
-      Utils.NaN2Zero(player.exp.attack),
-      Utils.NaN2Zero(player.exp.defense),
-      Utils.NaN2Zero(player.exp.move),
-      Utils.NaN2Zero(player.exp.sword),
-      Utils.NaN2Zero(player.exp.bow),
-      Utils.NaN2Zero(player.exp.hammer),
-      Utils.NaN2Zero(player.exp.axe),
-      Utils.NaN2Zero(player.exp.logging),
-      Utils.NaN2Zero(player.exp.mining),
-    ];
-
-    var map = [
-      player.map.index,
-      player.x,
-      player.y,
-      player.orientation];
-
-    var skillexps = [];
-    for (var i =0 ; i < player.skills.length; ++i)
-      skillexps[i] = player.skills[i].skillXP;
-
-    var completeQuests = (Object.keys(player.completeQuests).length > 0) ? JSON.stringify(player.completeQuests) : 0;
-
-    var hexLooks = Utils.BinToHex(player.user.looks);
-
-    var data = [
-      player.name,
-      map.join(","),
-      stats.join(","),
-      exps.join(","),
-      player.gold.join(","),
-      skillexps.join(","),
-      player.pStats.join(","),
-      player.sprites.join(","),
-      player.colors.join(","),
-      JSON.stringify(player.shortcuts).join(","),
-      completeQuests];
-
-    if (callback)
-      callback(playerName, data);
-  },
-
-  loadPlayerQuests: function (playerName, callback) {
-    var player = self = this;
-
-    var quests = [];
-    for (var quest of this.quests)
-    {
-      if (!quest || quest.status == QuestStatus.COMPLETE  || _.isEmpty(quest))
-        continue;
-      quests.push(quest.toString());
-    }
-
-    if (callback)
-      callback(playerName, quests.join(','));
-  },
-
-  loadPlayerAchievements: function (playerName, callback) {
-    var player = self = this;
-
-    var data = "";
-    for (var achievement of this.achievements)
-    {
-        data += achievement.toRedis(achievement).join(',') + ",";
-    }
-
-    if (callback)
-      callback(playerName, data);
-  },
-
-  loadPlayerItems: function (playerName, type, callback) {
-    var player = self = this;
-
-    if (callback)
-      callback(playerName, type, player.itemStore[type].toStringJSON());
-  },
 
   /*loadPlayerUserInfo: function (userName, callback) {
 
@@ -1212,38 +1130,57 @@ module.exports = Player = Character.extend({
       callback(playerName, type, player.itemStore[type].toStringJSON());
   },*/
 
+  sendToUserServer: function (msg) {
+    if (this.world)
+      this.world.send(msg.serialize());
+    else {
+      console.warn("Player, sendToUserServer called without world being set. "+JSON.stringify(msg));
+    }
+  },
+
   save: function () {
-    var self = this;
+    //var self = this;
 
     console.info("SAVING PLAYER: "+this.name);
+
+    if (this.worldHandler)
+      this.worldHandler.savePlayer(this);
+    else {
+      console.warn("Player, save called without worldHandler being set. "+JSON.stringify(msg));
+    }
+/*
     //try { throw new Error(); } catch(err) { console.info(err.stack); }
+    var userName = this.user.name;
+    var playerName = this.name;
+
 
 // // TODO:
     this.loadPlayerUserInfo(userName, function (userName, db_data) {
-      self.sendToWorld( new Message.UserInfo(userName, db_data));
+      self.sendToUserServer( new UserMessages.SaveUserInfo(userName, db_data, ''));
 
       self.loadPlayerInfo(playerName, function (playerName, db_data) {
-        self.sendToWorld( new Message.PlayerInfo(playerName, db_data));
+        self.sendToUserServer( new UserMessages.SavePlayerInfo(playerName, db_data));
       });
 
       self.loadPlayerQuests(playerName, function (playerName, db_data) {
-        self.sendToWorld( new Message.PlayerQuests(playerName, db_data));
+        self.sendToUserServer( new UserMessages.SavePlayerQuests(playerName, db_data));
       });
       self.loadPlayerAchievements(playerName, function (playerName, db_data) {
-        self.sendToWorld( new Message.PlayerAchievements(playerName, db_data));
+        self.sendToUserServer( new UserMessages.SavePlayerAchievements(playerName, db_data));
       });
 
       self.loadPlayerItems(playerName, 0, function (playerName, type, db_data) {
-        self.sendToWorld( new Message.PlayerItems(playerName, type, db_data));
+        self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
       });
       self.loadPlayerItems(playerName, 1, function (playerName, type, db_data) {
-        self.sendToWorld( new Message.PlayerItems(playerName, type, db_data));
+        self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
       });
       self.loadPlayerItems(playerName, 2, function (playerName, type, db_data) {
-        self.sendToWorld( new Message.PlayerItems(playerName, type, db_data));
+        self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
       });
 
     });
+*/
   },
 
   isArcher: function () {

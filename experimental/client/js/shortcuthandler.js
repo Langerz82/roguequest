@@ -201,7 +201,7 @@ define(['data/skilldata', 'data/items'], function(SkillData, Items) {
 
     install: function (slot, type, index) {
       if (this.shortcuts[slot])
-        this.shortcuts[slot].install(type, index);
+        this.shortcuts[slot].install(slot, type, index);
     },
 
     exec: function (slot) {

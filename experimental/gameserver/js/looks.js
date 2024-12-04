@@ -4,12 +4,17 @@ var cls = require("./lib/class"),
 
 module.exports = Looks = cls.Class.extend({
     init: function(){
-        var length = AppearanceData.Data.length;
-        this.prices = new Array(length);
-        this.load();
+        this.prices = [];
+        this.reset();
+    },
 
+    reset: function ()
+    {
+        console.info("LOOKS INIT");
+
+        var length = AppearanceData.Data.length;
         for (var i = 0; i < length; i++) {
-          this.prices[i] = 500;
+          this.prices.push(500);
         }
         this.prices[0] = 0; // Sword1
         this.prices[50] = 0; // WoodenBow
@@ -17,18 +22,29 @@ module.exports = Looks = cls.Class.extend({
         this.prices[151] = 0; // Cloth armor
     },
 
-    load: function ()
+    load: function (data)
     {
-      console.info("LOOKS LOAD");
-      databaseHandler.loadLooks(this.prices);
+      var self = this;
+      console.info("LOOKS LOAD: "+JSON.stringify(data));
+
+      if (!data)
+        this.reset();
+
+      this.prices = data.split(",");
     },
 
     save: function ()
     {
       console.info("LOOKS SAVED");
-      if (this.prices)
-        databaseHandler.saveLooks(this.prices);
 
+      if (!this.prices)
+        return;
+
+      data = this.prices.join(",");
+      if (world.userHandler) {
+        world.userHandler.sendLooksData(data);
+      }
+// TODO
     },
 
     modPrice: function (index, modPrice) {

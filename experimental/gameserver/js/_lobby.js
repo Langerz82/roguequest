@@ -17,17 +17,17 @@ module.exports = Lobby = World.extend({
     loadInfo: function(player) {
         if (this.server) {
             this.sendPlayerToLobby(player);
-            
+
             this.playerName = player.name;
-            
+
             if (player && player.id && !this.hasLoggedIn) {
                 this.hasLoggedIn = true;
                 databaseHandler.loadPlayer(player);
-                
+
             }
-        }  
+        }
     },
-    
+
     updatePlayerCount: function() {
         var playersUpdate = this.server.getPlayerCount();
         this.playersOnline = playersUpdate;
@@ -37,7 +37,7 @@ module.exports = Lobby = World.extend({
         this.loadPlayerHighscores();
         this.loadWorldCount();
     },
-    
+
     getPlayerByNameInLobby: function(name) {
         for(var id in this.lobbyPlayers) {
             if(this.lobbyPlayers[id].name === name){
@@ -53,33 +53,33 @@ module.exports = Lobby = World.extend({
                     count++;
                 }
             }
-        
-        
+
+
         return count;
     },
     addPlayerFriends: function(player) {
-        
+
     },
-    
+
     loadPlayerFriendList: function(player) {
-        
-    
+
+
     },
-    
+
     loadPlayerIgnores: function() {
-        
-          
+
+
     },
-    
+
     loadPlayerHighscores: function() {
         databaseHandler.loadHighscores();
     },
-    
+
     loadLobbyCount: function() {
         var lobbyCount = this.getPlayerCountInLobby();
         return lobbyCount;
     },
-    
+
     loadWorldCount: function() {
         if (this.playersOnline != 0) {
             setInterval(function() {
@@ -87,6 +87,6 @@ module.exports = Lobby = World.extend({
             }, 1500);
         }
     }
-    
-    
+
+
 });

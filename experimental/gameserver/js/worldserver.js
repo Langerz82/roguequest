@@ -33,6 +33,8 @@ var cls = require("./lib/class"),
     Pathfinder = require("./pathfinder"),
     NotifyData = require("./data/notificationdata.js"),
     Updater = require("./updater"),
+    Auction = require("./auction"),
+    Looks = require("./looks"),
     Party = require("./party"),
     TaskHandler = require("./taskhandler");
 
@@ -81,6 +83,10 @@ module.exports = World = cls.Class.extend(
              }
         });
 
+        //self.products = JSON.parse(JSON.stringify(Products));
+
+        self.auction = new Auction();
+        self.looks = new Looks();
 
         self.lastUpdateTime = Date.now();
 
@@ -196,6 +202,24 @@ module.exports = World = cls.Class.extend(
 
     save: function ()
     {
+      for (mapId in this.maps)
+      {
+          var map = this.maps[mapId];
+          if (map && map.isLoaded && map.entities)
+          {
+              var savedPlayers = 0;
+              map.entities.forEachPlayer(function(p)
+              {
+                  p.save();
+                  if (p.isSaved)
+                    savedPlayers++;
+              });
+              if (map.entities.players.length == savedPlayers)
+                PLAYERS_SAVED = true;
+          }
+      }
+      this.auction.save();
+      this.looks.save();
     },
 
     update: function () {

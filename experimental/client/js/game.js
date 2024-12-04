@@ -581,7 +581,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               });
             },
 
-            onVersion: function(data) {
+            onVersionUser: function(data) {
               //var self;
               this.versionChecked = true;
               var version = data[0];
@@ -589,8 +589,35 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               this.hashChallenge = hash;
               log.info("onVersion: hash="+hash);
 
-              log.info("config.build.version="+config.build.version);
-              if (version != config.build.version)
+              var local_version = config.build.version_game;
+              log.info("config.build.version_user="+local_version);
+              if (version != local_version)
+              {
+                $('#container').addClass('error');
+                var errmsg = "Please download the new version of RRO2.<br/>";
+
+                if (game.renderer.isMobile) {
+                  errmsg += "<br/>For mobile see: " + config.build.updatepage;
+                } else {
+                  errmsg += "<br/>For most browsers press Ctrl+F5 to reload the game cache files.";
+                }
+                game.clienterror_callback(errmsg);
+                if (this.tablet || this.mobile)
+                  window.location.replace(config.build.updatepage);
+              }
+            },
+
+            onVersionGame: function(data) {
+              //var self;
+              this.versionChecked = true;
+              var version = data[0];
+              var hash = data[1];
+              this.hashChallenge = hash;
+              log.info("onVersion: hash="+hash);
+
+              var local_version = config.build.version_user;
+              log.info("config.build.version_user="+local_version);
+              if (version != local_version)
               {
                 $('#container').addClass('error');
                 var errmsg = "Please download the new version of RRO2.<br/>";

@@ -3,11 +3,12 @@ var crypto = require('crypto');
 var Metrics = require('./metrics');
 var ProductionConfig = require('./productionconfig');
 var User = require('./user');
-var World = require('./world');
+var WorldHandler = require('./worldhandler');
 var Utils = require('./utils');
 var redis = require('./redis');
-var Auction = require("./auction");
-var Looks = require("./looks");
+var UserMessages = require('./usermessage');
+//var Auction = require("./auction");
+//var Looks = require("./looks");
 var GameTypes = require("../shared/js/gametypes");
 
 var _ = require('underscore');
@@ -34,7 +35,7 @@ PLAYERS_SAVED = false;
 /* global log, Player, databaseHandler */
 
 worlds = [];
-world_servers = [];
+worldHandlers = [];
 users = {};
 players = [];
 
@@ -131,29 +132,26 @@ function main(config) {
 
     console.log("REDIS SERVER CREATED!!!!!!!!!!!!!");
 
-    self.auction = new Auction();
-    self.looks = new Looks();
-
-    self.handleConnectWorld = function (msg, connection) {
-      var world = new World(self, connection);
-      world_servers.push(world);
+    self.handleConnectWorld = function (msg, conn) {
+      var worldHandler = new WorldHandler(self, conn, worlds.length);
+      worldHandlers.push(worldHandler);
     };
 
-    self.handleConnectUser = function (msg, connection) {
+    self.handleConnectUser = function (msg, conn) {
       var current_date = (new Date()).valueOf().toString();
       var random = Math.random().toString();
       var hash = crypto.createHash('sha1').update(current_date + random).digest('hex');
-      connection.hash = hash;
+      conn.hash = hash;
       console.warn("onConnect: hash="+hash);
 
       //var connect = function(config) {
       console.info(JSON.stringify(config));
       console.info("version sent");
-      console.info(GameTypes.Messages.SC_VERSION);
+      console.info(GameTypes.UserMessages.UC_VERSION);
 
-      connection.sendUTF8(GameTypes.Messages.SC_VERSION+","+config.version+","+connection.hash);
+      conn.sendUTF8(GameTypes.UserMessages.UC_VERSION+","+config.version+","+conn.hash);
 
-      var reply = [GameTypes.Messages.SC_WORLDS];
+      var reply = [GameTypes.UserMessages.UC_WORLDS];
       var i=0;
       for (var world of worlds)
       {
@@ -162,14 +160,14 @@ function main(config) {
         reply.push(world.count);
         reply.push(world.maxCount);
       }
-      connection.send(reply);
+      conn.send(reply);
 
-      var user = new User(self, connection);
-      user.hashChallenge = connection.hash;
+      var user = new User(self, conn);
+      user.hashChallenge = conn.hash;
 
     };
 
-    server.onConnect(function(connection) {
+    server.onConnect(function(conn) {
         var listener = function(message) {
           console.info("recv[0]="+message);
           var action = parseInt(message[0]);
@@ -178,14 +176,14 @@ function main(config) {
           switch (action)
           {
             case Types.UserMessages.WU_CONNECT_WORLD:
-              self.handleConnectWorld(message, connection);
+              self.handleConnectWorld(message, conn);
               break;
             case Types.UserMessages.CU_CONNECT_USER:
-              self.handleConnectUser(message, connection);
+              self.handleConnectUser(message, conn);
               break;
           }
         };
-        connection.listen(listener);
+        conn.listen(listener);
     });
 
     server.onError(function() {
@@ -290,18 +288,9 @@ function getInput(cmd) {
       case "forcequit":
         process.exit(1);
         break;
-      case "reloadauction":
-        reloadAuction();
-        break;
       default:
         console.info("Unknown command.")
     }
-}
-
-function reloadAuction() {
-  _.each(worlds, function(world) {
-			world.auction.load();
-	});
 }
 
 function checkSaved() {

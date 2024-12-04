@@ -29,33 +29,54 @@ module.exports = AuctionRecord = cls.Class.extend({
 module.exports = Auction = cls.Class.extend({
     init: function(){
         this.auctions = {};
-        this.load();
     },
 
-    load: function ()
+    load: function (data)
     {
       var self = this;
-      console.info("AUCTION LOAD");
-      databaseHandler.loadAuctions(self, self.onLoad);
+      console.info("AUCTIONS LOAD");
 
-    },
-// TODO - see if this can be simplified.
-    onLoad: function (self, auctions)
-    {
+      if (!data)
+        return;
+
+      auctions = [];
+      for (var i = 0; i < Object.keys(data).length; ++i) {
+        var rec = data[i];
+        var sData = rec.split(",");
+        var record = new AuctionRecord(sData[0],
+          parseInt(sData[1]),
+          new ItemRoom(parseInt(sData[2]),
+             parseInt(sData[3]),
+             parseInt(sData[4]),
+             parseInt(sData[5]),
+             parseInt(sData[6]))
+          );
+        auctions.push(record);
+      }
       if (auctions)
-        self.auctions = auctions;
+        this.auctions = auctions;
     },
 
     save: function ()
     {
       console.info("AUCTION SAVED");
-      if (this.auctions)
-        databaseHandler.saveAuctions(this.auctions);
 
+      if (!this.auctions)
+        return;
+
+      var data = [];
+      var auctions = this.auctions;
+      for (var i = 0; i < Object.keys(auctions).length; ++i) {
+        if (auctions[i])
+          data.push(auctions[i].save(i));
+      }
+
+      if (world.userHandler) {
+        world.userHandler.sendAuctionsData(data);
+      }
     },
 
     add: function(player, item, price, invIndex) {
-        //this.auctions = databaseHandler.loadAuctions();
         var count = 0;
         if (this.auctions)
           count = Object.keys(this.auctions).length;
@@ -69,7 +90,7 @@ module.exports = Auction = cls.Class.extend({
     },
 
     list: function (player, type) {
-      var msg = [Types.Messages.SC_AUCTIONOPEN, type, 0];
+      var msg = [Types.Messages.WC_AUCTIONOPEN, type, 0];
       var recCount = 0;
       for (var i in this.auctions) {
         var rec = this.auctions[i];

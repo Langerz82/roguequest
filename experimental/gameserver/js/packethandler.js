@@ -77,123 +77,123 @@ module.exports = PacketHandler = Class.extend({
       }*/
 
       switch (action) {
-        case Types.Messages.CS_REQUEST:
+        case Types.Messages.CW_REQUEST:
           self.handleRequest(message);
           break;
 
-        case Types.Messages.CS_WHO:
+        case Types.Messages.CW_WHO:
           //console.info("Who: " + self.player.name);
           //console.info("list: " + message);
           self.handleWho(message);
           break;
 
-        case Types.Messages.CS_CHAT:
+        case Types.Messages.CW_CHAT:
           self.handleChat(message);
           break;
 
-        case Types.Messages.CS_MOVE:
+        case Types.Messages.CW_MOVE:
           self.handleMoveEntity(message);
           break;
 
-        case Types.Messages.CS_MOVEPATH:
+        case Types.Messages.CW_MOVEPATH:
           self.handleMovePath(message);
           break;
 
-        case Types.Messages.CS_ATTACK:
+        case Types.Messages.CW_ATTACK:
           //console.info("Player: " + self.player.name + " hit: " + message[1]);
           self.handleAttack(message);
           break;
 
-        case Types.Messages.CS_ITEMSLOT:
+        case Types.Messages.CW_ITEMSLOT:
           self.handleItemSlot(message);
           break;
 
-        case Types.Messages.CS_STORESELL:
+        case Types.Messages.CW_STORESELL:
           //console.info("Player: " + self.player.name + " store sell: " + message[1]);
           self.handleStoreSell(message);
           break;
-        case Types.Messages.CS_STOREBUY:
+        case Types.Messages.CW_STOREBUY:
           //console.info("Player: " + self.player.name + " store buy: " + message[1] + " " + message[2] + " " + message[3]);
           self.handleStoreBuy(message);
           break;
-        case Types.Messages.CS_CRAFT:
+        case Types.Messages.CW_CRAFT:
           //console.info("Player: " + self.player.name + " store buy: " + message[1] + " " + message[2] + " " + message[3]);
           self.handleCraft(message);
           break;
-        case Types.Messages.CS_APPEARANCEUNLOCK:
+        case Types.Messages.CW_APPEARANCEUNLOCK:
           self.handleAppearanceUnlock(message);
           break;
-        case Types.Messages.CS_LOOKUPDATE:
+        case Types.Messages.CW_LOOKUPDATE:
           self.handleLookUpdate(message);
           break;
-        case Types.Messages.CS_AUCTIONSELL:
+        case Types.Messages.CW_AUCTIONSELL:
           //console.info("Player: " + self.player.name + " auction sell: " + message[0]);
           self.handleAuctionSell(message);
           break;
 
-        case Types.Messages.CS_AUCTIONBUY:
+        case Types.Messages.CW_AUCTIONBUY:
           //console.info("Player: " + self.player.name + " auction buy: " + message[0]);
           self.handleAuctionBuy(message);
           break;
 
-        case Types.Messages.CS_AUCTIONOPEN:
+        case Types.Messages.CW_AUCTIONOPEN:
           //console.info("Player: " + self.player.name + " auction open: " + message[0]);
           self.handleAuctionOpen(message);
           break;
 
-        case Types.Messages.CS_AUCTIONDELETE:
+        case Types.Messages.CW_AUCTIONDELETE:
           //console.info("Player: " + self.player.name + " auction delete: " + message[0]);
           self.handleAuctionDelete(message);
           break;
 
-        case Types.Messages.CS_STORE_MODITEM:
+        case Types.Messages.CW_STORE_MODITEM:
           //console.info("Player: " + self.player.name + " store enchant: " + message[0]);
           self.handleStoreModItem(message);
           break;
 
 // TODO - Fix CHaracter Info
-        case Types.Messages.CS_CHARACTERINFO:
+        case Types.Messages.CW_CHARACTERINFO:
           //console.info("Player character info: " + self.player.name);
           self.entities.pushToPlayer(self.player, new Messages.CharacterInfo(self.player));
           break;
 
-        case Types.Messages.CS_TELEPORT_MAP:
+        case Types.Messages.CW_TELEPORT_MAP:
           self.handleTeleportMap(message);
           break;
-        case Types.Messages.CS_LOOT:
+        case Types.Messages.CW_LOOT:
           self.handleLoot(message);
           break;
-        case Types.Messages.CS_TALKTONPC:
+        case Types.Messages.CW_TALKTONPC:
           self.handleTalkToNPC(message);
           break;
-        case Types.Messages.CS_QUEST:
+        case Types.Messages.CW_QUEST:
           self.handleQuest(message);
           break;
-        case Types.Messages.CS_GOLD:
+        case Types.Messages.CW_GOLD:
           self.handleGold(message);
           break;
-        case Types.Messages.CS_STATADD:
+        case Types.Messages.CW_STATADD:
           self.handleStatAdd(message);
           break;
-        case Types.Messages.CS_SKILL:
+        case Types.Messages.CW_SKILL:
           self.handleSkill(message);
           break;
-        case Types.Messages.CS_SHORTCUT:
+        case Types.Messages.CW_SHORTCUT:
           self.handleShortcut(message);
           break;
-        case Types.Messages.CS_BLOCK_MODIFY:
+        case Types.Messages.CW_BLOCK_MODIFY:
           self.handleBlock(message);
           break;
 
-        case Types.Messages.CS_PARTY:
+        case Types.Messages.CW_PARTY:
           self.handleParty(message);
           break;
 
-        case Types.Messages.CS_HARVEST:
+        case Types.Messages.CW_HARVEST:
           self.handleHarvest(message);
           break;
 
-        case Types.Messages.CS_USE_NODE:
+        case Types.Messages.CW_USE_NODE:
           self.handleUseNode(message);
           break;
 
@@ -207,7 +207,7 @@ module.exports = PacketHandler = Class.extend({
     this.connection.onClose(function() {
       console.info("Player: " + self.player.name + " has exited the world.");
       //if (self.player.user.loadedPlayer)
-        //self.player.save();
+      self.player.save();
 
       if (players[self.player.name])
         players[self.player.name] = 0;
@@ -312,7 +312,7 @@ module.exports = PacketHandler = Class.extend({
     console.info("Chat: " + self.player.name + ": " + msg);
 
     if ((new Date()).getTime() > self.player.chatBanEndTime) {
-      self.send([Types.Messages.SC_NOTIFY, "CHAT", "CHATMUTED"]);
+      self.send([Types.Messages.WC_NOTIFY, "CHAT", "CHATMUTED"]);
       return;
     }
 
@@ -321,7 +321,7 @@ module.exports = PacketHandler = Class.extend({
       var command = msg.split(" ", 3)
       switch (command[0]) {
         case "/w":
-          self.send([Types.Messages.SC_NOTIFY, "CHAT", "CHATMUTED"]);
+          self.send([Types.Messages.WC_NOTIFY, "CHAT", "CHATMUTED"]);
           break;
         default:
           self.server.pushWorld(new Messages.Chat(self.player, msg));
@@ -1384,7 +1384,7 @@ module.exports = PacketHandler = Class.extend({
         p.move([Date.now(),3,1,pos.x,pos.y]);
 
         console.info("trying to send.");
-        self.send([Types.Messages.SC_TELEPORT_MAP, mapId, 1, p.x, p.y]);
+        self.send([Types.Messages.WC_TELEPORT_MAP, mapId, 1, p.x, p.y]);
       };
 
       pos = map.enterCallback(p);
@@ -1394,7 +1394,7 @@ module.exports = PacketHandler = Class.extend({
       p.mapStatus = 2;
       self.handleSpawnMap(mapId, p.x, p.y);
 
-      self.send([Types.Messages.SC_TELEPORT_MAP, mapId, 2, p.x, p.y]);
+      self.send([Types.Messages.WC_TELEPORT_MAP, mapId, 2, p.x, p.y]);
     }
   },
 
@@ -1540,13 +1540,13 @@ module.exports = PacketHandler = Class.extend({
     var type = parseInt(msg);
 
     switch (type) {
-      case 0: // CS_APPEARANCELIST
+      case 0: // CW_APPEARANCELIST
         this.handlePlayerInfo(msg);
         break;
-      case 1: // CS_PLAYER_REVIVE
+      case 1: // CW_PLAYER_REVIVE
         this.handleRevive(msg);
         break;
-      case 2: // CS_PLAYERINFO
+      case 2: // CW_PLAYERINFO
         this.handlePlayerInfo(msg);
         break;
     }

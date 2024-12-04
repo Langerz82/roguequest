@@ -11,32 +11,12 @@ var Message = cls.Class.extend({
 
 });
 
-Messages.ServerInfo = Message.extend({
-    init: function (serverName, count, maxCount, serverIP, serverPort, password) {
-    	this.serverName = serverName;
-      this.count = count;
-      this.maxCount = maxCount;
-      this.serverIP = serverIP;
-      this.serverPort = serverPort;
-      this.password = password;
-    },
-    serialize: function () {
-        return [Types.UserMessages.WU_GAMESERVER_INFO,
-          this.serverName,
-          this.count,
-          this.maxCount,
-          this.serverIP,
-          this.serverPort,
-          this.password];
-    }
-});
-
 Messages.Spawn = Message.extend({
     init: function (entity) {
     	this.entity = entity;
     },
     serialize: function () {
-        var spawn = [Types.Messages.SC_SPAWN];
+        var spawn = [Types.Messages.WC_SPAWN];
         return spawn.concat(this.entity.getState());
     }
 });
@@ -50,7 +30,7 @@ Messages.Despawn = Message.extend({
 
     },
     serialize: function () {
-        return [Types.Messages.SC_DESPAWN, this.id,
+        return [Types.Messages.WC_DESPAWN, this.id,
                 this.mapIndex, this.x, this.y];
     }
 });
@@ -62,7 +42,7 @@ Messages.SwapSprite = Message.extend({
       this.animId = animId;
     },
     serialize: function () {
-        return [Types.Messages.SC_SWAPSPRITE,
+        return [Types.Messages.WC_SWAPSPRITE,
           this.entity.id, this.entity.kind, this.animId];
     }
 });
@@ -77,7 +57,7 @@ Messages.Move = Message.extend({
         this.y = y || this.entity.y;
     },
     serialize: function () {
-        return [Types.Messages.SC_MOVE,
+        return [Types.Messages.WC_MOVE,
             this.time,
             this.entity.map.index,
             this.entity.id,
@@ -97,7 +77,7 @@ Messages.MovePath = Message.extend({
         this.orientation = entity.orientation;
     },
     serialize: function () {
-        return ([Types.Messages.SC_MOVEPATH,
+        return ([Types.Messages.WC_MOVEPATH,
               this.time,
               this.entity.map.index,
             	this.entity.id,
@@ -114,7 +94,7 @@ Messages.MovePath = Message.extend({
         this.targetId = targetId;
     },
     serialize: function() {
-        return [Types.Messages.SC_ATTACK,
+        return [Types.Messages.WC_ATTACK,
             this.attackerId,
             this.targetId];
     }
@@ -128,7 +108,7 @@ Messages.MovePath = Message.extend({
         this.isRegen = isRegen;
     },
     serialize: function() {
-        var health = [Types.Messages.SC_HEALTH,
+        var health = [Types.Messages.WC_HEALTH,
                       this.id, this.points];
         if (this.isRegen)
             health.push(1);
@@ -147,7 +127,7 @@ Messages.ChangePoints = Message.extend({
         this.modep = modep;
     },
     serialize: function() {
-        return [Types.Messages.SC_CHANGEPOINTS,
+        return [Types.Messages.WC_CHANGEPOINTS,
           this.id,
           this.hp, this.hpMax, this.modhp,
           this.ep, this.epMax, this.modep];
@@ -159,7 +139,7 @@ Messages.Error = Message.extend({
     this.message = message;
   },
   serialize: function() {
-    return [Types.Messages.SC_ERROR,
+    return [Types.Messages.WC_ERROR,
             this.message];
   }
 });
@@ -171,7 +151,7 @@ Messages.Notify = Message.extend({
     this.vars = vars || [];
   },
   serialize: function() {
-    var arr =[Types.Messages.SC_NOTIFY,
+    var arr =[Types.Messages.WC_NOTIFY,
         this.group,
         this.message]
     return arr.concat(this.vars);
@@ -185,7 +165,7 @@ Messages.Dialogue = Message.extend({
         this.vars = vars || [];
     },
     serialize: function () {
-        return [Types.Messages.SC_DIALOGUE, this.id, this.langcode].concat(this.vars);
+        return [Types.Messages.WC_DIALOGUE, this.id, this.langcode].concat(this.vars);
     }
 });
 
@@ -195,7 +175,7 @@ Messages.Quest = Message.extend({
     },
     serialize: function(){
         var arr = this.quest.toClient();
-        return ([Types.Messages.SC_QUEST]).concat(arr);
+        return ([Types.Messages.WC_QUEST]).concat(arr);
     }
 });
 
@@ -205,7 +185,7 @@ Messages.Achievement = Message.extend({
     },
     serialize: function(){
         var arr = this.achievement.toClient(this.achievement);
-        return ([Types.Messages.SC_ACHIEVEMENT]).concat(arr);
+        return ([Types.Messages.WC_ACHIEVEMENT]).concat(arr);
     }
 });
 
@@ -216,7 +196,7 @@ Messages.Achievement = Message.extend({
         this.y = y || this.mob.y;
     },
     serialize: function() {
-        var drop = [Types.Messages.SC_DROP,
+        var drop = [Types.Messages.WC_DROP,
                     this.item.map.index,
                     this.item.id,
                     this.item.room.itemKind,
@@ -231,7 +211,7 @@ Messages.Achievement = Message.extend({
 Messages.Log = Message.extend({
     init: function(message) {
         this.message = message;
-        this.message.unshift(Types.Messages.SC_LOG);
+        this.message.unshift(Types.Messages.WC_LOG);
     },
     serialize: function() {
         return this.message;
@@ -245,7 +225,7 @@ Messages.SkillLoad = Message.extend({
         this.exp = exp;
     },
     serialize: function() {
-        return [Types.Messages.SC_SKILLLOAD,
+        return [Types.Messages.WC_SKILLLOAD,
             this.index,
             this.exp];
     }
@@ -257,7 +237,7 @@ Messages.SkillEffects = Message.extend({
         this.effects = effects;
     },
     serialize: function() {
-        return ([Types.Messages.SC_SKILLEFFECTS,
+        return ([Types.Messages.WC_SKILLEFFECTS,
             this.id]).concat(this.effects);
     }
 });
@@ -267,7 +247,7 @@ Messages.SkillXP = Message.extend({
         this.skillXPs = skillXPs;
     },
     serialize: function() {
-        var arr = [Types.Messages.SC_SKILLXP];
+        var arr = [Types.Messages.WC_SKILLXP];
         arr.push(skillXPs.length);
         arr.concat(skillXPs);
         return arr;
@@ -281,7 +261,7 @@ Messages.Chat = Message.extend({
         this.message = message;
     },
     serialize: function () {
-        return [Types.Messages.SC_CHAT,
+        return [Types.Messages.WC_CHAT,
                 this.playerId,
                 this.group,
                 this.message];
@@ -295,7 +275,7 @@ Messages.TeleportMap = Message.extend({
         this.status = status;
     },
     serialize: function () {
-        return [Types.Messages.SC_TELEPORT_MAP,
+        return [Types.Messages.WC_TELEPORT_MAP,
                 this.entity.getMapIndex(),
         	      this.subIndex,
                 this.status,
@@ -322,7 +302,7 @@ Messages.Damage = Message.extend({
         this.effects = data[5];
     },
     serialize: function () {
-        var arr = [Types.Messages.SC_DAMAGE,
+        var arr = [Types.Messages.WC_DAMAGE,
           this.entity1.id,
           this.entity2.id,
           this.entity1.orientation,
@@ -344,7 +324,7 @@ Messages.StatInfo = Message.extend({
         this.player = player;
     },
     serialize: function() {
-      var data = [Types.Messages.SC_STATINFO,
+      var data = [Types.Messages.WC_STATINFO,
       	    this.player.stats.attack,
       	    this.player.stats.defense,
       	    this.player.stats.health,
@@ -361,7 +341,7 @@ Messages.UpdateLook = Message.extend({
         this.player = player;
     },
     serialize: function() {
-      return [Types.Messages.SC_LOOKUPDATE,
+      return [Types.Messages.WC_LOOKUPDATE,
             this.player.id,
             this.player.sprites[0],
       	    this.player.sprites[1],
@@ -376,7 +356,7 @@ Messages.AppearanceList = Message.extend({
         this.prices = looks.prices;
     },
     serialize: function() {
-        return [Types.Messages.SC_APPEARANCE, this.looks].concat(this.prices);
+        return [Types.Messages.WC_APPEARANCE, this.looks].concat(this.prices);
     }
 });
 
@@ -390,7 +370,7 @@ Messages.ItemSlot = Message.extend({
     this.items = items;
   },
   serialize: function() {
-  		var msg = [Types.Messages.SC_ITEMSLOT,
+  		var msg = [Types.Messages.WC_ITEMSLOT,
         this.type,
         this.items.length];
         for (var item of this.items) {
@@ -414,7 +394,7 @@ Messages.ItemLevelUp = Message.extend({
   },
   serialize: function() {
   	if (this.item) {
-    	return [Types.Messages.SC_ITEMLEVELUP,
+    	return [Types.Messages.WC_ITEMLEVELUP,
     		this.index,
     		this.item.itemNumber,
     		this.item.itemExperience];
@@ -429,7 +409,7 @@ Messages.ItemLevelUp = Message.extend({
         //this.exp = exp;
     },
     serialize: function () {
-        return [Types.Messages.SC_KILL,
+        return [Types.Messages.WC_KILL,
                 this.entity ? this.entity.id : -1];
     }
 });*/
@@ -441,7 +421,7 @@ Messages.Stat = Message.extend({
         this.change = change;
     },
     serialize: function () {
-        return [Types.Messages.SC_STAT,
+        return [Types.Messages.WC_STAT,
                 this.type,
                 this.value,
                 this.change];
@@ -455,7 +435,7 @@ Messages.LevelUp = Message.extend({
         this.exp = exp;
     },
     serialize: function () {
-        return [Types.Messages.SC_LEVELUP,
+        return [Types.Messages.WC_LEVELUP,
                 this.type,
                 this.level,
                 this.exp];
@@ -468,7 +448,7 @@ Messages.List = Message.extend({
     },
     serialize: function () {
         var list = this.ids;
-        list.unshift(Types.Messages.SC_LIST);
+        list.unshift(Types.Messages.WC_LIST);
         //console.info(JSON.stringify(list));
         return list;
     }
@@ -490,7 +470,7 @@ Messages.Speech = Message.extend({
     	 this.value = value;
     },
     serialize: function () {
-        return [Types.Messages.SC_SPEECH, this.entityid, this.kind, this.value];
+        return [Types.Messages.WC_SPEECH, this.entityid, this.kind, this.value];
     }
 });
 
@@ -501,7 +481,7 @@ Messages.Gold = Message.extend({
     this.gems = player.user.gems;
 	},
 	serialize: function () {
-		return [Types.Messages.SC_GOLD, this.invgold, this.bankgold,
+		return [Types.Messages.WC_GOLD, this.invgold, this.bankgold,
           this.gems];
   }
 });
@@ -513,7 +493,7 @@ Messages.BlockModify = Message.extend({
       this.state = state;
     },
     serialize: function () {
-        var spawn = [Types.Messages.SC_SPAWN, this.id, this.state];
+        var spawn = [Types.Messages.WC_SPAWN, this.id, this.state];
         return spawn.concat(this.entity.getState());
     }
 });
@@ -523,7 +503,7 @@ Messages.PartyInvite = Message.extend({
         this.id = id;
     },
     serialize: function() {
-        return [Types.Messages.SC_PARTY, 2, this.id];
+        return [Types.Messages.WC_PARTY, 2, this.id];
     }
 });
 
@@ -532,7 +512,7 @@ Messages.Party = Message.extend({
         this.members = members;
     },
     serialize: function () {
-        return [Types.Messages.SC_PARTY, 1].concat(this.members);
+        return [Types.Messages.WC_PARTY, 1].concat(this.members);
     }
 });
 
@@ -541,7 +521,7 @@ Messages.PlayerInfo = Message.extend({
         this.player = player;
     },
     serialize: function () {
-        return [Types.Messages.SC_PLAYERINFO,
+        return [Types.Messages.WC_PLAYERINFO,
           this.player.exp.base,
           this.player.exp.attack,
           this.player.exp.defense,
@@ -566,7 +546,7 @@ Messages.Looks = Message.extend({
         }
     },
     serialize: function () {
-        return [Types.Messages.SC_LOOKS,
+        return [Types.Messages.WC_LOOKS,
           this.player.id,
           (this.player.isArcher() ? 1 : 0), //].concat(this.player.sprites);
           this.sprite1,
@@ -581,7 +561,7 @@ Messages.setSprite = Message.extend({
         this.sprite2 = sprite2 || 0;
     },
     serialize: function () {
-        return [Types.Messages.SC_SET_SPRITE,
+        return [Types.Messages.WC_SET_SPRITE,
           this.id,
           this.sprite1,
           this.sprite2];
@@ -594,7 +574,7 @@ Messages.setAnimation = Message.extend({
         this.animation = animation;
     },
     serialize: function () {
-        return [Types.Messages.SC_SET_ANIMATION,
+        return [Types.Messages.WC_SET_ANIMATION,
           this.id,
           this.animation];
     }
@@ -609,7 +589,7 @@ Messages.Harvest = Message.extend({
         this.gy = gy;
     },
     serialize: function () {
-        var arr = [Types.Messages.SC_HARVEST,
+        var arr = [Types.Messages.WC_HARVEST,
           this.id,
           this.action,
           this.gx,

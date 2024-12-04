@@ -4,15 +4,15 @@
 var cls = require("./lib/class"),
     _ = require("underscore"),
     crypto = require('crypto'),
-    Messages = require("./message"),
+    UserMessages = require("./usermessage"),
     Utils = require("./utils"),
     Types = require("../shared/js/gametypes"),
     bcrypt = require('bcrypt'),
     express = require('express'),
     bodyParser = require('body-parser'),
     app = express(),
-    AppearanceData = require("./data/appearancedata"),
-    PacketHandler = require("./packethandler");
+    AppearanceData = require("./data/appearancedata");
+    //PacketHandler = require("./packethandler");
 var CryptoJS = require("crypto-js");
 
 function PlayerSummary(index, db_player) {
@@ -67,16 +67,14 @@ module.exports = User = cls.Class.extend({
 
           switch (action)
           {
+            // NOTE - This has to be allowed as is packet that validates world server.
             case Types.UserMessages.WU_GAMESERVER_INFO:
               self.handleGameServerInfo(message);
               return;
-            case Types.Messages.BI_SYNCTIME:
-              self.handleSyncTime(message);
-              return;
-            case Types.Messages.CS_CREATE_USER:
+            case Types.UserMessages.CU_CREATE_USER:
               self.handleCreateUser(message);
               return;
-            case Types.Messages.CS_LOGIN_USER:
+            case Types.UserMessages.CU_LOGIN_USER:
               self.handleLoginUser(message);
               return;
           }
@@ -109,13 +107,13 @@ module.exports = User = cls.Class.extend({
           }
 
           switch (action) {
-            case Types.Messages.CS_CREATE_PLAYER:
+            case Types.UserMessages.CU_CREATE_PLAYER:
               self.handleCreatePlayer(message);
               return;
-            case Types.Messages.CS_LOGIN_PLAYER:
+            case Types.UserMessages.CU_LOGIN_PLAYER:
               self.handleLoginPlayer(message);
               return;
-            case Types.Messages.CS_REMOVE_USER:
+            case Types.UserMessages.CU_REMOVE_USER:
               self.handleRemoveUser(message);
               return;
           }
@@ -206,6 +204,7 @@ module.exports = User = cls.Class.extend({
 
     handleSaveUserInfo: function (msg) {
       var userName = msg.shift();
+      msg.pop();
 
       DBH.savePlayerUserInfo(userName, msg);
     },
@@ -235,11 +234,11 @@ module.exports = User = cls.Class.extend({
       DBH.saveItems(playerName, type, msg);
     },
 
-    handleSyncTime: function (message) {
+    /*handleSyncTime: function (message) {
       var clientTime = parseInt(message[0]);
       var world = worlds[0];
       this.connection.sendUTF8([Types.Messages.BI_SYNCTIME, clientTime, Date.now()].join(","));
-    },
+    },*/
 
     handleCreateUser: function(message)
     {
@@ -262,7 +261,7 @@ module.exports = User = cls.Class.extend({
 
       try {
         if (!Utils.checkInputName(self.name)) {
-          self.connection.sendUTF8(Types.Messages.SC_ERROR+"invalidusername");
+          self.connection.sendUTF8(Types.UserMessages.UC_ERROR+"invalidusername");
           return;
         }
         self.hash = hash;
@@ -290,7 +289,7 @@ module.exports = User = cls.Class.extend({
       try {
         // Validate the username
         if (!Utils.checkInputName(self.name)) {
-          self.connection.sendUTF8(Types.Messages.SC_ERROR+",invalidname");
+          self.connection.sendUTF8(Types.UserMessages.SC_ERROR+",invalidname");
           return;
         }
         self.hash = hash;
@@ -305,21 +304,13 @@ module.exports = User = cls.Class.extend({
     handleRemoveUser: function(message)
     {
       var self = this;
-      //var name = Utils.sanitize(message[0]);
       var hash = Utils.sanitize(message[1]);
       hash = Utils.btoa(hash);
 
       //console.info("Starting Client/Server Handshake");
 
-      //self.name = name.substr(0, 16).trim().toLowerCase();
-
       console.info("self.name=" + self.name);
       try {
-        // Validate the username
-        /*if (!Utils.checkInputName(self.name)) {
-          self.connection.sendUTF8(Types.Messages.SC_ERROR+",invalidname");
-          return;
-        }*/
         self.hash = hash;
 
         DBH.removeUser(self);
@@ -336,7 +327,7 @@ module.exports = User = cls.Class.extend({
       var curTime = Date.now();
       var banTime = db_user.banTime + db_user.banDuration;
       if (banTime > curTime) {
-        this.connection.sendUTF8(Types.Messages.SC_ERROR+",ban");
+        this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",ban");
         this.connection.close("Closing connection to: " + player.name);
         return false;
       }
@@ -354,7 +345,7 @@ module.exports = User = cls.Class.extend({
       var hash = crypto.createHash('sha1').update(decrypt+db_user.salt).digest('hex');
       console.info("checkUser: "+hash+" != "+db_user.hash);
       if (hash != db_user.hash) {
-        this.connection.sendUTF8(Types.Messages.SC_ERROR+",invalidlogin");
+        this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",invalidlogin");
         if (++this.passwordTries > 3)
           this.connection.close("Wrong Password: " + this.name);
         return false;
@@ -363,7 +354,7 @@ module.exports = User = cls.Class.extend({
       console.warn(JSON.stringify(users));
       console.info("LOGIN: " + this.name);
       if (!skip_logged_in && users.hasOwnProperty(this.name) && users[this.name] == 1) {
-        this.connection.sendUTF8(Types.Messages.SC_ERROR+",loggedin");
+        this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",loggedin");
         return false;
       }
 
@@ -381,12 +372,12 @@ module.exports = User = cls.Class.extend({
       this.loadedUser = true;
       if (!Array.isArray(db_players))
       {
-        this.connection.send([Types.Messages.SC_PLAYER_SUM,"0"]);
+        this.connection.send([Types.UserMessages.UC_PLAYER_SUM,"0"]);
         return;
       }
 
 
-      var sendMsg = [Types.Messages.SC_PLAYER_SUM, db_players.length];
+      var sendMsg = [Types.UserMessages.UC_PLAYER_SUM, db_players.length];
       for (var i=0; i < db_players.length; ++i)
       {
         var dbp = db_players[i];
@@ -404,7 +395,8 @@ module.exports = User = cls.Class.extend({
 
       var worldIndex = parseInt(message[0]);
       var name = Utils.sanitize(message[1]);
-      //var pClass = parseInt(message[2]);
+
+      var worldHandler = this.getWorldHander(worldIndex);
 
       var tmpPlayer = {
         name: name,
@@ -424,7 +416,7 @@ module.exports = User = cls.Class.extend({
 
       // Validate the username
       if (!Utils.checkInputName(tmpPlayer.name)) {
-        user.connection.sendUTF8(Types.Messages.SC_ERROR+",invalidname");
+        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",invalidname");
         return;
       }
 
@@ -437,6 +429,7 @@ module.exports = User = cls.Class.extend({
         sprites: [0,0]
       };
 
+      var playername = db_player.name;
       var playerSummary = new PlayerSummary(this.players.length, db_player);
       this.players.push(playerSummary);
 
@@ -450,10 +443,19 @@ module.exports = User = cls.Class.extend({
             p.name = db_player.name;
 
             players.push(p);
-            p.sendPlayer(db_player);
+            //p.sendPlayer(db_player);
           }
         };
-        DBH.createPlayer(this, db_player, callback);
+        DBH.createPlayer(playername, function (playername, res) {
+          if (res) {
+            DBH.createPlayerNameInUser(self.name, playername, function () {
+              worldHandler.createPlayerToWorld(self, self.name, playername);
+            });
+          }
+          else {
+            this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",playerexists");
+          }
+        });
       } catch (e) {
         console.info('message=' + e.message);
         console.info('stack=' + e.stack);
@@ -469,30 +471,29 @@ module.exports = User = cls.Class.extend({
         return false;
 
       this.loginPlayer(worldIndex, this.players[playerIndex]);
-        //DBH.loadPlayer(this.currentPlayer);
+    },
+
+    getWorldHandler: function (worldIndex) {
+      if (worldIndex < 0 || worldIndex >= worlds.length)
+        return null;
+
+      console.info("worldIndex: "+worldIndex);
+      var worldHandler = worldHandlers[worldIndex];
+      return worldHandler;
     },
 
     loginPlayer: function (worldIndex, playerSummary)
     {
-      if (worldIndex < 0 || worldIndex >= worlds.length)
-        return false;
+      var worldHandler = this.getWorldHandler(worldIndex);
 
-      console.info("worldIndex: "+worldIndex);
-      var world = worlds[worldIndex];
-      var worldServer = world_servers[worldIndex];
-
-      //console.info(JSON.stringify(world));
-// ISSUE - The client is calling LoginPlayer, so worldConnection is null.
-
-// TODO FUNCTION TO SEND PLAYER TO PLAYER Server
       var playerName = playerSummary.name;
       this.playerName = playerName;
 
-      worldServer.sendPlayerToWorld(this, this.name, playerName);
+      worldHandler.sendPlayerToWorld(this, this.name, playerName);
       return true;
     },
 
-    modifyGems: function(diff) {
+    /*modifyGems: function(diff) {
       diff = parseInt(diff);
       if ((this.gems - diff) < 0)
       {
@@ -502,5 +503,6 @@ module.exports = User = cls.Class.extend({
       this.gems += diff;
       this.connection.send((new Messages.Gold(this.currentPlayer)).serialize());
       return true;
-    },
+    },*/
+
 });

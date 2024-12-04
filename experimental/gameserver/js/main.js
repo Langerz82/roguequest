@@ -5,9 +5,10 @@ var useBison = false;
 
 var Metrics = require('./metrics');
 var ProductionConfig = require('./productionconfig');
-var World = require('./world');
+var UserHandler = require('./userhandler');
+var WorldHandler = require('./worldhandler');
 var Utils = require('./utils');
-var Messages = require('./message');
+var UserMessages = require('./usermessage');
 var GameTypes = require("../shared/js/gametypes");
 
 //var RedisServer = require('redis-server');
@@ -69,6 +70,9 @@ PLAYERS_SAVED = false;
 //GDATE = new Date();
 
 /* global log, Player, databaseHandler */
+
+var worldHandler;
+var userHandler;
 
 worlds = [];
 users = {};
@@ -183,35 +187,38 @@ function main(config) {
 
     loadWorlds();
 
-    server.onConnect(function(connection) {
+    server.onConnect(function(conn) {
 
         //var self = this;
 
         var current_date = (new Date()).valueOf().toString();
         var random = Math.random().toString();
         var hash = crypto.createHash('sha1').update(current_date + random).digest('hex');
-        connection.hash = hash;
+        conn.hash = hash;
         console.warn("onConnect: hash="+hash);
 
       	console.info(JSON.stringify(config));
       	console.info("version sent");
-        console.info(GameTypes.Messages.SC_VERSION);
+        console.info(GameTypes.Messages.WC_VERSION);
 
-      	connection.sendUTF8(GameTypes.Messages.SC_VERSION+","+config.version+","+connection.hash);
+      	conn.sendUTF8(GameTypes.Messages.WC_VERSION+","+config.version+","+conn.hash);
 
         //self.enterWorld(connection);
-        var userWorld = new World(self, connection, false);
+// TODO Not sure if commenting out is right.
+        var worldHandler = new WorldHandler(self, conn, userHandler.connection);
     });
 
     server.userConn.onConnectUser(function (conn) {
       console.info("onConnectUser - Connected");
       this.send([GameTypes.UserMessages.WU_CONNECT_WORLD]);
-      var msg = new Messages.ServerInfo(world.name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
+      var msg = new UserMessages.ServerInfo(world.name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
       this.send(msg.serialize());
 
       console.info("server.enterWorld");
       //console.info(JSON.stringify(conn));
-      var userWorld = new World(self, conn, true);
+      userHandler = new UserHandler(self, conn, world);
+      world.userHandler = userHandler;
+
       //world.hashChallenge = conn.hash;
       //world.world = world;
     });
@@ -407,9 +414,7 @@ function sleep(ms) {
 function saveServer() {
   console.log("saving server!")
   SAVING_SERVER = true;
-  _.each(worlds, function(world) {
-			world.save();
-	});
+  world.save();
 }
 
 function getWorldDistribution(worlds) {

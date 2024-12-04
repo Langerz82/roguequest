@@ -111,7 +111,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     // Check if username is taken
     client.sismember('usr', user.name, function(err, reply) {
       if (reply === 1) {
-        user.connection.sendUTF8(Types.Messages.SC_ERROR+",userexists");
+        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",userexists");
         user.connection.close("Username not available: " + user.name);
       } else {
         data = [
@@ -126,7 +126,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           Utils.BinToHex(user.looks),
           user.connection._connection.remoteAddress];
 
-        this.saveUser(user.name, data, function (userName, data) {
+        this.saveUser(user.name, data, function (username, data) {
           user.hasLoggedIn = true;
           users[user.name] = 1;
 
@@ -136,24 +136,24 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  savePlayerUserInfo: function (userName, data, callback) {
-    var uKey = "u:" + userName;
+  savePlayerUserInfo: function (username, data, callback) {
+    var uKey = "u:" + username;
     client.multi()
-      .sadd("usr", userName)
+      .sadd("usr", username)
       .hset(uKey, "gems", data[7])
       .hset(uKey, "looks", data[8])
       .exec(function(err, replies) {
         if (callback)
-          callback(userName, data);
+          callback(username, data);
       });
   },
 
-  saveUserInfo: function(userName, data, callback) {
-    var uKey = "u:" + userName;
+  saveUserInfo: function(username, data, callback) {
+    var uKey = "u:" + username;
 
       client.multi()
-        .sadd("usr", userName)
-        .hset(uKey, "username", userName)
+        .sadd("usr", username)
+        .hset(uKey, "username", username)
         .hset(uKey, "hash", data[0])
         .hset(uKey, "salt", data[1])
         .hset(uKey, "banTime", data[2])
@@ -166,7 +166,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         .hset(uKey, "ipAddresses", data[9])
         .exec(function(err, replies) {
           if (callback)
-            callback(userName, data);
+            callback(username, data);
         });
   },
 
@@ -195,19 +195,19 @@ module.exports = DatabaseHandler = cls.Class.extend({
       console.error("USER CHECK USER");
       if(user.checkUser(db_user, true)) {
         console.error("USER CHECK USER SUCCESS");
-        var playerNames = data.players.split(",");
-        for(var i=0; i < playerNames.length; ++i)
+        var playernames = data.players.split(",");
+        for(var i=0; i < playernames.length; ++i)
         {
-          var pKey = "p:"+playerNames[i];
+          var pKey = "p:"+playernames[i];
           client.del(pKey);
         }
         client.del(uKey);
         client.srem("usr", user.name);
-        user.connection.sendUTF8(Types.Messages.SC_ERROR+",removed_user_ok");
+        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",removed_user_ok");
         user.connection.close();
         return;
       }
-      user.connection.sendUTF8(Types.Messages.SC_ERROR+",removed_user_fail");
+      user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",removed_user_fail");
       user.connection.close();
     });
   },
@@ -221,15 +221,15 @@ module.exports = DatabaseHandler = cls.Class.extend({
       //console.info("reply: "+reply);
       if (reply !== 1)
       {
-        user.connection.sendUTF8(Types.Messages.SC_ERROR+",invalidlogin");
-        return;
+        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",invalidlogin");
+        return false;
       }
 
       client.hgetall(uKey, function(err, data) {
         console.info("replies: "+data);
         console.info(JSON.stringify(data));
         if (data === null || !(typeof data === 'object'))
-          return;
+          return false;
         //console.info(replies.toString());
 
         var db_user = {
@@ -281,10 +281,26 @@ module.exports = DatabaseHandler = cls.Class.extend({
           client.hset(uKey, "lastLoginTime", new Date().getTime());
 
           self.sendPlayers(user);
+          return true;
         }
       });
       //user.connection.sendUTF8(Types.Messages.SC_ERROR+",invalidlogin");
       return false;
+    });
+  },
+
+  createPlayerNameInUser: function (username, playername, callback) {
+    var uKey = "u:" + username;
+    // Create Player Name in User account.
+    client.hget(uKey, "players", function (err, reply) {
+      var db_players = [];
+      if (reply)
+        db_players = reply.split(",");
+      db_players.push(playername);
+      client.hset(uKey, "players", db_players.join(","));
+
+      if (callback)
+        callback();
     });
   },
 
@@ -297,12 +313,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
         user.sendPlayers();
         return;
       }
-      var playerNames = reply.split(",");
+      var playernames = reply.split(",");
       var db_players = [];
       var count = 0;
-      for(var i=0; i < playerNames.length; ++i)
+      for(var i=0; i < playernames.length; ++i)
       {
-        var pKey = "p:"+playerNames[i];
+        var pKey = "p:"+playernames[i];
         hgetarray(pKey, ["name","map","exps","colors","sprites"], function(err, reply) {
           //console.info("err:"+JSON.stringify(err));
           //console.info("reply:"+JSON.stringify(reply));
@@ -315,15 +331,33 @@ module.exports = DatabaseHandler = cls.Class.extend({
             "sprites": reply[4].split(",")
           };
           db_players.push(db_player);
-          if (++count == playerNames.length)
+          if (++count == playernames.length)
             user.sendPlayers(db_players);
         });
       }
     });
   },
 
-  loadUserInfo: function(userName, callback) {
-    var uKey = "u:" + userName;
+  createPlayer: function(playername, callback) {
+    var self = this;
+    var pKey = "p:" + playername;
+    var curTime = new Date().getTime();
+
+    // Check if playername is taken
+    client.hget(pKey, "name", function(err, reply) {
+      if (reply) {
+        if (callback)
+          callback(playername, false);
+        return;
+      }
+      console.info("CREATING PLAYER");
+      if (callback)
+        callback(playername, true);
+    });
+  },
+
+  loadUserInfo: function(username, callback) {
+    var uKey = "u:" + username;
 
     client.hgetall(uKey, function(err, data) {
       console.info("replies: "+data);
@@ -331,12 +365,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
       if (data === null || !(typeof data === 'object'))
         return;
 
-      callback(userName, data);
+      if (callback)
+        callback(username, data);
     });
   },
 
-  loadPlayerUserInfo: function(userName, callback) {
-    var uKey = "u:" + userName;
+  loadPlayerUserInfo: function(username, callback) {
+    var uKey = "u:" + username;
 
     client.multi()
       .hget(uKey, "gems")
@@ -346,12 +381,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
         if (data === null || !(typeof data === 'object'))
           return;
 
-        callback(userName, data);
+        if (callback)
+          callback(username, data);
       });
   },
 
-  loadPlayerInfo: function(playerName, callback) {
-    var pKey = "p:" + playerName;
+  loadPlayerInfo: function(playername, callback) {
+    var pKey = "p:" + playername;
 
     client.hdel(pKey, "skillSlots");
     client.multi()
@@ -371,58 +407,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
         if (data === null || !(typeof data === 'object'))
           return;
 
-        callback(playerName, data);
+        if (callback)
+          callback(playername, data);
       });
   },
 
-  createPlayer: function(playerName, callback) {
-    var self = this;
-    var pKey = "p:" + playerName;
-    var curTime = new Date().getTime();
-    //var player = player;
-
-// TODO - Make Unique.
-    // Check if playername is taken
-    client.hget(pKey, "name", function(err, reply) {
-      if (reply) {
-        user.connection.sendUTF8(Types.Messages.SC_ERROR+",playerexists");
-        return;
-      }
-      console.info("CREATING PLAYER");
-
-      var db_player = {
-        "name": playerName,
-        "map": [0,0,0,0],
-        "stats": [2,2,2,2,2,0],
-        "exps": [0,0,0,0,0,0,0,0,0,0],
-        "gold": [0,0],
-        "skills": new Array(SkillData.Skills.length),
-        "pStats": [0,0],
-        "sprites": [77,0,151,50],
-        "colors": [0,0],
-        "shortcuts": [],
-        "completeQuests": []};
-
-      data = [
-        db_player.name,
-        db_player.map.join(","),
-        db_player.stats.join(","),
-        db_player.exps.join(","),
-        db_player.gold.join(","),
-        db_player.skills.join(","),
-        db_player.shortcuts.join(","),
-        db_player.pStats.join(","),
-        db_player.sprites.join(","),
-        db_player.colors.join(","),
-        db_player.completeQuests.join(",")];
-
-      self.savePlayerInfo(playerName, data, function (playerName) {});
-    });
-
-  },
-
-  savePlayerInfo: function(playerName, data, callback) {
-    var pKey = "p:" + playerName;
+  savePlayerInfo: function(playername, data, callback) {
+    var pKey = "p:" + playername;
 
     client.multi()
       .hset(pKey, "name", data[0])
@@ -438,21 +429,33 @@ module.exports = DatabaseHandler = cls.Class.extend({
       .hset(pKey, "completeQuests", data[10])
 
       .exec(function(err, replies) {
-        callback(playerName);
+        if (err) {
+          console.warn(err);
+          console.warn(JSON.stringify(replies));
+          return;
+        }
+
+        if (callback)
+          callback(playername);
       });
   },
 
 
-  modifyGold: function(playerName, golddiff, type) {
+  modifyGold: function(playername, golddiff, type) {
     var type = type || 0;
     var golddiff = parseInt(golddiff);
-    var pKey = "p:" + playerName;
+    var pKey = "p:" + playername;
     //console.info(pKey+","+golddiff+","+type);
     client.hget(pKey, "gold", function (err, data)
     {
       console.info("modifyGold.gold: "+JSON.stringify(data));
       if (!data) {
-        console.error("redis.modifyGold - no gold record for player '"+playerName+"' found.");
+        console.error("redis.modifyGold - no gold record for player '"+playername+"' found.");
+        return;
+      }
+      if (err || !data || data == "") {
+        console.warn(err);
+        console.warn(JSON.stringify(data));
         return;
       }
 
@@ -462,8 +465,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  modifyGems: function(userName, diff) {
-    var uKey = "u:" + userName;
+  modifyGems: function(username, diff) {
+    var uKey = "u:" + username;
     var diff = parseInt(diff);
 
     client.hget(uKey, "gems", function (err, data)
@@ -477,27 +480,40 @@ module.exports = DatabaseHandler = cls.Class.extend({
 // ITEMS - BEGIN. New item store functions.
 
 
-  loadItems:function (playerName, type, callback) {
+  loadItems: function (playername, type, callback) {
     var self = this;
-    var pKey = "p:" + playerName;
+    var pKey = "p:" + playername;
 
     var maxNumber = getItemsStoreCount(type);
     var sType = getStoreTypeNew(type);
 
     client.hget(pKey, sType, function (err, data) {
         if (err || !data || data == "") {
+          console.warn(err);
+          console.warn(JSON.stringify(data));
           return;
         }
-        callback(playerName, data);
+        if (callback)
+          callback(playername, data);
     });
   },
 
-  saveItems: function(playerName, type, data)
+// TODO - FN NOT WORKING PROPERLY.
+  saveItems: function(playername, type, data)
   {
-    var pKey = "p:" + playerName;
+    var pKey = "p:" + playername;
     var sType = getStoreTypeNew(type);
+    console.info("saveItems: "+data);
+    console.info("pKey: "+pKey);
+    console.info("sType: "+sType);
     client.hset(pKey, sType, data,
       function(err, replies) {
+        if (err || !data || data == "") {
+          console.warn(err);
+          console.warn(JSON.stringify(replies));
+          console.warn(JSON.stringify(data));
+          return;
+        }
     });
   },
 
@@ -507,112 +523,132 @@ module.exports = DatabaseHandler = cls.Class.extend({
 // TODO - Just do new save rather than appending to key "quests".
 
   // example {id: id, type: 2, npcId: this.id, objectId: topEntity.kind, count: mobCount, repeat: repeat}
-  saveQuests: function(playerName, data) {
-    var pKey = "p:" + playerName;
+  saveQuests: function(playername, data) {
+    var pKey = "p:" + playername;
 
     client.hset(pKey, "newquests2", data,
       function(err, replies) {
+        if (err || !data || data == "") {
+          console.warn(err);
+          console.warn(JSON.stringify(replies));
+          console.warn(JSON.stringify(data));
+          return;
+        }
     });
   },
 
-  loadQuests: function(playerName, callback) {
+  loadQuests: function(playername, callback) {
     var self = this;
     console.info("loadQuest");
-    var pKey = "p:" + playerName;
+    var pKey = "p:" + playername;
     var multi = client.multi();
     var indexes;
 
     client.hget(pKey, "newquests2", function (err, data) {
         if (err || !data || data == "") {
+          console.warn(err);
+          console.warn(JSON.stringify(replies));
+          console.warn(JSON.stringify(data));
           return;
         }
         console.info(pKey);
         console.info("getItems - data="+data);
-        callback(playerName, data);
+        if (callback)
+          callback(playername, data);
     });
   },
 // QUESTS - END.
 
 
 // ACHIEVEMENTS - START.
-saveAchievements: function(playerName, data) {
+saveAchievements: function(playername, data) {
   console.info("saveAchievement");
-  var pKey = "p:" + playerName;
+  var pKey = "p:" + playername;
   client.hset(pKey, "achievements", data,
     function(err, replies) {
+      if (err || !data || data == "") {
+        console.warn(err);
+        console.warn(JSON.stringify(replies));
+        console.warn(JSON.stringify(data));
+        return;
+      }
   });
 },
 
-loadAchievements: function(playerName, callback) {
+loadAchievements: function(playername, callback) {
   console.info("loadAchievement");
-  var pKey = "p:" + playerName;
+  var pKey = "p:" + playername;
   client.hget(pKey, "achievements", function (err, data) {
-      if (err || !data) {
+      if (err || !data || data == "") {
+        console.warn(err);
+        console.warn(JSON.stringify(data));
         return;
       }
-      callback(playerName, data);
+      if (callback)
+        callback(playername, data);
   });
 },
 // ACHIEVEMENTS - END.
 
 // AUCTION DATABASE CALLS.
-  loadAuctions: function(self, callback) {
-    client.hgetall('s:auction', function(err, data) {
+  loadAuctions: function(worldIndex, callback) {
+    client.hgetall('s:auction'+worldIndex, function(err, data) {
       var auctions = {};
 
       if (data === null || !(typeof data === 'object'))
       {
         console.warn("loadAuctions - err: "+JSON.stringify(err));
         console.warn("loadAuctions - data: "+JSON.stringify(data));
-        callback(self, {});
         return;
       }
-      for (var i = 0; i < Object.keys(data).length; ++i) {
-        var rec = data[i];
-        var sData = rec.split(",");
-        var record = new AuctionRecord(sData[0],
-          parseInt(sData[1]),
-          new ItemRoom(parseInt(sData[2]),
-             parseInt(sData[3]),
-             parseInt(sData[4]),
-             parseInt(sData[5]),
-             parseInt(sData[6]))
-          );
-        auctions[i] = record;
-      }
-      callback(self, auctions);
+      if (callback)
+        callback(worldIndex, data);
       return;
     });
   },
 
-  saveAuctions: function(auctions) {
+  saveAuctions: function(worldIndex, data) {
+    console.info("redis - saveAuctions: "+JSON.stringify(data));
     client.del('s:auction');
-    var j = 0;
     var multi = client.multi();
-    for (var i = 0; i < Object.keys(auctions).length; ++i) {
-      if (auctions[i])
-        multi.hset('s:auction', j++, auctions[i].save(i));
+    for (var i = 0; i < Object.keys(data).length; ++i) {
+        multi.hset('s:auction'+worldIndex, i, data[i]);
     }
     multi.exec(function(err, replies) {
       if (err)
         console.error("saveAuctions: "+JSON.stringify(err));
-      AUCTION_SAVED = true;
     });
   },
+// END AUCTION DB CALLS.
 
-  loadLooks: function (looks) {
+// START LOOKS DB CALLS.
+  loadLooks: function (worldIndex, callback) {
     client.hget("l:looks", "prices", function (err, data)
     {
-      if (data)
-        looks = data.split(",");
+      if (err || !data || data == "") {
+        console.warn(err);
+        console.warn(JSON.stringify(data));
+        return;
+      }
+      if (data) {
+        data = data.split(",");
+        if (callback)
+          callback(worldIndex, data);
+      }
     });
   },
 
-  saveLooks: function (looks) {
-    client.hset('l:looks', 'prices', looks.join(','));
+  saveLooks: function (worldIndex, looks) {
+    console.info("redis - saveLooks: "+JSON.stringify(looks));
+    client.hset('l:looks', 'prices', looks.join(','), function(err, data) {
+      if (err || !data || data == "") {
+        console.warn(err);
+        console.warn(JSON.stringify(data));
+        return;
+      }
+    });
   },
-
-// END AUCTION DB CALLS.
+// END LOOKS DB CALLS.
 
 
 });
