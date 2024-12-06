@@ -26,29 +26,23 @@ module.exports = UserHandler = cls.Class.extend({
           var action = parseInt(message[0]);
           message.shift();
 
-          //if (isWorld) {
-            switch (action) {
-              case Types.UserMessages.UW_LOAD_PLAYER_DATA:
-                self.handleLoadPlayerData(message);
-                return;
-              case Types.UserMessages.UW_LOAD_PLAYER_AUCTIONS:
-                self.handleLoadPlayerAuctions(message);
-                return;
-              case Types.UserMessages.UW_LOAD_PLAYER_LOOKS:
-                self.handleLoadPlayerLooks(message);
-                return;
-              case Types.UserMessages.UW_WORLD_SAVE:
-                self.handleWorldSave(message);
-                return;
-              case Types.UserMessages.UW_WORLD_CLOSE:
-                self.handleWorldClose(message);
-                return;
-            }
-          //}
-          /*if (action == Types.UserMessages.CW_LOGIN_PLAYER) {
-            self.handleLoginPlayer(message);
-            return;
-          }*/
+          switch (action) {
+            case Types.UserMessages.UW_LOAD_PLAYER_DATA:
+              self.handleLoadPlayerData(message);
+              return;
+            case Types.UserMessages.UW_LOAD_PLAYER_AUCTIONS:
+              self.handleLoadPlayerAuctions(message);
+              return;
+            case Types.UserMessages.UW_LOAD_PLAYER_LOOKS:
+              self.handleLoadPlayerLooks(message);
+              return;
+            case Types.UserMessages.UW_WORLD_SAVE:
+              self.handleWorldSave(message);
+              return;
+            case Types.UserMessages.UW_WORLD_CLOSE:
+              self.handleWorldClose(message);
+              return;
+          }
 
         });
 
@@ -208,7 +202,7 @@ module.exports = UserHandler = cls.Class.extend({
       var player = this.player;
       //player.name = msg.shift();
       //console.info(msg.toString());
-      var db_player = {
+      var data_player = {
           "name": msg[0],
           "map": msg[1].split(","),
           "stats": msg[2].split(","),
@@ -220,21 +214,20 @@ module.exports = UserHandler = cls.Class.extend({
           "colors": msg[8].split(","),
           "shortcuts": msg[9],
           "completeQuests": msg[10]
-  // TODO - ADD IN REDIS
         };
 
-      console.info("shortcuts: "+JSON.stringify(db_player.shortcuts));
-      console.info("completeQuests: "+JSON.stringify(db_player.completeQuests));
+      console.info("shortcuts: "+JSON.stringify(data_player.shortcuts));
+      console.info("completeQuests: "+JSON.stringify(data_player.completeQuests));
 
-      if (db_player.shortcuts) {
-        db_player.shortcuts = JSON.parse(db_player.shortcuts);
+      if (data_player.shortcuts) {
+        data_player.shortcuts = JSON.parse(data_player.shortcuts);
       }
 
-      if (db_player.completeQuests) {
-        db_player.completeQuests = JSON.parse(db_player.completeQuests);
+      if (data_player.completeQuests) {
+        data_player.completeQuests = JSON.parse(data_player.completeQuests);
       }
 
-      player.fillPlayerInfo(db_player);
+      player.fillPlayerInfo(data_player);
       //player.hasLoggedIn = true;
       //player.packetHandler.loadedPlayer = true;
 

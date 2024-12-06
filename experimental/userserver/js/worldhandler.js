@@ -22,6 +22,7 @@ module.exports = WorldHandler = cls.Class.extend({
         this.SAVED_PLAYERS = false;
         this.savePlayers = [];
         this.playerLoadData = {};
+        this.playerCreateData = {};
 
         this.block = false;
         this.listener = function(message) {
@@ -271,26 +272,51 @@ module.exports = WorldHandler = cls.Class.extend({
       console.info("SENDING USERNAME: "+username);
       console.info("SENDING PLAYER: "+playername);
 
-      DBH.loadPlayerUserInfo(username, function (username, db_data) {
-        self.sendMessage( new UserMessages.UserInfo(username, db_data, user.hash));
+      var playerName = playername;
+      var checkLoadDataFull = function (index, data) {
+        var objData = self.playerCreateData[playerName];
+        objData.count++;
+        objData.data[index] = data;
+        if (objData.count == 7)
+        {
+          self.sendMessage( new UserMessages.SendLoadPlayerData(playerName, objData.data));
+          delete self.playerCreateData[playerName];
+        }
+        else {
+          self.playerCreateData[playerName] = objData;
+        }
+      };
 
-        var data = self.handleCreatePlayerInfo(playername);
-        self.sendMessage( new UserMessages.PlayerInfo(playername, data));
+      DBH.loadPlayerUserInfo(username, function (username, data) {
+        var objData = {};
+        objData.data = new Array(7);
+        objData.count = 0;
 
-        data = self.handleCreatePlayerQuests(playername);
-        self.sendMessage( new UserMessages.PlayerQuests(playername, data));
+        self.playerCreateData[playerName] = objData;
 
-        data = self.handleCreatePlayerAchievements(playername);
-        self.sendMessage( new UserMessages.PlayerAchievements(playername, data));
+        // Little bit of a workaround to marshal user data across.
+        data.unshift(self.user.hash);
+        data.unshift(username);
 
-        data = self.handleCreatePlayerItems(playername);
-        self.sendMessage( new UserMessages.PlayerItems(playername, 0, data));
+        checkLoadDataFull(0, data);
 
-        data = self.handleCreatePlayerItems(playername);
-        self.sendMessage( new UserMessages.PlayerItems(playername, 1, data));
+        data = self.handleCreatePlayerInfo(playerName);
+        checkLoadDataFull(1, data);
 
-        data = self.handleCreatePlayerItems(playername);
-        self.sendMessage( new UserMessages.PlayerItems(playername, 2, data));
+        data = self.handleCreatePlayerQuests(playerName);
+        checkLoadDataFull(2, data);
+
+        data = self.handleCreatePlayerAchievements(playerName);
+        checkLoadDataFull(3, data);
+
+        data = self.handleCreatePlayerItems(playerName);
+        checkLoadDataFull(4, data);
+
+        data = self.handleCreatePlayerItems(playerName);
+        checkLoadDataFull(5, data);
+
+        data = self.handleCreatePlayerItems(playerName);
+        checkLoadDataFull(6, data);
       });
     },
 
@@ -332,7 +358,7 @@ module.exports = WorldHandler = cls.Class.extend({
       console.info("SENDING USERNAME: "+username);
       console.info("SENDING PLAYER: "+playername);
 
-      var checkLoadDataFull = function (playername, index, db_data) {
+      var checkLoadDataFull = function (index, db_data) {
         var objData = self.playerLoadData[playername];
         objData.count++;
         objData.data[index] = db_data;
@@ -357,28 +383,28 @@ module.exports = WorldHandler = cls.Class.extend({
         // Little bit of a workaround to marshal user data across.
         db_data.unshift(self.user.hash);
         db_data.unshift(username);
-        checkLoadDataFull(playername, 0, db_data);
+        checkLoadDataFull(0, db_data);
 
         DBH.loadPlayerInfo(playername, function (playername, db_data) {
-          checkLoadDataFull(playername, 1, db_data);
+          checkLoadDataFull(1, db_data);
         });
         DBH.loadQuests(playername, function (playername, db_data) {
-          checkLoadDataFull(playername, 2, db_data);
+          checkLoadDataFull(2, db_data);
         });
         DBH.loadAchievements(playername, function (playername, db_data) {
-          checkLoadDataFull(playername, 3, db_data);
+          checkLoadDataFull(3, db_data);
         });
         // INVENTORY
         DBH.loadItems(playername, 0, function (playername, db_data) {
-          checkLoadDataFull(playername, 4, db_data);
+          checkLoadDataFull(4, db_data);
         });
         // BANK
         DBH.loadItems(playername, 1, function (playername, db_data) {
-          checkLoadDataFull(playername, 5, db_data);
+          checkLoadDataFull(5, db_data);
         });
         // EQUIPMENT
         DBH.loadItems(playername, 2, function (playername, db_data) {
-          checkLoadDataFull(playername, 6, db_data);
+          checkLoadDataFull(6, db_data);
         });
       });
     },

@@ -162,10 +162,10 @@ module.exports = WorldHandler = cls.Class.extend({
       var username = player.user.name;
       var playerName = player.name;
 
-      var checkLoadDataFull = function (index, db_data) {
+      var checkLoadDataFull = function (index, data) {
         var objData = self.playerSaveData[playerName];
         objData.count++;
-        objData.data[index] = db_data;
+        objData.data[index] = data;
         if (objData.count == 7)
         {
           self.sendToUserServer( new UserMessages.SavePlayerData(playerName, objData.data));
@@ -176,34 +176,34 @@ module.exports = WorldHandler = cls.Class.extend({
         }
       };
 
-      this.loadPlayerDataUserInfo(player, function (userName, db_data) {
+      this.loadPlayerDataUserInfo(player, function (userName, data) {
         var objData = {};
         objData.data = new Array(7);
         objData.count = 0;
 
         self.playerSaveData[playerName] = objData;
 
-        checkLoadDataFull(0, db_data);
+        checkLoadDataFull(0, data);
 
-        self.loadPlayerDataInfo(player, function (pn, db_data) {
-          checkLoadDataFull(1, db_data);
-        });
-
-        self.loadPlayerDataQuests(player, function (pn, db_data) {
-          checkLoadDataFull(2, db_data);
-        });
-        self.loadPlayerDataAchievements(player, function (pn, db_data) {
-          checkLoadDataFull(3, db_data);
+        self.loadPlayerDataInfo(player, function (pn, data) {
+          checkLoadDataFull(1, data);
         });
 
-        self.loadPlayerDataItems(player, 0, function (pn, type, db_data) {
-          checkLoadDataFull(4, db_data);
+        self.loadPlayerDataQuests(player, function (pn, data) {
+          checkLoadDataFull(2, data);
         });
-        self.loadPlayerDataItems(player, 1, function (pn, type, db_data) {
-          checkLoadDataFull(5, db_data);
+        self.loadPlayerDataAchievements(player, function (pn, data) {
+          checkLoadDataFull(3, data);
         });
-        self.loadPlayerDataItems(player, 2, function (pn, type, db_data) {
-          checkLoadDataFull(6, db_data);
+
+        self.loadPlayerDataItems(player, 0, function (pn, type, data) {
+          checkLoadDataFull(4, data);
+        });
+        self.loadPlayerDataItems(player, 1, function (pn, type, data) {
+          checkLoadDataFull(5, data);
+        });
+        self.loadPlayerDataItems(player, 2, function (pn, type, data) {
+          checkLoadDataFull(6, data);
         });
       });
     },
