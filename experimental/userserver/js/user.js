@@ -416,7 +416,7 @@ module.exports = User = cls.Class.extend({
 
       // Validate the username
       if (!Utils.checkInputName(tmpPlayer.name)) {
-        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",invalidname");
+        user.connection.send([Types.UserMessages.UC_ERROR,"invalidname"]);
         return;
       }
 
@@ -453,7 +453,7 @@ module.exports = User = cls.Class.extend({
             });
           }
           else {
-            this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",playerexists");
+            self.connection.send([Types.UserMessages.UC_ERROR,"playerexists"]);
           }
         });
       } catch (e) {
