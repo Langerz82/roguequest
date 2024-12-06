@@ -15,6 +15,7 @@ module.exports = WorldHandler = cls.Class.extend({
 
         this.main = main;
         this.connection = connection;
+        this.playerSaveData = {};
 
         this.connection.listen(function(message) {
           console.info("recv="+JSON.stringify(message));
@@ -52,6 +53,8 @@ module.exports = WorldHandler = cls.Class.extend({
     loadPlayerDataUserInfo: function (player, callback) {
       var user = player.user;
       var data = [
+        user.name,
+        user.hash,
         user.gems,
         Utils.BinToHex(user.looks)];
 
@@ -156,35 +159,52 @@ module.exports = WorldHandler = cls.Class.extend({
 
       console.info("SAVING PLAYER: "+player.name);
       //try { throw new Error(); } catch(err) { console.info(err.stack); }
-      var userName = player.user.name;
+      var username = player.user.name;
       var playerName = player.name;
 
+      var checkLoadDataFull = function (index, db_data) {
+        var objData = self.playerSaveData[playerName];
+        objData.count++;
+        objData.data[index] = db_data;
+        if (objData.count == 7)
+        {
+          self.sendToUserServer( new UserMessages.SavePlayerData(playerName, objData.data));
+          delete self.playerSaveData[playerName];
+        }
+        else {
+          self.playerSaveData[playerName] = objData;
+        }
+      };
 
-  // // TODO:
       this.loadPlayerDataUserInfo(player, function (userName, db_data) {
-        self.sendToUserServer( new UserMessages.SaveUserInfo(userName, playerName, db_data, ''));
+        var objData = {};
+        objData.data = new Array(7);
+        objData.count = 0;
 
-        self.loadPlayerDataInfo(player, function (playerName, db_data) {
-          self.sendToUserServer( new UserMessages.SavePlayerInfo(playerName, db_data));
-        });
+        self.playerSaveData[playerName] = objData;
 
-        self.loadPlayerDataQuests(player, function (playerName, db_data) {
-          self.sendToUserServer( new UserMessages.SavePlayerQuests(playerName, db_data));
-        });
-        self.loadPlayerDataAchievements(player, function (playerName, db_data) {
-          self.sendToUserServer( new UserMessages.SavePlayerAchievements(playerName, db_data));
-        });
+        checkLoadDataFull(0, db_data);
 
-        self.loadPlayerDataItems(player, 0, function (playerName, type, db_data) {
-          self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
-        });
-        self.loadPlayerDataItems(player, 1, function (playerName, type, db_data) {
-          self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
-        });
-        self.loadPlayerDataItems(player, 2, function (playerName, type, db_data) {
-          self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
+        self.loadPlayerDataInfo(player, function (pn, db_data) {
+          checkLoadDataFull(1, db_data);
         });
 
+        self.loadPlayerDataQuests(player, function (pn, db_data) {
+          checkLoadDataFull(2, db_data);
+        });
+        self.loadPlayerDataAchievements(player, function (pn, db_data) {
+          checkLoadDataFull(3, db_data);
+        });
+
+        self.loadPlayerDataItems(player, 0, function (pn, type, db_data) {
+          checkLoadDataFull(4, db_data);
+        });
+        self.loadPlayerDataItems(player, 1, function (pn, type, db_data) {
+          checkLoadDataFull(5, db_data);
+        });
+        self.loadPlayerDataItems(player, 2, function (pn, type, db_data) {
+          checkLoadDataFull(6, db_data);
+        });
       });
     },
 

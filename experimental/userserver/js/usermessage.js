@@ -49,6 +49,18 @@ UserMessages.PlayerLooks = Message.extend({
     }
 });
 
+UserMessages.SendLoadPlayerData = Message.extend({
+    init: function (playerName, playerData) {
+    	this.playerName = playerName;
+      this.playerData = playerData;
+    },
+    serialize: function () {
+        return [Types.UserMessages.UW_LOAD_PLAYER_DATA, this.playerName,
+          this.playerData];
+    }
+});
+
+/*
 UserMessages.UserInfo = Message.extend({
     init: function (userName, data, hash) {
     	this.userName = userName;
@@ -60,6 +72,7 @@ UserMessages.UserInfo = Message.extend({
         return arr.concat(this.data);
     }
 });
+
 
 UserMessages.PlayerInfo = Message.extend({
     init: function (playerName, data) {
@@ -105,3 +118,4 @@ UserMessages.PlayerItems = Message.extend({
         return arr.concat(this.data);
     }
 });
+*/

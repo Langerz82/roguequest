@@ -21,6 +21,7 @@ module.exports = WorldHandler = cls.Class.extend({
         this.SAVED_LOOKS = false;
         this.SAVED_PLAYERS = false;
         this.savePlayers = [];
+        this.playerLoadData = {};
 
         this.block = false;
         this.listener = function(message) {
@@ -35,20 +36,8 @@ module.exports = WorldHandler = cls.Class.extend({
               case Types.UserMessages.WU_GAMESERVER_INFO:
                 self.handleGameServerInfo(message);
                 return;
-              case Types.UserMessages.WU_SAVE_USER_INFO:
-                self.handleSaveUserInfo(message);
-                return;
-              case Types.UserMessages.WU_SAVE_PLAYER_INFO:
-                self.handleSavePlayerInfo(message);
-                return;
-              case Types.UserMessages.WU_SAVE_PLAYER_QUESTS:
-                self.handleSavePlayerQuests(message);
-                return;
-              case Types.UserMessages.WU_SAVE_PLAYER_ACHIEVEMENTS:
-                self.handleSavePlayerAchievements(message);
-                return;
-              case Types.UserMessages.WU_SAVE_PLAYER_ITEMS:
-                self.handleSavePlayerItems(message);
+              case Types.UserMessages.WU_SAVE_PLAYER_DATA:
+                self.handleSavePlayerData(message);
                 return;
             }
           }
@@ -99,14 +88,6 @@ module.exports = WorldHandler = cls.Class.extend({
 
     sendMessage: function(message) {
       this.connection.send(message.serialize());
-    },
-
-    checkPlayerSaved: function (playerName) {
-        this.savePlayers[playerName]++;
-        if (this.savePlayers[playerName] == 7)
-          delete this.savePlayers[playerName];
-        if (Object.keys(this.savePlayers).length == 0)
-          this.SAVED_PLAYERS = true;
     },
 
     handleSavePlayersList: function (msg) {
@@ -182,56 +163,57 @@ module.exports = WorldHandler = cls.Class.extend({
     },
 
 // TODO FIX - Add playername in packet.
-    handleSaveUserInfo: function (msg) {
-      console.info("handleSaveUserInfo: "+JSON.stringify(msg));
-      var self = this;
-      var playerName = msg.shift();
-      var userName = msg.shift();
 
-      DBH.savePlayerUserInfo(userName, playerName, msg, function (userName, playerName, data) {
-        self.checkPlayerSaved(playerName);
-      });
-    },
+    handleSavePlayerData: function (msg) {
+      console.info("handleSavePlayerData: "+JSON.stringify(msg));
 
-    handleSavePlayerInfo: function (msg) {
-      console.info("handleSavePlayerInfo: "+JSON.stringify(msg));
-      var self = this;
-      var playerName = msg.shift();
-
-      DBH.savePlayerInfo(playerName, msg, function (playerName) {
-        self.checkPlayerSaved(playerName);
-      });
-    },
-
-    handleSavePlayerQuests: function (msg) {
-      console.info("handleSavePlayerQuests: "+JSON.stringify(msg));
       var self = this;
       var playerName = msg[0];
 
-      DBH.saveQuests(playerName, msg[1], function (playerName) {
-        self.checkPlayerSaved(playerName);
+      var data = msg[1];
+
+      this.savePlayers[playerName] = 0;
+
+      var checkPlayerSaved = function (playerName) {
+          self.savePlayers[playerName]++;
+          if (self.savePlayers[playerName] == 7)
+          delete self.savePlayers[playerName];
+          if (Object.keys(self.savePlayers).length == 0)
+            self.SAVED_PLAYERS = true;
+      };
+
+      // NOTE - Remove the userame and hash from the data.
+      var username = data[0].shift();
+      var hash = data[0].shift();
+
+      DBH.savePlayerUserInfo(username, playerName, data[0], function (username, playerName, data) {
+        checkPlayerSaved(playerName);
       });
-    },
 
-    handleSavePlayerAchievements: function (msg) {
-      console.info("handleSavePlayerAchievements: "+JSON.stringify(msg));
-      var self = this;
-      var playerName = msg[0];
-
-      DBH.saveAchievements(playerName, msg[1], function (playerName) {
-        self.checkPlayerSaved(playerName);
+      DBH.savePlayerInfo(playerName, data[1], function (playerName) {
+        checkPlayerSaved(playerName);
       });
-    },
 
-    handleSavePlayerItems: function (msg) {
-      console.info("handleSavePlayerItems: "+JSON.stringify(msg));
-      var self = this;
-      var playerName = msg[0],
-          type = parseInt(msg[1]);
-
-      DBH.saveItems(playerName, type, msg[2], function (playerName) {
-        self.checkPlayerSaved(playerName);
+      DBH.saveQuests(playerName, data[2], function (playerName) {
+        checkPlayerSaved(playerName);
       });
+
+      DBH.saveAchievements(playerName, data[3], function (playerName) {
+        checkPlayerSaved(playerName);
+      });
+
+      DBH.saveItems(playerName, 0, data[4], function (playerName) {
+        checkPlayerSaved(playerName);
+      });
+
+      DBH.saveItems(playerName, 1, data[5], function (playerName) {
+        checkPlayerSaved(playerName);
+      });
+
+      DBH.saveItems(playerName, 2, data[6], function (playerName) {
+        checkPlayerSaved(playerName);
+      });
+
     },
 
     handlePlayerLoaded: function (msg) {
@@ -345,36 +327,58 @@ module.exports = WorldHandler = cls.Class.extend({
       console.info("sendPlayerToWorld");
       var self = this;
 
-      this.block = true;
       this.user = user;
 
       console.info("SENDING USERNAME: "+username);
       console.info("SENDING PLAYER: "+playername);
 
+      var checkLoadDataFull = function (playername, index, db_data) {
+        var objData = self.playerLoadData[playername];
+        objData.count++;
+        objData.data[index] = db_data;
+        if (objData.count == 7)
+        {
+          self.sendMessage( new UserMessages.SendLoadPlayerData(playername, objData.data));
+          delete self.playerLoadData[playername];
+        }
+        else {
+          self.playerLoadData[playername] = objData;
+        }
+      };
+
       DBH.loadPlayerUserInfo(username, function (username, db_data) {
-        self.sendMessage( new UserMessages.UserInfo(username, db_data, user.hash));
+        var objData = {};
+        objData.data = new Array(7);
+        objData.count = 0;
+        //objData.username = username;
+
+        self.playerLoadData[playername] = objData;
+
+        // Little bit of a workaround to marshal user data across.
+        db_data.unshift(self.user.hash);
+        db_data.unshift(username);
+        checkLoadDataFull(playername, 0, db_data);
 
         DBH.loadPlayerInfo(playername, function (playername, db_data) {
-          self.sendMessage( new UserMessages.PlayerInfo(playername, db_data));
-
-          DBH.loadQuests(playername, function (playername, db_data) {
-            self.sendMessage( new UserMessages.PlayerQuests(playername, db_data));
-          });
-          DBH.loadAchievements(playername, function (playername, db_data) {
-            self.sendMessage( new UserMessages.PlayerAchievements(playername, db_data));
-          });
-          // INVENTORY
-          DBH.loadItems(playername, 0, function (playername, db_data) {
-            self.sendMessage( new UserMessages.PlayerItems(playername, 0, db_data));
-          });
-          // BANK
-          DBH.loadItems(playername, 1, function (playername, db_data) {
-            self.sendMessage( new UserMessages.PlayerItems(playername, 1, db_data));
-          });
-          // EQUIPMENT
-          DBH.loadItems(playername, 2, function (playername, db_data) {
-            self.sendMessage( new UserMessages.PlayerItems(playername, 2, db_data));
-          });
+          checkLoadDataFull(playername, 1, db_data);
+        });
+        DBH.loadQuests(playername, function (playername, db_data) {
+          checkLoadDataFull(playername, 2, db_data);
+        });
+        DBH.loadAchievements(playername, function (playername, db_data) {
+          checkLoadDataFull(playername, 3, db_data);
+        });
+        // INVENTORY
+        DBH.loadItems(playername, 0, function (playername, db_data) {
+          checkLoadDataFull(playername, 4, db_data);
+        });
+        // BANK
+        DBH.loadItems(playername, 1, function (playername, db_data) {
+          checkLoadDataFull(playername, 5, db_data);
+        });
+        // EQUIPMENT
+        DBH.loadItems(playername, 2, function (playername, db_data) {
+          checkLoadDataFull(playername, 6, db_data);
         });
       });
     },

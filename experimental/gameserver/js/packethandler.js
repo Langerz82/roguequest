@@ -208,8 +208,8 @@ module.exports = PacketHandler = Class.extend({
       //if (self.player.user.loadedPlayer)
       self.player.save();
 
-      if (players[self.player.name])
-        players[self.player.name] = 0;
+      //if (players[self.player.name])
+        //players[self.player.name] = 0;
 
       //if (users[self.player.user.name])
         //users[self.player.user.name] = 0;

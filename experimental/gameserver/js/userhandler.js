@@ -10,31 +10,6 @@ var cls = require("./lib/class"),
     AppearanceData = require("./data/appearancedata");
 //    TaskHandler = require("./taskhandler");
 
-/*function PlayerSummary(index, db_player) {
-  this.index = index;
-  this.name = db_player.name;
-  //this.pClass = db_player.pClass;
-  this.exp = db_player.exp;
-  this.colors = db_player.colors;
-  this.sprites = db_player.sprites;
-  return this;
-}
-
-PlayerSummary.prototype.toArray = function () {
-  return [this.index,
-    this.name,
-    //this.pClass,
-    this.exp,
-    this.colors[0],
-    this.colors[1],
-    this.sprites[0],
-    this.sprites[1]];
-}
-
-PlayerSummary.prototype.toString = function () {
-    return this.toArray().join(",");
-}*/
-
 module.exports = UserHandler = cls.Class.extend({
     init: function(main, server, world, connection) {
         var self = this;
@@ -53,20 +28,8 @@ module.exports = UserHandler = cls.Class.extend({
 
           //if (isWorld) {
             switch (action) {
-              case Types.UserMessages.UW_LOAD_USER_INFO:
-                self.handleLoadUserInfo(message);
-                return;
-              case Types.UserMessages.UW_LOAD_PLAYER_INFO:
-                self.handleLoadPlayerInfo(message);
-                return;
-              case Types.UserMessages.UW_LOAD_PLAYER_QUESTS:
-                self.handleLoadPlayerQuests(message);
-                return;
-              case Types.UserMessages.UW_LOAD_PLAYER_ACHIEVEMENTS:
-                self.handleLoadPlayerAchievements(message);
-                return;
-              case Types.UserMessages.UW_LOAD_PLAYER_ITEMS:
-                self.handleLoadPlayerItems(message);
+              case Types.UserMessages.UW_LOAD_PLAYER_DATA:
+                self.handleLoadPlayerData(message);
                 return;
               case Types.UserMessages.UW_LOAD_PLAYER_AUCTIONS:
                 self.handleLoadPlayerAuctions(message);
@@ -182,7 +145,27 @@ module.exports = UserHandler = cls.Class.extend({
       this.world.looks.load(msg);
     },
 
-    handleLoadUserInfo: function (msg) {
+    handleLoadPlayerData: function (msg) {
+        var playerName = msg[0];
+        var data = msg[1];
+        console.info("handleLoadPlayerData data: "+JSON.stringify(data));
+        this.handleLoadUserInfo(playerName, data[0]);
+        this.handleLoadPlayerInfo(data[1]);
+        this.handleLoadPlayerQuests(data[2]);
+        this.handleLoadPlayerAchievements(data[3]);
+        this.handleLoadPlayerItems(0, data[4]);
+        this.handleLoadPlayerItems(1, data[5]);
+        this.handleLoadPlayerItems(2, data[6]);
+
+        var player = this.player;
+        console.info("player hash: "+player.hash);
+        hashes[player.hash] = player;
+        this.player = null;
+        this.send([Types.UserMessages.WU_PLAYER_LOADED,
+          MainConfig.protocol,MainConfig.address,MainConfig.port]);
+    },
+
+    handleLoadUserInfo: function (playerName, msg) {
       console.info("handleLoadUserInfo: "+JSON.stringify(msg));
 
       var username = msg[0],
@@ -204,10 +187,11 @@ module.exports = UserHandler = cls.Class.extend({
       user.name = username;
       //user.world = this;
 
-      var player = new Player(this.world, user, conn);
+      player = new Player(this.world, user, conn);
       //player.start(this.connection);
       //player.name = playerSummary.name;
       //player.hasLoggedIn = true;
+      player.name = playerName;
       player.hash = hash;
       player.loaded = 0;
       player.worldHandler = user.worldHandler;
@@ -222,8 +206,7 @@ module.exports = UserHandler = cls.Class.extend({
     handleLoadPlayerInfo: function (msg) {
       console.info("handleLoadPlayerInfo: "+JSON.stringify(msg));
       var player = this.player;
-      player.name = msg.shift();
-
+      //player.name = msg.shift();
       //console.info(msg.toString());
       var db_player = {
           "name": msg[0],
@@ -255,14 +238,13 @@ module.exports = UserHandler = cls.Class.extend({
       //player.hasLoggedIn = true;
       //player.packetHandler.loadedPlayer = true;
 
-      this.handlePlayerLoaded();
+      //this.handlePlayerLoaded();
     },
 
     handleLoadPlayerQuests: function (msg) {
       console.info("handleLoadPlayerQuests: "+JSON.stringify(msg));
       var player = this.player;
-      var playerName = msg.shift();
-
+      //var playerName = msg.shift();
       var quests = [];
       console.info("msg="+msg);
       dataJSON = JSON.parse(msg);
@@ -278,16 +260,16 @@ module.exports = UserHandler = cls.Class.extend({
           player.quests.push(quest);
         }
       }
-      this.handlePlayerLoaded();
+      //this.handlePlayerLoaded();
     },
 
     handleLoadPlayerAchievements: function (msg) {
       console.info("handleLoadPlayerAchievements: "+JSON.stringify(msg));
       var player = this.player;
-      var playerName = msg.shift();
+      //var playerName = msg.shift();
 
       var achievements = getInitAchievements();
-      var rec = msg.shift().split(',');
+      var rec = msg.split(',');
       var len = ~~(rec.length / 3);
       for (var i=0; i < len; ++i)
       {
@@ -298,16 +280,13 @@ module.exports = UserHandler = cls.Class.extend({
       {
         player.achievements.push(achievements[i]);
       }
-      this.handlePlayerLoaded();
+      //this.handlePlayerLoaded();
     },
 
-    handleLoadPlayerItems: function (msg) {
+    handleLoadPlayerItems: function (type, msg) {
       console.info("handleLoadPlayerItems: "+JSON.stringify(msg));
       var player = this.player;
-      var playerName = msg.shift();
-
-      var type = msg.shift();
-
+      //var playerName = msg.shift();
       var items = [];
       //console.info(pKey);
       console.info("getItems - data="+msg);
@@ -342,10 +321,10 @@ module.exports = UserHandler = cls.Class.extend({
         };
       }
       player.itemStore[type] = storeType;
-      this.handlePlayerLoaded();
+      //this.handlePlayerLoaded();
     },
 
-    handlePlayerLoaded: function () {
+    /*handlePlayerLoaded: function () {
         var player = this.player;
         player.loaded++;
         if (player.loaded == 6) {
@@ -359,7 +338,7 @@ module.exports = UserHandler = cls.Class.extend({
           this.send([Types.UserMessages.WU_PLAYER_LOADED,
             MainConfig.protocol,MainConfig.address,MainConfig.port]);
         }
-    },
+    },*/
 
     sendToUserServer: function (msg) {
       if (this.connection)

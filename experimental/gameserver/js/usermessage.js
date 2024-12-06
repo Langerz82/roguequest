@@ -49,6 +49,27 @@ UserMessages.ServerInfo = Message.extend({
     }
 });
 
+UserMessages.SavePlayersList = Message.extend({
+    init: function (data) {
+        this.data = data;
+    },
+    serialize: function () {
+        return [Types.UserMessages.WU_SAVE_PLAYERS_LIST].concat(this.data);
+    }
+});
+
+UserMessages.SavePlayerData = Message.extend({
+    init: function (playerName, playerData) {
+    	this.playerName = playerName;
+      this.playerData = playerData;
+    },
+    serialize: function () {
+        return [Types.UserMessages.WU_SAVE_PLAYER_DATA, this.playerName,
+          this.playerData];
+    }
+});
+
+/*
 UserMessages.SaveUserInfo = Message.extend({
     init: function (playerName, userName, data, hash) {
     	this.userName = userName;
@@ -62,14 +83,6 @@ UserMessages.SaveUserInfo = Message.extend({
     }
 });
 
-UserMessages.SavePlayersList = Message.extend({
-    init: function (data) {
-        this.data = data;
-    },
-    serialize: function () {
-        return [Types.UserMessages.WU_SAVE_PLAYERS_LIST].concat(this.data);
-    }
-});
 
 UserMessages.SavePlayerInfo = Message.extend({
     init: function (playerName, data) {
@@ -115,3 +128,4 @@ UserMessages.SavePlayerItems = Message.extend({
         return arr.concat(this.data);
     }
 });
+*/
