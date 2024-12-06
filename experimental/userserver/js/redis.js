@@ -111,7 +111,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     // Check if username is taken
     client.sismember('usr', user.name, function(err, reply) {
       if (reply === 1) {
-        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",userexists");
+        user.connection.send([Types.UserMessages.UC_ERROR,"userexists"]);
         user.connection.close("Username not available: " + user.name);
       } else {
         data = [
@@ -203,11 +203,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
         }
         client.del(uKey);
         client.srem("usr", user.name);
-        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",removed_user_ok");
+        user.connection.send([Types.UserMessages.UC_ERROR,"removed_user_ok"]);
         user.connection.close();
         return;
       }
-      user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",removed_user_fail");
+      user.connection.send([Types.UserMessages.UC_ERROR,"removed_user_fail"]);
       user.connection.close();
     });
   },
@@ -221,7 +221,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       //console.info("reply: "+reply);
       if (reply !== 1)
       {
-        user.connection.sendUTF8(Types.UserMessages.UC_ERROR+",invalidlogin");
+        user.connection.send([Types.UserMessages.UC_ERROR,"invalidlogin"]);
         return false;
       }
 
@@ -284,7 +284,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
           return true;
         }
       });
-      //user.connection.sendUTF8(Types.Messages.SC_ERROR+",invalidlogin");
       return false;
     });
   },
