@@ -5,18 +5,8 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 	function(pako, Player, EntityFactory, Mob, Item, MobData, BISON, config, ChatHandler, Timer) {
 
     var GameClient = Class.extend({
-        init: function(game, userclient) {
+        init: function() {
 						var self = this;
-						this.game = game;
-            //this.game = game;
-            this.connection = userclient.connection;
-
-						this.connection.removeListener('message', userclient.onMessage);
-						this.connection.on('message', function(e) {
-	              //console.warn("recv="+e);
-								self.processMessage(e);
-								return false;
-	          });
 
 						this.useBison = false;
 
@@ -34,60 +24,51 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 
 		        var burst = 4;
 
-		        this.processMessage = function(data) {
-		          //if (!self.rawpackets || self.rawpackets.length == 0)
-		            //return;
+						self.onMessage = function(data) {
+	            console.warn("recv: "+data);
+							var fnProcessMessage = function (message) {
 
-		          //var data = self.rawpackets.shift();
-		          if (data.charAt(0) == '2')
-		          {
-		            var buffer = _base64ToArrayBuffer(data.substr(1));
-		            try {
-		            var message = pako.inflate(buffer, {gzip: true, to: 'string'});
-		            if(self.isListening) {
-		              if(self.useBison) {
-		                data = BISON.decode(message);
-		              } else {
-		                data = JSON.parse(message);
-		              }
-		              if(data instanceof Array) {
-		                if(data[0] instanceof Array) {
-		                  // Multiple actions received
-		                  self.receiveActionBatch(data);
-		                } else {
-		                  // Only one action received
-		                  //self.packets.push(data);
-											self.receiveAction(data);
-		                }
-		              }
-		            }
-		          } catch (err) {
-		            console.log(err);
-		          }
-		        }
-		        else
+								if(self.isListening) {
+			            if(self.useBison) {
+			              data = BISON.decode(message);
+			            } else {
+			              data = JSON.parse(message);
+			            }
+	                fnRecieveAction(data);
+			          }
+							};
+	           var fnRecieveAction = function (data) {
+	             console.warn("recv: "+data);
+	             if(data instanceof Array) {
+	               if(data[0] instanceof Array) {
+	                 // Multiple actions received
+	                 self.receiveActionBatch(data);
+	               } else {
+	                 // Only one action received
+	                 self.receiveAction(data);
+	               }
+	             }
+	           };
+	           var method = data.substr(0,2) ;
+		        if (method === '2[')
 		        {
-		          var message = data.substr(1);
-		          if(self.isListening) {
-		            if(self.useBison) {
-		              data = BISON.decode(message);
-		            } else {
-		              data = JSON.parse(message);
-		            }
-		            if(data instanceof Array) {
-		              if(data[0] instanceof Array) {
-		                // Multiple actions received
-		                self.receiveActionBatch(data);
-		              } else {
-		                // Only one action received
-		                //self.packets.push(data);
-										self.receiveAction(data);
-		              }
-		            }
-		          }
+	            var buffer = _base64ToArrayBuffer(data.substr(1));
+	            try {
+	              var message = pako.inflate(buffer, {gzip: true, to: 'string'});
+							  fnProcessMessage(message);
+	            } catch (err) {
+	              console.log(err);
+	            }
 		        }
+		        else if (method === '1[') {
+		          var message = data.substr(1);
+							fnProcessMessage(message);
+		        }
+	          else {
+	            var message = data.split(",");
+	            fnRecieveAction(message);
+	          }
 		      };
-
 		      /*this.packetProcFunc = function() {
 		        if (!self.packets || self.packets.length == 0)
 		          return;
@@ -142,9 +123,24 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 
 					this.handlers[Types.Messages.SC_SET_SPRITE] = this.set_sprite_callback;
 					this.handlers[Types.Messages.SC_SET_ANIMATION] = this.set_animation_callback;
-
-
 				},
+
+				connect: function (connection) {
+					var self = this;
+
+					this.connection = connection;
+
+					//this.connection.removeListener('message', userclient.onMessage);
+					this.connection.on('message', function(e) {
+							//console.warn("recv="+e);
+							self.onMessage(e);
+							return false;
+					});
+				},
+
+				onVersion: function (data) {
+	        game.onVersion(data);
+	      },
 
         enable: function() {
             this.isListening = true;
@@ -209,7 +205,7 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 								x = parseInt(data[5]),
 								y = parseInt(data[6]);
 
-            //log.info("this.game.mapIndex:"+this.game.mapIndex);
+            //log.info("game.mapIndex:"+game.mapIndex);
             //log.info("map:"+parseInt(map));
 
             if (!game.mapContainer.ready || game.mapContainer.mapIndex != parseInt(mapIndex) ||
@@ -218,8 +214,8 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 
             //log.info("data="+JSON.stringify(data));
 						// If Entity exists just re-create it.
-            if (this.game.entityIdExists(id)) {
-            	var entity = this.game.getEntityById(id);
+            if (game.entityIdExists(id)) {
+            	var entity = game.getEntityById(id);
 							game.removeEntity(entity);
             }
 
@@ -249,12 +245,20 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
             }
         },
 
+				onVersion: function (data) {
+	        game.onVersionGame(data);
+	      },
+
 				onParty: function (callback) {
             this.party_callback = callback;
         },
 
 				onLooks: function (callback) {
             this.looks_callback = callback;
+        },
+
+				onPlayer: function (callback) {
+            this.player_callback = callback;
         },
 
 				onPlayerInfo: function (callback) {

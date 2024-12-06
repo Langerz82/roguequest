@@ -41,9 +41,9 @@ function(UserClient, Player, AppearanceData) {
         this.regHash = hashObj;
         //var hashChallenge = new jsSHA(this.client.hashChallenge, "ASCII");
         log.info("User init: hash="+hash);
-        log.info("User init: hashChallenge="+this.client.hashChallenge);
+        log.info("User init: hashChallenge="+game.hashChallenge);
         //var hash = new jsSHA(hashObj+this.client.hashChallenge, "ASCII");
-        var hash = CryptoJS.AES.encrypt(JSON.stringify(hashObj), this.client.hashChallenge).toString();
+        var hash = CryptoJS.AES.encrypt(JSON.stringify(hashObj), game.hashChallenge).toString();
         //log.info("hash="+hash.getHash("SHA-1","HEX"));
         //log.info("hashChallenge="+hashChallenge.getHash("SHA-1","HEX"));
         this.hash = this.hash || btoa(hash);

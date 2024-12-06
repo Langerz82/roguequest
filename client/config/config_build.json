@@ -1,7 +1,7 @@
 {
-		"host": "localhost",
+    "host": "localhost",
     "port": 1340,
-		"protocol": "http",
+    "protocol": "http",
     "useLocalAPI": false,
     "dispatcher": false,
     "version":91,

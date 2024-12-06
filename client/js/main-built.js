@@ -16750,18 +16750,8 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 	function(pako, Player, EntityFactory, Mob, Item, MobData, BISON, config, ChatHandler, Timer) {
 
     var GameClient = Class.extend({
-        init: function(game, userclient) {
+        init: function() {
 						var self = this;
-						this.game = game;
-            //this.game = game;
-            this.connection = userclient.connection;
-
-						this.connection.removeListener('message', userclient.onMessage);
-						this.connection.on('message', function(e) {
-	              //console.warn("recv="+e);
-								self.processMessage(e);
-								return false;
-	          });
 
 						this.useBison = false;
 
@@ -16779,60 +16769,51 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 
 		        var burst = 4;
 
-		        this.processMessage = function(data) {
-		          //if (!self.rawpackets || self.rawpackets.length == 0)
-		            //return;
+						self.onMessage = function(data) {
+	            console.warn("recv: "+data);
+							var fnProcessMessage = function (message) {
 
-		          //var data = self.rawpackets.shift();
-		          if (data.charAt(0) == '2')
-		          {
-		            var buffer = _base64ToArrayBuffer(data.substr(1));
-		            try {
-		            var message = pako.inflate(buffer, {gzip: true, to: 'string'});
-		            if(self.isListening) {
-		              if(self.useBison) {
-		                data = BISON.decode(message);
-		              } else {
-		                data = JSON.parse(message);
-		              }
-		              if(data instanceof Array) {
-		                if(data[0] instanceof Array) {
-		                  // Multiple actions received
-		                  self.receiveActionBatch(data);
-		                } else {
-		                  // Only one action received
-		                  //self.packets.push(data);
-											self.receiveAction(data);
-		                }
-		              }
-		            }
-		          } catch (err) {
-		            console.log(err);
-		          }
-		        }
-		        else
+								if(self.isListening) {
+			            if(self.useBison) {
+			              data = BISON.decode(message);
+			            } else {
+			              data = JSON.parse(message);
+			            }
+	                fnRecieveAction(data);
+			          }
+							};
+	           var fnRecieveAction = function (data) {
+	             console.warn("recv: "+data);
+	             if(data instanceof Array) {
+	               if(data[0] instanceof Array) {
+	                 // Multiple actions received
+	                 self.receiveActionBatch(data);
+	               } else {
+	                 // Only one action received
+	                 self.receiveAction(data);
+	               }
+	             }
+	           };
+	           var method = data.substr(0,2) ;
+		        if (method === '2[')
 		        {
-		          var message = data.substr(1);
-		          if(self.isListening) {
-		            if(self.useBison) {
-		              data = BISON.decode(message);
-		            } else {
-		              data = JSON.parse(message);
-		            }
-		            if(data instanceof Array) {
-		              if(data[0] instanceof Array) {
-		                // Multiple actions received
-		                self.receiveActionBatch(data);
-		              } else {
-		                // Only one action received
-		                //self.packets.push(data);
-										self.receiveAction(data);
-		              }
-		            }
-		          }
+	            var buffer = _base64ToArrayBuffer(data.substr(1));
+	            try {
+	              var message = pako.inflate(buffer, {gzip: true, to: 'string'});
+							  fnProcessMessage(message);
+	            } catch (err) {
+	              console.log(err);
+	            }
 		        }
+		        else if (method === '1[') {
+		          var message = data.substr(1);
+							fnProcessMessage(message);
+		        }
+	          else {
+	            var message = data.split(",");
+	            fnRecieveAction(message);
+	          }
 		      };
-
 		      /*this.packetProcFunc = function() {
 		        if (!self.packets || self.packets.length == 0)
 		          return;
@@ -16887,9 +16868,24 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 
 					this.handlers[Types.Messages.SC_SET_SPRITE] = this.set_sprite_callback;
 					this.handlers[Types.Messages.SC_SET_ANIMATION] = this.set_animation_callback;
-
-
 				},
+
+				connect: function (connection) {
+					var self = this;
+
+					this.connection = connection;
+
+					//this.connection.removeListener('message', userclient.onMessage);
+					this.connection.on('message', function(e) {
+							//console.warn("recv="+e);
+							self.onMessage(e);
+							return false;
+					});
+				},
+
+				onVersion: function (data) {
+	        game.onVersion(data);
+	      },
 
         enable: function() {
             this.isListening = true;
@@ -16954,7 +16950,7 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 								x = parseInt(data[5]),
 								y = parseInt(data[6]);
 
-            //log.info("this.game.mapIndex:"+this.game.mapIndex);
+            //log.info("game.mapIndex:"+game.mapIndex);
             //log.info("map:"+parseInt(map));
 
             if (!game.mapContainer.ready || game.mapContainer.mapIndex != parseInt(mapIndex) ||
@@ -16963,8 +16959,8 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 
             //log.info("data="+JSON.stringify(data));
 						// If Entity exists just re-create it.
-            if (this.game.entityIdExists(id)) {
-            	var entity = this.game.getEntityById(id);
+            if (game.entityIdExists(id)) {
+            	var entity = game.getEntityById(id);
 							game.removeEntity(entity);
             }
 
@@ -16994,12 +16990,20 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
             }
         },
 
+				onVersion: function (data) {
+	        game.onVersionGame(data);
+	      },
+
 				onParty: function (callback) {
             this.party_callback = callback;
         },
 
 				onLooks: function (callback) {
             this.looks_callback = callback;
+        },
+
+				onPlayer: function (callback) {
+            this.player_callback = callback;
         },
 
 				onPlayerInfo: function (callback) {
@@ -18214,32 +18218,77 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
           });*/
 
           //var certLoaded = function(self, data) {
-            self.connection = io(url, {
-              forceNew: true,
-              reconnection: false,
-              timeout: 10000,
-              //secure: true,
-              //transports: ['websocket','polling'],
-              transports: ['websocket'],
-              //rejectUnauthorized: false,
-              //ca: data
-            });
+          self.connection = io(url, {
+            forceNew: true,
+            reconnection: false,
+            timeout: 10000,
+            //secure: true,
+            //transports: ['websocket','polling'],
+            transports: ['websocket'],
+            //rejectUnauthorized: false,
+            //ca: data
+          });
 
-            self.connection.on('connect', function() {
-              log.info("Connected to server "+self.config.host+":"+self.config.port);
-              self.onConnected();
-            });
+          self.connection.on('connect', function() {
+            log.info("Connected to server "+self.config.host+":"+self.config.port);
+            self.onConnected();
+          });
 
-            self.connection.on('connect_error', function(e) {
-              self._onError(["There has been an error connecting to RSO server try again soon."]);
-              log.error(e, true);
-            });
+          self.connection.on('connect_error', function(e) {
+            self._onError(["There has been an error connecting to RSO server try again soon."]);
+            log.error(e, true);
+          });
 
-            self.onMessage = function(e) {
+          self.onMessage = function(data) {
+            console.warn("recv: "+data);
+						var fnProcessMessage = function (message) {
+
+							if(self.isListening) {
+		            if(self.useBison) {
+		              data = BISON.decode(message);
+		            } else {
+		              data = JSON.parse(message);
+		            }
+                fnRecieveAction(data);
+		          }
+						};
+           var fnRecieveAction = function (data) {
+             console.warn("recv: "+data);
+             if(data instanceof Array) {
+               if(data[0] instanceof Array) {
+                 // Multiple actions received
+                 self.receiveActionBatch(data);
+               } else {
+                 // Only one action received
+                 self.receiveAction(data);
+               }
+             }
+           };
+           var method = data.substr(0,2) ;
+	        if (method === '2[')
+	        {
+            var buffer = _base64ToArrayBuffer(data.substr(1));
+            try {
+              var message = pako.inflate(buffer, {gzip: true, to: 'string'});
+						  fnProcessMessage(message);
+            } catch (err) {
+              console.log(err);
+            }
+	        }
+	        else if (method === '1[') {
+	          var message = data.substr(1);
+						fnProcessMessage(message);
+	        }
+          else {
+            var message = data.split(",");
+            fnRecieveAction(message);
+          }
+	      };
+            /*self.onMessage = function(e) {
               console.warn("recv: "+e);
               var data = e.split(",");
               self.receiveAction(data);
-            }
+            }*/
             self.connection.on('message', this.onMessage);
 
             self.connection.on('error', function(e) {
@@ -18270,6 +18319,13 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
           }
       },
 
+      receiveActionBatch: function(actions) {
+          var self = this;
+          _.each(actions, function(action) {
+              self.receiveAction(action);
+          });
+      },
+
       sendMessage: function(json) {
           var data;
           if(this.connection.connected === true) {
@@ -18290,6 +18346,7 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
       onConnected: function() {
         log.info("Starting client/server handshake");
 
+        //this.sendUserConnected();
         this.sendSyncTime();
 
         /*switch (this.initialAction)
@@ -18304,121 +18361,7 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
         }*/
       },
 
-      onPlayerSummary: function (data) {
-        user.setPlayerSummary(data);
-
-        var count = user.playerSum.length;
-        for (var i=0; i < count; ++i)
-        {
-          var ps = user.playerSum[i];
-          var option = ps.name + " Lv" + Types.getLevel(ps.exp);
-
-          var o = new Option(option, i);
-          $('#player_select').append(o);
-        }
-
-        app.loadWindow('user_window', 'player_window');
-        $('#player_select').focus();
-
-        if (count > 0) {
-          $('#player_select option[value="'+(count-1)+'"]').attr("selected",true);
-          app.showPlayerLoad();
-          //$('#player_create').show();
-          //$('#player_load').show();
-          //$('#player_select').show();
-          //$('#lbl_player_select').show();
-        }
-
-
-        if (count == 0)
-        {
-          app.showPlayerCreate();
-          //$('#player_create_form').show();
-          //$('#player_select').hide();
-          //$('#lbl_player_select').hide();
-        }
-        else
-        {
-          $('#player_create_form').hide();
-        }
-      },
-
-      onWorlds: function (data) {
-        for (var i = 0; i < data.length; i += 4)
-        {
-          $("#player_server").append("<option value="+data[i]+">"+
-            data[i+1]+" "+data[i+2]+"/"+data[i+3]+"</option");
-        }
-        $('#user_create').removeClass('loading');
-        $('#user_load').removeClass('loading');
-        app.$loginInfo.text("Connected.");
-      },
-
-      _onError: function (data) {
-          var message = data[0];
-          /*if (message == 'playerexists') {
-            app.addValidationError(null, 'The playername you entered is not available.');
-            return;
-          }*/
-
-          $('#container').addClass('error');
-          $('#errorwindow .errordetails').html("<p>"+message+"</p>");
-          app.loadWindow('loginwindow','errorwindow');
-      },
-
-      onVersion: function(data) {
-        //var self;
-        this.versionChecked = true;
-        var version = data[0];
-        var hash = data[1];
-        this.hashChallenge = hash;
-        log.info("onVersion: hash="+hash);
-
-        log.info("config.build.version="+config.build.version);
-        if (version != config.build.version)
-        {
-          $('#container').addClass('error');
-          var errmsg = "Please download the new version of RRO2.<br/>";
-
-          if (game.renderer.isMobile) {
-            errmsg += "<br/>For mobile see: " + config.build.updatepage;
-          } else {
-            errmsg += "<br/>For most browsers press Ctrl+F5 to reload the game cache files.";
-          }
-          game.clienterror_callback(errmsg);
-          if (this.tablet || this.mobile)
-            window.location.replace(config.build.updatepage);
-        }
-      },
-
-      onSyncTime: function (data) {
-        setWorldTime(parseInt(data[0]), parseInt(data[1]))
-      },
-
-      onError: function (data) {
-        var error = data[0];
-
-        switch(error) {
-          case 'full':
-          case 'invalidlogin':
-          case 'userexists':
-          case 'playerexists':
-          case 'loggedin':
-          case 'invalidusername':
-          case 'ban':
-          case 'passwordChanged':
-          case 'timeout':
-            app.info_callback(data);
-            return;
-          case 'timeout':
-            app.info_callback(data);
-            self.isTimeout = true;
-            return;
-        }
-        this._onError(data);
-      },
-
-      onPlayer: function(data) {
+      onPlayer: function (data) {
           //setWorldTime(data[0], data[1]);
           data.shift();
           data.shift();
@@ -18604,7 +18547,118 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
             game.shortcuts.installAll(shortcuts);
           }
 
+          game.onWorldReady(this.connection);
           game.onPlayerLoad(p);
+      },
+
+      onPlayerSummary: function (data) {
+        user.setPlayerSummary(data);
+
+        var count = user.playerSum.length;
+        for (var i=0; i < count; ++i)
+        {
+          var ps = user.playerSum[i];
+          var option = ps.name + " Lv" + Types.getLevel(ps.exp);
+
+          var o = new Option(option, i);
+          $('#player_select').append(o);
+        }
+
+        app.loadWindow('user_window', 'player_window');
+        $('#player_select').focus();
+
+        if (count > 0) {
+          $('#player_select option[value="'+(count-1)+'"]').attr("selected",true);
+          app.showPlayerLoad();
+        }
+
+        if (count == 0)
+        {
+          app.showPlayerCreate();
+        }
+        else
+        {
+          $('#player_create_form').hide();
+        }
+      },
+
+      onWorlds: function (data) {
+        for (var i = 0; i < data.length; i += 4)
+        {
+          $("#player_server").append("<option value="+data[i]+">"+
+            data[i+1]+" "+data[i+2]+"/"+data[i+3]+"</option");
+        }
+        $('#user_create').removeClass('loading');
+        $('#user_load').removeClass('loading');
+        app.$loginInfo.text("Connected.");
+      },
+
+      _onError: function (data) {
+          var message = data[0];
+          /*if (message == 'playerexists') {
+            app.addValidationError(null, 'The playername you entered is not available.');
+            return;
+          }*/
+
+          $('#container').addClass('error');
+          $('#errorwindow .errordetails').html("<p>"+message+"</p>");
+          app.loadWindow('loginwindow','errorwindow');
+      },
+
+      onVersion: function (data) {
+        game.onVersion(data);
+      },
+
+      /*onVersion: function(data) {
+        //var self;
+        this.versionChecked = true;
+        var version = data[0];
+        var hash = data[1];
+        this.hashChallenge = hash;
+        log.info("onVersion: hash="+hash);
+
+        log.info("config.build.version="+config.build.version);
+        if (version != config.build.version)
+        {
+          $('#container').addClass('error');
+          var errmsg = "Please download the new version of RRO2.<br/>";
+
+          if (game.renderer.isMobile) {
+            errmsg += "<br/>For mobile see: " + config.build.updatepage;
+          } else {
+            errmsg += "<br/>For most browsers press Ctrl+F5 to reload the game cache files.";
+          }
+          game.clienterror_callback(errmsg);
+          if (this.tablet || this.mobile)
+            window.location.replace(config.build.updatepage);
+        }
+      },*/
+
+      onSyncTime: function (data) {
+        setWorldTime(parseInt(data[0]), parseInt(data[1]))
+      },
+
+      onError: function (data) {
+        var error = data[0];
+
+        switch(error) {
+          case 'full':
+          case 'invalidlogin':
+          case 'userexists':
+          case 'playerexists':
+          case 'loggedin':
+          case 'invalidusername':
+          case 'ban':
+          case 'passwordChanged':
+          case 'timeout':
+            app.info_callback(data);
+            return;
+          case 'timeout':
+            app.info_callback(data);
+            self.isTimeout = true;
+            return;
+        }
+        this._onError(data);
       },
 
       sendSyncTime: function() {
@@ -18717,9 +18771,9 @@ function(UserClient, Player, AppearanceData) {
         this.regHash = hashObj;
         //var hashChallenge = new jsSHA(this.client.hashChallenge, "ASCII");
         log.info("User init: hash="+hash);
-        log.info("User init: hashChallenge="+this.client.hashChallenge);
+        log.info("User init: hashChallenge="+game.hashChallenge);
         //var hash = new jsSHA(hashObj+this.client.hashChallenge, "ASCII");
-        var hash = CryptoJS.AES.encrypt(JSON.stringify(hashObj), this.client.hashChallenge).toString();
+        var hash = CryptoJS.AES.encrypt(JSON.stringify(hashObj), game.hashChallenge).toString();
         //log.info("hash="+hash.getHash("SHA-1","HEX"));
         //log.info("hashChallenge="+hashChallenge.getHash("SHA-1","HEX"));
         this.hash = this.hash || btoa(hash);
@@ -32824,7 +32878,7 @@ define('shortcuthandler',['data/skilldata', 'data/items'], function(SkillData, I
 
     install: function (slot, type, index) {
       if (this.shortcuts[slot])
-        this.shortcuts[slot].install(type, index);
+        this.shortcuts[slot].install(slot, type, index);
     },
 
     exec: function (slot) {
@@ -34337,15 +34391,45 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               });
             },
 
-            onPlayerLoad: function (player) {
-              game.settingsHandler = new SettingsHandler(game, game.app);
-              game.settingsHandler.apply();
+            onVersion: function(data) {
+              //var self;
+              this.versionChecked = true;
+              var version = data[0];
+              var hash = data[1];
+              this.hashChallenge = hash;
+              log.info("onVersion: hash="+hash);
 
+              var local_version = config.build.version;
+              log.info("config.build.version_user="+local_version);
+              if (version != local_version)
+              {
+                $('#container').addClass('error');
+                var errmsg = "Please download the new version of RRO2.<br/>";
+
+                if (game.renderer.isMobile) {
+                  errmsg += "<br/>For mobile see: " + config.build.updatepage;
+                } else {
+                  errmsg += "<br/>For most browsers press Ctrl+F5 to reload the game cache files.";
+                }
+                game.clienterror_callback(errmsg);
+                if (this.tablet || this.mobile)
+                  window.location.replace(config.build.updatepage);
+              }
+            },
+
+            onWorldReady: function (connection, data) {
               // Game Client takes over the processing of Messages.
-              game.client = new GameClient(game, user.client);
+              game.client = new GameClient();
 
               game.client.callbacks = new ClientCallbacks(game.client);
               game.client.setHandlers();
+
+              game.client.connect(connection);
+            },
+
+            onPlayerLoad: function (player) {
+              game.settingsHandler = new SettingsHandler(game, game.app);
+              game.settingsHandler.apply();
 
               log.info("Received player ID from server : "+ player.id);
 

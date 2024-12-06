@@ -1,5 +1,15 @@
 TODO:
 
+FIX BUG Player sometimes jams and moves across with the wrong orientation.
+  user.js, player.move
+
+Add semi-transparent black to chat window.
+Adjust shortcut bar window.
+Equipping bow does not change animation.
+  - Slight bug when swapping to bow, Bow armor sprite does not swap.
+Chat button doesnt activate enter text prompt.
+
+
 Update shortcut equipment count when activating item.
 
 Harvest Entity sometimes does not remove Sword when destroying any.
