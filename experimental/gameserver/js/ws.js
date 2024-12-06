@@ -22,13 +22,18 @@ var sServer = cls.Class.extend({
     init: function () {
     },
 
+    start: function () {
+      if (this.startCallback)
+        this.startCallback(this);
+    },
+
+    onStart: function (callback) {
+      this.startCallback = callback;
+    },
+
     onConnect: function (callback) {
         this.connectionCallback = callback;
     },
-
-    /*onConnectUser: function (callback) {
-        this.connectionUserCallback = callback;
-    },*/
 
     onError: function (callback) {
         this.errorCallback = callback;
@@ -54,7 +59,6 @@ var sServer = cls.Class.extend({
         return this._connections[id];
     }
 });
-
 
 var Connection = cls.Class.extend({
     init: function (id, connection, server) {
@@ -82,15 +86,6 @@ var Connection = cls.Class.extend({
     sendUTF8: function (data) {
         throw 'Not implemented';
     },
-
-    /*sendUser: function (message)
-    {
-      throw 'Not implemented';
-    },
-
-    sendUserUTF8: function(data) {
-      throw 'Not implemented';
-    },*/
 
     close: function (logError) {
         console.info('Closing connection to ' + this._connection.remoteAddress + '. ' + logError);
@@ -124,15 +119,10 @@ WS.WebsocketServer = sServer.extend({
         if (config.protocol == "https")
           protocol = https;
 
-        if (!this.userConn) {
-          this.userConn = new WS.userConnection(99999, this.userConn, this);
-        }
-
         var client_connect = function (socket) {
           console.info('Client socket connected from ' + socket.conn.remoteAddress);
           // Add remoteAddress property
           socket.remoteAddress = socket.conn.remoteAddress;
-
 
           var c = new WS.socketioConnection(self._createId(), socket, self);
 
@@ -286,63 +276,66 @@ WS.userConnection = Connection.extend({
         var config = MainConfig;
 
         this._super(id, connection, server);
+    },
 
-        var connectString = config.protocol+'://'+config.user_address+':'+config.user_port;
-        this._connection = io_client.connect(connectString, {reconnect: true});
+    connect: function (connectString) {
+      var self = this;
 
-        this._connection.on('message', function (msg) {
-          console.info("m="+msg);
-          var flag = msg.charAt(0);
-          if (flag == "2")
-          {
-              var buffer = Buffer.from(flag, 'base64');
+      this._connection = io_client.connect(connectString, {reconnect: true});
 
-              zlib.gunzip(buffer, (err, buffer) => {
-                if (err)
-                  console.log(err.toString());
-                else {
-                  if (self.listenCallback) {
-                    if (useBison) {
-                      self.listenCallback(BISON.decode(buffer));
-                    } else {
-                      self.listenCallback(JSON.parse(buffer));
-                    }
+      this._connection.on('connect_error', function(err){
+        console.info('Failed to establish a connection to the servers, or lost     connection');
+        console.info(JSON.stringify(err));
+      });
+
+      this._connection.on('message', function (msg) {
+        console.info("m="+msg);
+        var flag = msg.charAt(0);
+        if (flag == "2")
+        {
+            var buffer = Buffer.from(flag, 'base64');
+
+            zlib.gunzip(buffer, (err, buffer) => {
+              if (err)
+                console.log(err.toString());
+              else {
+                if (self.listenCallback) {
+                  if (useBison) {
+                    self.listenCallback(BISON.decode(buffer));
+                  } else {
+                    self.listenCallback(JSON.parse(buffer));
                   }
                 }
-              });
-          }
-          else
-          {
-            if (self.listenCallback) {
-              if (useBison) {
-                self.listenCallback(BISON.decode(msg.substr(1)));
-              } else {
-                 //console.info("message="+message.substr(1));
-                self.listenCallback(JSON.parse(msg.substr(1)));
               }
+            });
+        }
+        else
+        {
+          if (self.listenCallback) {
+            if (useBison) {
+              self.listenCallback(BISON.decode(msg.substr(1)));
+            } else {
+               //console.info("message="+message.substr(1));
+              self.listenCallback(JSON.parse(msg.substr(1)));
             }
           }
-        });
+        }
+      });
 
-        this._connection.on('connect', function (socket) {
-            console.info('CONNECTING! YAYYYY');
+      this._connection.on('connect', function (socket) {
+          console.info('CONNECTED! YAYYYY');
 
-            if (self.connectionUserCallback)
-              self.connectionUserCallback(self);
-        });
+          if (self.connectionUserCallback)
+            self.connectionUserCallback(self);
+      });
 
-        /*this._userConn.on('connection', function (socket) {
-            console.info('CONNECTION! YAYYYY');
-
-        });*/
-
-        this._connection.on('disconnect', function () {
-            console.info('Client closed socket ');
-            //console.info('Client closed socket ' + self._connection.conn.remoteAddress);
-            if (self.closeCallback) {
-                self.closeCallback();
-            }
-        });
+      this._connection.on('disconnect', function () {
+          console.info('Client closed socket.');
+          if (self.closeCallback) {
+              self.closeCallback();
+          }
+          delete this._connection;
+      });
     },
 
     onConnectUser: function (callback) {
@@ -371,6 +364,13 @@ WS.userConnection = Connection.extend({
     	{
     		self.sendUTF8('1'+data);
     	}
+    },
+
+    disconnect: function () {
+      console.info("userConnection - disconnect.");
+      this._connection.removeAllListeners(['message']);
+      this._connection.disconnect();
+      this._connection.off();
     },
 
     sendUTF8: function(data) {

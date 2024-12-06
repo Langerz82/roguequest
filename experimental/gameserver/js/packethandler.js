@@ -31,9 +31,8 @@ var cls = require("./lib/class"),
   TaskHandler = require("./taskhandler");
 
 module.exports = PacketHandler = Class.extend({
-  init: function(user, main, player, connection, worldServer, map) {
+  init: function(user, player, connection, worldServer, map) {
     this.user = user;
-    this.main = main;
     this.player = player;
     this.connection = connection;
     this.server = worldServer;

@@ -14,7 +14,7 @@ var cls = require("./lib/class"),
     Chest = require('./entity/chest'),
     Mob = require('./entity/mob'),
     Node = require('./entity/node'),
-
+//    Main = require('./main'),
     Map = require('./map'),
     MapManager = require('./mapmanager'),
     MapEntities = require('./mapentities'),
@@ -36,8 +36,8 @@ var cls = require("./lib/class"),
     Auction = require("./auction"),
     Looks = require("./looks"),
     Party = require("./party"),
-    TaskHandler = require("./taskhandler");
-
+    TaskHandler = require("./taskhandler"),
+    UserHandler = require("./userhandler");
 
 /**
  * Always use instanced self = this;
@@ -60,6 +60,7 @@ module.exports = World = cls.Class.extend(
 
         self.maps = self.mapManager.maps;
 
+        self.players = [];
         self.party = [];
 
         self.itemCount = 0;
@@ -90,11 +91,16 @@ module.exports = World = cls.Class.extend(
 
         self.lastUpdateTime = Date.now();
 
+        self.PLAYERS_SAVED = false;
+        self.AUCTIONS_SAVED = false;
+        self.LOOKS_SAVED = false;
+
         /**
          * Handlers
          */
         self.onPlayerConnect(function(player)
         {
+          self.players.push(player);
         });
 
         self.onPlayerEnter(function(player)
@@ -200,28 +206,37 @@ module.exports = World = cls.Class.extend(
       this.save();
     },
 
+    isSaved: function () {
+      return this.PLAYERS_SAVED && this.AUCTIONS_SAVED && this.LOOKS_SAVED;
+    },
+
+    skipSave: function () {
+      this.PLAYERS_SAVED = true;
+      this.AUCTIONS_SAVED = true;
+      this.LOOKS_SAVED = true;
+    },
+
     save: function ()
     {
-      for (mapId in this.maps)
-      {
-          var map = this.maps[mapId];
-          if (map && map.isLoaded && map.entities)
-          {
-              var savedPlayers = 0;
-              map.entities.forEachPlayer(function(p)
-              {
-                  p.save();
-                  if (p.isSaved)
-                    savedPlayers++;
-              });
-              if (map.entities.players.length == savedPlayers)
-                PLAYERS_SAVED = true;
-          }
+      if (this.userHandler) {
+        var playerNameList = [];
+        for (var p of this.players) {
+          playerNameList.push(p.name);
+        }
+        this.userHandler.sendPlayersList(playerNameList);
+      } else {
+        console.warn("worldServer save: no user server connection aborting save.");
       }
-      this.auction.save();
-      AUCTION_SAVED = true;
-      this.looks.save();
-      LOOKS_SAVED = true;
+
+      for (var p of this.players) {
+        p.save();
+      }
+      this.PLAYERS_SAVED = true;
+
+      this.auction.save(this);
+      this.AUCTIONS_SAVED = true;
+      this.looks.save(this);
+      this.LOOKS_SAVED = true;
     },
 
     update: function () {

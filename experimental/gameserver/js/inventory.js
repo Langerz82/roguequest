@@ -194,7 +194,7 @@ module.exports = Inventory = cls.Class.extend({
 
     save: function ()
     {
-        databaseHandler.saveItems(this.owner, 0, this.rooms);
+        //databaseHandler.saveItems(this.owner, 0, this.rooms);
     },
 
     removeItemKind: function (kind, number)

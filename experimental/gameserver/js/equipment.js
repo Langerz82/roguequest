@@ -165,7 +165,7 @@ module.exports = Equipment = cls.Class.extend({
 
     save: function ()
     {
-        databaseHandler.saveItems(this.owner, 2, this.rooms);
+        //databaseHandler.saveItems(this.owner, 2, this.rooms);
     },
 
     /*takeOutItems: function(index, number){

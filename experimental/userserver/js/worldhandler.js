@@ -11,14 +11,18 @@ var cls = require("./lib/class"),
 //    PacketHandler = require("./packethandler");
 
 module.exports = WorldHandler = cls.Class.extend({
-    init: function(main, connection, worldIndex) {
+    init: function(main, connection) {
         var self = this;
 
         this.main = main;
         this.connection = connection;
-        this.worldIndex = worldIndex;
 
-        this.black = false;
+        this.SAVED_AUCTIONS = false;
+        this.SAVED_LOOKS = false;
+        this.SAVED_PLAYERS = false;
+        this.savePlayers = [];
+
+        this.block = false;
         this.listener = function(message) {
           console.info("recv[0]="+message);
           var action = parseInt(message[0]);
@@ -47,6 +51,10 @@ module.exports = WorldHandler = cls.Class.extend({
                 self.handleSavePlayerItems(message);
                 return;
             }
+          }
+          if (action == Types.UserMessages.WU_SAVE_PLAYERS_LIST) {
+              self.handleSavePlayersList(message);
+              return;
           }
           if (action == Types.UserMessages.WU_PLAYER_LOADED) {
               self.handlePlayerLoaded(message);
@@ -93,23 +101,40 @@ module.exports = WorldHandler = cls.Class.extend({
       this.connection.send(message.serialize());
     },
 
+    checkPlayerSaved: function (playerName) {
+        this.savePlayers[playerName]++;
+        if (this.savePlayers[playerName] == 7)
+          delete this.savePlayers[playerName];
+        if (Object.keys(this.savePlayers).length == 0)
+          this.SAVED_PLAYERS = true;
+    },
+
+    handleSavePlayersList: function (msg) {
+      console.info("handleSavePlayersList: "+JSON.stringify(msg));
+      this.SAVED_PLAYERS = false;
+      this.savePlayers = {};
+      for (var rec of msg)
+      {
+        this.savePlayers[rec] = 0;
+      }
+      if (Object.keys(this.savePlayers).length == 0)
+        this.SAVED_PLAYERS = true;
+    },
+
     handleSavePlayerAuctions: function (msg) {
       console.info("handleSavePlayerAuctions: "+JSON.stringify(msg));
-
-      DBH.saveAuctions(this.worldIndex, msg);
-      /*DBH.saveAuctions(this.worldIndex, msg, function () {
-        self.send([Types.UserMessages.UW_SAVED_PLAYER_AUCTIONS]);
-      });*/
+      var self = this;
+      DBH.saveAuctions(this.worldIndex, msg, function (player) {
+        self.SAVED_AUCTIONS = true;
+      });
     },
 
     handleSavePlayerLooks: function (msg) {
+      console.info("handleSavePlayerLooks: "/*+JSON.stringify(msg)*/);
       var self = this;
-      console.info("handleSavePlayerLooks: "+JSON.stringify(msg));
-
-      DBH.saveLooks(this.worldIndex, msg);
-      /*DBH.saveLooks(this.worldIndex, msg, function () {
-        self.send([Types.UserMessages.UW_SAVED_PLAYER_LOOKS]);
-      });*/
+      DBH.saveLooks(this.worldIndex, msg, function () {
+        self.SAVED_LOOKS = true;
+      });
     },
 
     handleGameServerInfo: function (msg) {
@@ -132,64 +157,81 @@ module.exports = WorldHandler = cls.Class.extend({
         return;
       }
 
+      var index = 0
       for (var tworld of worlds)
       {
         if (world.ipAddress == tworld.ipAddress &&
             world.port == tworld.port)
-          {
-            tworld.name = world.name;
-            tworld.count = world.count;
-            tworld.maxCount = world.maxCount;
-            return;
-          }
+        {
+          tworld.name = world.name;
+          tworld.count = world.count;
+          tworld.maxCount = world.maxCount;
+          break;
+          //return;
+        }
+        index++;
       }
 
-      this.worldIndex = worlds.length;
-      worlds.push(world);
+      this.worldIndex = index;
+      if (index == worlds.length)
+        worlds.push(world);
+      this.world = world;
 
       this.sendAuctionsToWorld(this.worldIndex);
       this.sendLooksToWorld(this.worldIndex);
-
-      /*setTimeout(function () {
-        self.sendAuctionsToWorld(self.worldIndex);
-        self.sendLooksToWorld(self.worldIndex);
-      }, 1000);*/
     },
 
+// TODO FIX - Add playername in packet.
     handleSaveUserInfo: function (msg) {
       console.info("handleSaveUserInfo: "+JSON.stringify(msg));
+      var self = this;
+      var playerName = msg.shift();
       var userName = msg.shift();
 
-      DBH.savePlayerUserInfo(userName, msg);
+      DBH.savePlayerUserInfo(userName, playerName, msg, function (userName, playerName, data) {
+        self.checkPlayerSaved(playerName);
+      });
     },
 
     handleSavePlayerInfo: function (msg) {
       console.info("handleSavePlayerInfo: "+JSON.stringify(msg));
+      var self = this;
       var playerName = msg.shift();
 
-      DBH.savePlayerInfo(playerName, msg);
+      DBH.savePlayerInfo(playerName, msg, function (playerName) {
+        self.checkPlayerSaved(playerName);
+      });
     },
 
     handleSavePlayerQuests: function (msg) {
       console.info("handleSavePlayerQuests: "+JSON.stringify(msg));
+      var self = this;
       var playerName = msg[0];
 
-      DBH.saveQuests(playerName, msg[1]);
+      DBH.saveQuests(playerName, msg[1], function (playerName) {
+        self.checkPlayerSaved(playerName);
+      });
     },
 
     handleSavePlayerAchievements: function (msg) {
       console.info("handleSavePlayerAchievements: "+JSON.stringify(msg));
+      var self = this;
       var playerName = msg[0];
 
-      DBH.saveAchievements(playerName, msg[1]);
+      DBH.saveAchievements(playerName, msg[1], function (playerName) {
+        self.checkPlayerSaved(playerName);
+      });
     },
 
     handleSavePlayerItems: function (msg) {
       console.info("handleSavePlayerItems: "+JSON.stringify(msg));
+      var self = this;
       var playerName = msg[0],
           type = parseInt(msg[1]);
 
-      DBH.saveItems(playerName, type, msg[2]);
+      DBH.saveItems(playerName, type, msg[2], function (playerName) {
+        self.checkPlayerSaved(playerName);
+      });
     },
 
     handlePlayerLoaded: function (msg) {
@@ -278,8 +320,6 @@ module.exports = WorldHandler = cls.Class.extend({
       });
     },
 
-
-
     sendLooksToWorld: function (worldindex) {
       var self = this;
       DBH.loadLooks(worldindex, function (worldIndex, db_data) {
@@ -287,12 +327,18 @@ module.exports = WorldHandler = cls.Class.extend({
       });
     },
 
-    sendAuctionsSavedToWorld: function () {
-      this.send([UW_SAVED_PLAYER_AUCTIONS]);
+    sendWorldSave: function () {
+      console.info("worldHandler - sendForceSaveAndCloseToWorld.");
+      this.send([Types.UserMessages.UW_WORLD_SAVE]);
     },
 
-    sendLooksSavedToWorld: function () {
-      this.send([UW_SAVED_PLAYER_LOOKS]);
+    sendWorldClose: function () {
+      console.info("worldHandler - sendForceSaveAndCloseToWorld.");
+      this.send([Types.UserMessages.UW_WORLD_CLOSE]);
+    },
+
+    savedWorldState: function () {
+      return this.SAVED_PLAYERS && this.SAVED_LOOKS && this.SAVED_AUCTIONS;
     },
 
     sendPlayerToWorld: function (user, username, playername) {

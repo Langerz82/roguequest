@@ -133,8 +133,8 @@ function main(config) {
     console.log("REDIS SERVER CREATED!!!!!!!!!!!!!");
 
     self.handleConnectWorld = function (msg, conn) {
-      var worldHandler = new WorldHandler(self, conn, worlds.length);
-      worldHandlers.push(worldHandler);
+      var wh = new WorldHandler(self, conn);
+      worldHandlers.push(wh);
     };
 
     self.handleConnectUser = function (msg, conn) {
@@ -144,7 +144,6 @@ function main(config) {
       conn.hash = hash;
       console.warn("onConnect: hash="+hash);
 
-      //var connect = function(config) {
       console.info(JSON.stringify(config));
       console.info("version sent");
       console.info(GameTypes.UserMessages.UC_VERSION);
@@ -216,9 +215,9 @@ function main(config) {
 
   var signalHandler = function () {
     closeServer();
-    sleep(250);
-    checkSaved();
-    process.exit();
+    //sleep(250);
+    //checkSaved();
+    //process.exit();
   };
 
   process.on('SIGINT', signalHandler)
@@ -279,13 +278,14 @@ function getInput(cmd) {
       case 'q':
       case 'x':
         closeServer();
-        process.exit(1);
+        //process.exit(1);
         break;
       case "s":
       case "save":
-        saveServer();
+        closeServer();
         break;
       case "forcequit":
+        closeServer();
         process.exit(1);
         break;
       default:
@@ -294,22 +294,34 @@ function getInput(cmd) {
 }
 
 function checkSaved() {
-  var allSaved = setInterval(function () {
-    if (PLAYERS_SAVED && AUCTION_SAVED)
+  var allSavedInterval = setInterval(function () {
+    console.info("allSavedInterval");
+    var allSaved = true;
+    for (var wh of worldHandlers) {
+      //console.info("wh.SAVED_AUCTIONS:"+wh.SAVED_AUCTIONS);
+      //console.info("wh.SAVED_LOOKS:"+wh.SAVED_LOOKS);
+      console.info("wh.SAVED_PLAYERS:"+wh.SAVED_PLAYERS);
+      if (!wh.savedWorldState())
+      {
+        allSaved = false;
+        break;
+      }
+    }
+    if (allSaved)
     {
-      clearInterval(allSaved);
-      process.exit(1);
+      for (var wh of worldHandlers) {
+        wh.sendWorldClose();
+      }
+      clearInterval(allSavedInterval);
+      setTimeout(function () { process.exit(0); }, 2000);
     }
   }, 500);
-
 }
-var serverClosed = false;
+
 function closeServer() {
-  if (serverClosed)
-    return;
-  serverClosed = true;
   readline.close();
   saveServer();
+  checkSaved();
 }
 
 function sleep(ms) {
@@ -318,7 +330,11 @@ function sleep(ms) {
 
 function saveServer() {
   console.log("saving server!")
-  SAVING_SERVER = true;
+  //SAVING_SERVER = true;
+  for (var wh of worldHandlers)
+  {
+      wh.sendWorldSave();
+  }
 }
 
 function getConfigFile(path, callback) {

@@ -25,7 +25,7 @@ module.exports = Looks = cls.Class.extend({
     load: function (data)
     {
       var self = this;
-      console.info("LOOKS LOAD: "+JSON.stringify(data));
+      //console.info("LOOKS LOAD: "+JSON.stringify(data));
 
       if (!data)
         this.reset();
@@ -33,7 +33,7 @@ module.exports = Looks = cls.Class.extend({
       this.prices = data;
     },
 
-    save: function ()
+    save: function (world)
     {
       console.info("LOOKS SAVED");
 
@@ -44,7 +44,6 @@ module.exports = Looks = cls.Class.extend({
       if (world.userHandler) {
         world.userHandler.sendLooksData(data);
       }
-// TODO
     },
 
     modPrice: function (index, modPrice) {

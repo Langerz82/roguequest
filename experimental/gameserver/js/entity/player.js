@@ -18,7 +18,7 @@ var bodyParser = require('body-parser'),
     ItemTypes = require("../../shared/js/itemtypes"),
     Equipment = require("../equipment"),
     Inventory = require("../inventory"),
-    Main = require('../main'),
+//    Main = require('../main'),
     SkillHandler = require("../skillhandler"),
     SkillEffectHandler = require("../effecthandler"),
     Trade = require('../trade'),
@@ -28,17 +28,21 @@ var bodyParser = require('body-parser'),
     Quest = require("../quest");
 
 module.exports = Player = Character.extend({
-    init: function(user, main, connection, worldServer) {
+    init: function(world, user, connection) {
         var self = this;
 
         this.user = user;
-        this.main = main;
-        this.server = worldServer;
-        this.connection = connection;
+        //this.main = worldServer;
+        //this.server = main;
+        //this.userHandler = worldServer.userHandler;
+        this.world = world;
+        this.server = world;
+        //this.connection = connection;
+        //this.worldHandler = this.connection.worldHandler;
 
-        this.map = this.server.maps[0];
+        this.map = this.world.maps[0];
 
-        this._super(this.connection.id, Types.EntityTypes.PLAYER, 1, 0, 0, this.map, 0);
+        this._super(connection.id, Types.EntityTypes.PLAYER, 1, 0, 0, this.map, 0);
 
         this.mapStatus = 0;
         this.mapIndex = 0;
@@ -163,13 +167,13 @@ module.exports = Player = Character.extend({
         this.loaded = 0;
     },
 
-    start: function (worldHandler, connection) {
+    start: function (connection) {
 
-      this.worldHandler = worldHandler;
+      this.worldHandler = connection.worldHandler;
       this.connection = connection;
       this.id = connection.id;
 
-      this.packetHandler = new PacketHandler(this.user, this.main, this, this.connection, this.server, this.map);
+      this.packetHandler = new PacketHandler(this.user, this, connection, this.world, this.map);
       this.packetHandler.loadedPlayer = true;
 
       this.sendPlayerToClient();
@@ -645,10 +649,10 @@ module.exports = Player = Character.extend({
         }
       }
 
-      if (self.server.enter_callback)
+      if (self.world.enter_callback)
       {
         self.map.entities.addPlayer(self);
-        self.server.enter_callback(self);
+        self.world.enter_callback(self);
         //console.info(JSON.stringify(sendMessage));
         //self.send(sendMessage);
         self.connection.sendUTF8(sendMessage.join(","));

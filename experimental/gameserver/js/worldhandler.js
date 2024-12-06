@@ -10,15 +10,11 @@ var cls = require("./lib/class"),
 //    TaskHandler = require("./taskhandler");
 
 module.exports = WorldHandler = cls.Class.extend({
-    init: function(main, connection, userConnection) {
+    init: function(main, connection) {
         var self = this;
 
         this.main = main;
         this.connection = connection;
-        this.userConnection = userConnection;
-
-
-        this.currentPlayer = null;
 
         this.connection.listen(function(message) {
           console.info("recv="+JSON.stringify(message));
@@ -50,7 +46,7 @@ module.exports = WorldHandler = cls.Class.extend({
       if (!player)
         return;
 
-      player.start(this, this.connection);
+      player.start(this.connection);
     },
 
     loadPlayerDataUserInfo: function (player, callback) {
@@ -166,7 +162,7 @@ module.exports = WorldHandler = cls.Class.extend({
 
   // // TODO:
       this.loadPlayerDataUserInfo(player, function (userName, db_data) {
-        self.sendToUserServer( new UserMessages.SaveUserInfo(userName, db_data, ''));
+        self.sendToUserServer( new UserMessages.SaveUserInfo(userName, playerName, db_data, ''));
 
         self.loadPlayerDataInfo(player, function (playerName, db_data) {
           self.sendToUserServer( new UserMessages.SavePlayerInfo(playerName, db_data));

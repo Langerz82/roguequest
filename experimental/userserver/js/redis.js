@@ -126,7 +126,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           Utils.BinToHex(user.looks),
           user.connection._connection.remoteAddress];
 
-        this.saveUser(user.name, data, function (username, data) {
+        self.saveUserInfo(user.name, data, function (username, data) {
           user.hasLoggedIn = true;
           users[user.name] = 1;
 
@@ -136,7 +136,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  savePlayerUserInfo: function (username, data, callback) {
+  savePlayerUserInfo: function (username, playername, data, callback) {
     var uKey = "u:" + username;
     client.multi()
       .sadd("usr", username)
@@ -144,7 +144,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       .hset(uKey, "looks", data[8])
       .exec(function(err, replies) {
         if (callback)
-          callback(username, data);
+          callback(username, playername, data);
       });
   },
 
@@ -320,8 +320,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
       {
         var pKey = "p:"+playernames[i];
         hgetarray(pKey, ["name","map","exps","colors","sprites"], function(err, reply) {
+          if (err || !reply[0]) {
+            console.info("redis - sendPlayers, err:"+JSON.stringify(err));
+            ++count;
+            return;
+          }
+
           //console.info("err:"+JSON.stringify(err));
-          //console.info("reply:"+JSON.stringify(reply));
+          console.info("reply:"+JSON.stringify(reply));
           var db_player = {
             "name": reply[0],
             "map": reply[1].split(",")[0], // MapIndex.
@@ -338,6 +344,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
+// TODO SOME WACKKK SHIT
   createPlayer: function(playername, callback) {
     var self = this;
     var pKey = "p:" + playername;
@@ -499,7 +506,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
   },
 
 // TODO - FN NOT WORKING PROPERLY.
-  saveItems: function(playername, type, data)
+  saveItems: function(playername, type, data, callback)
   {
     var pKey = "p:" + playername;
     var sType = getStoreTypeNew(type);
@@ -514,6 +521,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           console.warn(JSON.stringify(data));
           return;
         }
+        if (callback)
+          callback(playername);
     });
   },
 
@@ -523,7 +532,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 // TODO - Just do new save rather than appending to key "quests".
 
   // example {id: id, type: 2, npcId: this.id, objectId: topEntity.kind, count: mobCount, repeat: repeat}
-  saveQuests: function(playername, data) {
+  saveQuests: function(playername, data, callback) {
     var pKey = "p:" + playername;
 
     client.hset(pKey, "newquests2", data,
@@ -534,6 +543,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           console.warn(JSON.stringify(data));
           return;
         }
+        if (callback)
+          callback(playername);
     });
   },
 
@@ -561,17 +572,19 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
 
 // ACHIEVEMENTS - START.
-saveAchievements: function(playername, data) {
+saveAchievements: function(playername, data, callback) {
   console.info("saveAchievement");
   var pKey = "p:" + playername;
   client.hset(pKey, "achievements", data,
     function(err, replies) {
-      if (err || !data || data == "") {
+      if (err) {
         console.warn(err);
         console.warn(JSON.stringify(replies));
         console.warn(JSON.stringify(data));
         return;
       }
+      if (callback)
+        callback(playername);
   });
 },
 
@@ -608,7 +621,7 @@ loadAchievements: function(playername, callback) {
   },
 
   saveAuctions: function(worldIndex, data, callback) {
-    console.info("redis - saveAuctions: "+JSON.stringify(data));
+    console.info("redis - saveAuctions: "/*+JSON.stringify(data)*/);
     client.del('s:auction');
     client.del('s:auction'+worldIndex);
     var multi = client.multi();
@@ -644,12 +657,12 @@ loadAchievements: function(playername, callback) {
   },
 
   saveLooks: function (worldIndex, looks, callback) {
-    console.info("redis - saveLooks: "+JSON.stringify(looks));
+    console.info("redis - saveLooks: "/*+JSON.stringify(looks)*/);
     client.del('l:looks');
     client.del('l:looks'+worldIndex);
     client.hset('l:looks'+worldIndex, 'prices', looks.join(","), function(err, data) {
       if (err) {
-        console.warn("redis - saveLooks:" + JSON.stringify(err));
+        console.error("redis - saveLooks:" + JSON.stringify(err));
         return;
       }
       if (callback)

@@ -211,7 +211,7 @@ WS.socketioConnection = Connection.extend({
             if (self.closeCallback) {
                 self.closeCallback();
             }
-            //self._connection.conn.close();
+            self._connection.conn.close();
             delete self._server.removeConnection(self.id);
         });
     },

@@ -177,7 +177,7 @@ define(['gameclient', 'skillhandler', 'quest', 'config', 'achievement'], functio
         log.info("Starting client/server handshake");
 
         this.sendUserConnected();
-        this.sendSyncTime();
+        //this.sendSyncTime();
 
         /*switch (this.initialAction)
         {

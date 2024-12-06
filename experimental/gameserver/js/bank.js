@@ -178,7 +178,7 @@ module.exports = Bank = cls.Class.extend({
 
     save: function ()
     {
-        databaseHandler.saveItems(this.owner, 1, this.rooms);
+        //databaseHandler.saveItems(this.owner, 1, this.rooms);
     },
 
     takeOutItems: function(index, number){

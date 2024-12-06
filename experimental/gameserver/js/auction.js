@@ -55,7 +55,7 @@ module.exports = Auction = cls.Class.extend({
         this.auctions = auctions;
     },
 
-    save: function ()
+    save: function (world)
     {
       console.info("auction - save: "+JSON.stringify(this.auctions));
 

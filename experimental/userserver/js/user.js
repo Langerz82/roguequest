@@ -79,7 +79,7 @@ module.exports = User = cls.Class.extend({
               return;
           }
 
-          if (this.game_server)
+          /*if (this.game_server)
           {
             switch (action)
             {
@@ -99,7 +99,7 @@ module.exports = User = cls.Class.extend({
                 self.handleSavePlayerItems(message);
                 return;
             }
-          }
+          }*/
 
           if (!self.loadedUser) {
             console.info("Cannot Login User: " + message);
@@ -168,7 +168,7 @@ module.exports = User = cls.Class.extend({
       this.worldConnection.send(message);
     },
 
-    handleGameServerInfo: function (msg) {
+    /*handleGameServerInfo: function (msg) {
       var world = {
         name: msg[0],
         count: parseInt(msg[1]),
@@ -232,7 +232,7 @@ module.exports = User = cls.Class.extend({
           type = parseInt(msg.shift());
 
       DBH.saveItems(playerName, type, msg);
-    },
+    },*/
 
     /*handleSyncTime: function (message) {
       var clientTime = parseInt(message[0]);
@@ -396,7 +396,7 @@ module.exports = User = cls.Class.extend({
       var worldIndex = parseInt(message[0]);
       var name = Utils.sanitize(message[1]);
 
-      var worldHandler = this.getWorldHander(worldIndex);
+      var worldHandler = this.getWorldHandler(worldIndex);
 
       var tmpPlayer = {
         name: name,

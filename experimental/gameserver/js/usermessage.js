@@ -50,14 +50,24 @@ UserMessages.ServerInfo = Message.extend({
 });
 
 UserMessages.SaveUserInfo = Message.extend({
-    init: function (userName, data, hash) {
+    init: function (playerName, userName, data, hash) {
     	this.userName = userName;
+      this.playerName = playerName;
       this.hash = hash;
       this.data = data;
     },
     serialize: function () {
-        var arr = [Types.UserMessages.WU_SAVE_USER_INFO, this.userName, this.hash];
+        var arr = [Types.UserMessages.WU_SAVE_USER_INFO, this.userName, this.playerName, this.hash];
         return arr.concat(this.data);
+    }
+});
+
+UserMessages.SavePlayersList = Message.extend({
+    init: function (data) {
+        this.data = data;
+    },
+    serialize: function () {
+        return [Types.UserMessages.WU_SAVE_PLAYERS_LIST].concat(this.data);
     }
 });
 

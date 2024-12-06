@@ -36,11 +36,12 @@ PlayerSummary.prototype.toString = function () {
 }*/
 
 module.exports = UserHandler = cls.Class.extend({
-    init: function(main, connection, server) {
+    init: function(main, server, world, connection) {
         var self = this;
 
-        this.server = server;
         this.main = main;
+        this.server = server;
+        this.world = world;
         this.connection = connection;
 
         this.currentPlayer = null;
@@ -73,14 +74,12 @@ module.exports = UserHandler = cls.Class.extend({
               case Types.UserMessages.UW_LOAD_PLAYER_LOOKS:
                 self.handleLoadPlayerLooks(message);
                 return;
-              /*case Types.UserMessages.UW_SAVED_PLAYER_AUCTIONS:
-                self.handleSavedPlayerAuctions(message);
+              case Types.UserMessages.UW_WORLD_SAVE:
+                self.handleWorldSave(message);
                 return;
-              case Types.UserMessages.UW_SAVED_PLAYER_LOOKS:
-                self.handleSavedPlayerLooks(message);
+              case Types.UserMessages.UW_WORLD_CLOSE:
+                self.handleWorldClose(message);
                 return;
-              */
-
             }
           //}
           /*if (action == Types.UserMessages.CW_LOGIN_PLAYER) {
@@ -130,7 +129,7 @@ module.exports = UserHandler = cls.Class.extend({
       this.connection.send(message);
     },
 
-    loginPlayer: function (worldIndex, playerSummary)
+    /*loginPlayer: function (worldIndex, playerSummary)
     {
       if (worldIndex < 0 && worldIndex >= worlds.length)
         return false;
@@ -139,7 +138,10 @@ module.exports = UserHandler = cls.Class.extend({
       var world = worlds[worldIndex];
       //console.info(JSON.stringify(world));
 
-      var player = new Player(this, this.main, this.connection, world);
+// TODO FIND OUT PLAYER CONNECTION
+      var player = new Player(this.world, this, this.connection);
+
+      //player.start();
       player.name = playerSummary.name;
       player.hasLoggedIn = true;
       player.packetHandler.loadedPlayer = true;
@@ -149,29 +151,18 @@ module.exports = UserHandler = cls.Class.extend({
 
       this.loadedPlayer = true;
       return true;
-    },
-
-    /*modifyGems: function(diff) {
-      diff = parseInt(diff);
-      if ((this.gems - diff) < 0)
-      {
-        this.connection.send((new Messages.Notify("SHOP", "SHOP_NOGEMS")).serialize());
-        return false;
-      }
-      this.gems += diff;
-      this.connection.send((new Messages.Gold(this.currentPlayer)).serialize());
-      return true;
     },*/
 
-    /*handleSavedPlayerAuctions: function (msg) {
-      console.info("handleSavedPlayerAuctions: "+JSON.stringify(msg));
-      AUCTION_SAVED = true;
+    handleWorldSave: function (msg) {
+      console.info("handleWorldSave.");
+      //this.world.save();
+      this.main.saveServer();
     },
 
-    handleSavedPlayerLooks: function (msg) {
-      console.info("handleSavedPlayerLooks: "+JSON.stringify(msg));
-      LOOKS_SAVED = true;
-    },*/
+    handleWorldClose: function (msg) {
+      console.info("handleWorldClose.");
+      this.main.safe_exit();
+    },
 
     handleLoadPlayerAuctions: function (msg) {
       console.info("handleLoadPlayerAuctions: "+JSON.stringify(msg));
@@ -179,7 +170,7 @@ module.exports = UserHandler = cls.Class.extend({
       if (!msg)
         return;
 
-      this.server.auction.load(msg);
+      this.world.auction.load(msg);
     },
 
     handleLoadPlayerLooks: function (msg) {
@@ -188,7 +179,7 @@ module.exports = UserHandler = cls.Class.extend({
       if (!msg)
         return;
 
-      this.server.looks.load(msg);
+      this.world.looks.load(msg);
     },
 
     handleLoadUserInfo: function (msg) {
@@ -199,24 +190,30 @@ module.exports = UserHandler = cls.Class.extend({
           gems = parseInt(msg[2]),
           looks = msg[3];
 
-      var user = this.main.enterWorld(this.connection);
+      var conn = this.connection;
+      var user = {};
+      user.hashChallenge = conn.hash;
+      user.world = this.world;
+      user.conn = conn;
+
+      this.server.enterWorld(conn);
       //var user = {gems: gems,
         //looks: Utils.HexToBin(looks)};
       user.gems = gems;
       user.looks = Utils.HexToBin(looks);
       user.name = username;
-      user.world = this;
+      //user.world = this;
 
-      var player = new Player(user, user.main, this.connection, world);
+      var player = new Player(this.world, user, conn);
+      //player.start(this.connection);
       //player.name = playerSummary.name;
       //player.hasLoggedIn = true;
       player.hash = hash;
       player.loaded = 0;
-      player.world = this;
+      player.worldHandler = user.worldHandler;
       this.player = player;
 
-
-      world.connect_callback(player);
+      this.world.connect_callback(player);
       //this.currentPlayer = player;
 
       this.loadedPlayer = true;
@@ -355,7 +352,7 @@ module.exports = UserHandler = cls.Class.extend({
           //this.main.send([500, "Hello"]);
           //player.initPacketHandler();
           //player.sendPlayerToClient();
-          players.push(player);
+          //players.push(player);
           //player.sendPlayer(db_player);
           console.info("player hash: "+player.hash);
           hashes[player.hash] = player;
@@ -372,7 +369,7 @@ module.exports = UserHandler = cls.Class.extend({
     },
 
     sendWorldInfo: function (config) {
-      var msg = new UserMessages.ServerInfo(this.server.name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
+      var msg = new UserMessages.ServerInfo(config.world_name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
       this.sendToUserServer( msg);
     },
 
@@ -384,17 +381,9 @@ module.exports = UserHandler = cls.Class.extend({
       this.sendToUserServer( new UserMessages.SavePlayerLooks(data));
     },
 
-    /*handleLoginPlayer: function (msg) {
-      console.info("handleLoginPlayer: "+JSON.stringify(msg));
-      var playername = msg[0],
-        playerhash = msg[1];
-
-      var player = hashes[playerhash];
-
-      if (!player)
-        return;
-
-      player.start(this.connection);
-    },*/
+    sendPlayersList: function (data) {
+      console.info("userHandler - sendPlayersList: "+JSON.stringify(data));
+      this.sendToUserServer( new UserMessages.SavePlayersList(data));
+    },
 
 });
