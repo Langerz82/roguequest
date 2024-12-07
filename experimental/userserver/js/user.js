@@ -53,6 +53,7 @@ module.exports = User = cls.Class.extend({
 
         this.loadedUser = false;
         this.loadedPlayer = false;
+        this.player_loggedin = false;
 
         this.looks = new Array(AppearanceData.Data.length);
 
@@ -136,13 +137,13 @@ module.exports = User = cls.Class.extend({
 
     onClose: function (save) {
       console.warn("User.onClose - called.")
-      if (this.name) {
+      /*if (this.name) {
         console.warn("name:"+this.name);
-        users[this.name] = 0;
-      }
-      save = save || false;
+        users[this.name] = ;
+      }*/
+      //save = save || false;
 
-      var p = this.currentPlayer;
+      /*var p = this.currentPlayer;
       if (save && p)
       {
         if (this.loadedPlayer)
@@ -150,11 +151,18 @@ module.exports = User = cls.Class.extend({
         players.splice(players.indexOf(p),1);
         //console.warn(JSON.stringify(players));
         delete this.currentPlayer;
-      }
-      delete users[this.name];
-      console.warn(JSON.stringify(users));
+      }*/
+      //if (!this.player_loggedin)
+      //{
+        delete this;
+        delete users[this.name];
+        delete loggedInUsers[this.name];
+      //}
+
+      //delete users[this.name];
+      //console.warn(JSON.stringify(users));
       this.connection.close("closing connection");
-      delete this;
+      //delete this;
     },
 
     onExit: function() {
@@ -167,78 +175,6 @@ module.exports = User = cls.Class.extend({
     sendWorld: function(message) {
       this.worldConnection.send(message);
     },
-
-    /*handleGameServerInfo: function (msg) {
-      var world = {
-        name: msg[0],
-        count: parseInt(msg[1]),
-        maxCount: parseInt(msg[2]),
-        ipAddress: msg[3],
-        port: parseInt(msg[4]),
-        password: msg[5]
-      };
-
-      if (world.password == MainConfig.user_password) {
-        this.game_server = true;
-      }
-      else {
-        return;
-      }
-
-      this.worldConnection = this.connection;
-
-      for (var tworld of worlds)
-      {
-        if (world.ipAddress == tworld.ipAddress &&
-            world.port == tworld.port)
-          {
-            tworld.name = world.name;
-            tworld.count = world.count;
-            tworld.maxCount = world.maxCount;
-            return;
-          }
-      }
-
-      worlds.push(world);
-    },
-
-    handleSaveUserInfo: function (msg) {
-      var userName = msg.shift();
-      msg.pop();
-
-      DBH.savePlayerUserInfo(userName, msg);
-    },
-
-    handleSavePlayerInfo: function (msg) {
-      var playerName = msg.shift();
-
-      DBH.savePlayerInfo(playerName, msg);
-    },
-
-    handleSavePlayerQuests: function (msg) {
-      var playerName = msg.shift();
-
-      DBH.saveQuests(playerName, msg);
-    },
-
-    handleSavePlayerAchievements: function (msg) {
-      var playerName = msg.shift();
-
-      DBH.saveAchievements(playerName, msg);
-    },
-
-    handleSavePlayerItems: function (msg) {
-      var playerName = msg.shift(),
-          type = parseInt(msg.shift());
-
-      DBH.saveItems(playerName, type, msg);
-    },*/
-
-    /*handleSyncTime: function (message) {
-      var clientTime = parseInt(message[0]);
-      var world = worlds[0];
-      this.connection.sendUTF8([Types.Messages.BI_SYNCTIME, clientTime, Date.now()].join(","));
-    },*/
 
     handleCreateUser: function(message)
     {
@@ -261,11 +197,10 @@ module.exports = User = cls.Class.extend({
 
       try {
         if (!Utils.checkInputName(self.name)) {
-          self.connection.sendUTF8(Types.UserMessages.UC_ERROR+"invalidusername");
+          self.connection.sendU([Types.UserMessages.UC_ERROR,"invalidusername"]);
           return;
         }
         self.hash = hash;
-        //self.hash = crypto.createHash('sha1').update(hash + salt).digest('hex');
         self.salt = salt;
         DBH.createUser(self);
       } catch (e) {
@@ -289,7 +224,7 @@ module.exports = User = cls.Class.extend({
       try {
         // Validate the username
         if (!Utils.checkInputName(self.name)) {
-          self.connection.sendUTF8(Types.UserMessages.SC_ERROR+",invalidname");
+          self.connection.send([Types.UserMessages.SC_ERROR,"invalidname"]);
           return;
         }
         self.hash = hash;
@@ -327,7 +262,7 @@ module.exports = User = cls.Class.extend({
       var curTime = Date.now();
       var banTime = db_user.banTime + db_user.banDuration;
       if (banTime > curTime) {
-        this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",ban");
+        this.connection.send([Types.UserMessages.UC_ERROR,"ban"]);
         this.connection.close("Closing connection to: " + player.name);
         return false;
       }
@@ -345,20 +280,21 @@ module.exports = User = cls.Class.extend({
       var hash = crypto.createHash('sha1').update(decrypt+db_user.salt).digest('hex');
       console.info("checkUser: "+hash+" != "+db_user.hash);
       if (hash != db_user.hash) {
-        this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",invalidlogin");
+        this.connection.send([Types.UserMessages.UC_ERROR,"invalidlogin"]);
         if (++this.passwordTries > 3)
           this.connection.close("Wrong Password: " + this.name);
         return false;
       }
 
-      console.warn(JSON.stringify(users));
+      ///console.warn(JSON.stringify(users));
       console.info("LOGIN: " + this.name);
-      if (!skip_logged_in && users.hasOwnProperty(this.name) && users[this.name] == 1) {
-        this.connection.sendUTF8(Types.UserMessages.UC_ERROR+",loggedin");
+      if (!skip_logged_in && loggedInUsers.hasOwnProperty(this.name)) {
+        this.connection.send([Types.UserMessages.UC_ERROR,"loggedin"]);
         return false;
       }
 
-      users[this.name] = 1;
+      users[this.name] = this;
+      loggedInUsers[this.name] = 1;
       this.hasLoggedIn = true;
 
       var d = new Date();
@@ -490,6 +426,9 @@ module.exports = User = cls.Class.extend({
       this.playerName = playerName;
 
       worldHandler.sendPlayerToWorld(this, this.name, playerName);
+
+      player_users[playerName] = this;
+
       return true;
     },
 

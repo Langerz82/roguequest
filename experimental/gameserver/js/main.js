@@ -219,7 +219,9 @@ function main(config) {
       	conn.sendUTF8(GameTypes.Messages.WC_VERSION+","+config.version+","+conn.hash);
         var wh = new WorldHandler(server, conn);
         wh.userConnection = server.userHandler.connection;
+
         conn.worldHandler = wh;
+
     });
 
     server.enterWorld = function (conn)

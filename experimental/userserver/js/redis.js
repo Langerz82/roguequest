@@ -129,6 +129,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         self.saveUserInfo(user.name, data, function (username, data) {
           user.hasLoggedIn = true;
           users[user.name] = 1;
+          usersLoggedIn[user.name] = 1;
 
           self.sendPlayers(user);
         });

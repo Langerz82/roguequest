@@ -15,6 +15,8 @@ module.exports = WorldHandler = cls.Class.extend({
 
         this.main = main;
         this.connection = connection;
+        //this.userHandler = userHandler;
+
         this.playerSaveData = {};
 
         this.connection.listen(function(message) {
@@ -39,15 +41,19 @@ module.exports = WorldHandler = cls.Class.extend({
 
     handleLoginPlayer: function (msg) {
       console.info("handleLoginPlayer: "+JSON.stringify(msg));
-      var playername = msg[0],
-        playerhash = msg[1];
+      var playerName = msg[0],
+        playerHash = msg[1];
 
-      var player = hashes[playerhash];
+      var player = null;
+      if (hashes.hasOwnProperty(playerHash))
+        player = hashes[playerHash];
 
       if (!player)
         return;
 
       player.start(this.connection);
+
+      this.sendToUserServer(new UserMessages.playerLoggedIn(player.user.name, playerName));
     },
 
     loadPlayerDataUserInfo: function (player, callback) {

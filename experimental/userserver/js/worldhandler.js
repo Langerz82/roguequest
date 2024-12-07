@@ -40,6 +40,9 @@ module.exports = WorldHandler = cls.Class.extend({
               case Types.UserMessages.WU_SAVE_PLAYER_DATA:
                 self.handleSavePlayerData(message);
                 return;
+              case Types.UserMessages.WU_PLAYER_LOGGED_IN:
+                self.handlePlayerLoggedIn(message);
+                return;
             }
           }
           if (action == Types.UserMessages.WU_SAVE_PLAYERS_LIST) {
@@ -119,6 +122,13 @@ module.exports = WorldHandler = cls.Class.extend({
       });
     },
 
+    handlePlayerLoggedIn: function (msg) {
+      console.info("handlePlayerLoggedIn: "+JSON.stringify(msg));
+      var username = msg[0];
+      var playerName = msg[1];
+      loggedInUsers[username] = playerName;
+    },
+
     handleGameServerInfo: function (msg) {
       console.info("handleGameServerInfo: "+JSON.stringify(msg));
       var self = this;
@@ -175,17 +185,19 @@ module.exports = WorldHandler = cls.Class.extend({
 
       this.savePlayers[playerName] = 0;
 
+      // NOTE - Remove the userame and hash from the data.
+      var username = data[0].shift();
+      var hash = data[0].shift();
+
       var checkPlayerSaved = function (playerName) {
           self.savePlayers[playerName]++;
           if (self.savePlayers[playerName] == 7)
           delete self.savePlayers[playerName];
-          if (Object.keys(self.savePlayers).length == 0)
+          if (Object.keys(self.savePlayers).length == 0) {
             self.SAVED_PLAYERS = true;
+            delete loggedInUsers[username];
+          }
       };
-
-      // NOTE - Remove the userame and hash from the data.
-      var username = data[0].shift();
-      var hash = data[0].shift();
 
       DBH.savePlayerUserInfo(username, playerName, data[0], function (username, playerName, data) {
         checkPlayerSaved(playerName);
@@ -214,7 +226,6 @@ module.exports = WorldHandler = cls.Class.extend({
       DBH.saveItems(playerName, 2, data[6], function (playerName) {
         checkPlayerSaved(playerName);
       });
-
     },
 
     handlePlayerLoaded: function (msg) {

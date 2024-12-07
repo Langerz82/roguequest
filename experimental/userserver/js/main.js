@@ -37,7 +37,10 @@ PLAYERS_SAVED = false;
 worlds = [];
 worldHandlers = [];
 users = {};
-players = [];
+loggedInUsers = {};
+
+//players = [];
+player_users = {};
 
 Log = require('log');
 var fs = require('fs');

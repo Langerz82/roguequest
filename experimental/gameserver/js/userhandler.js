@@ -142,6 +142,7 @@ module.exports = UserHandler = cls.Class.extend({
     handleLoadPlayerData: function (msg) {
         var playerName = msg[0];
         var data = msg[1];
+        var username = data[0][1];
         console.info("handleLoadPlayerData data: "+JSON.stringify(data));
         this.handleLoadUserInfo(playerName, data[0]);
         this.handleLoadPlayerInfo(data[1]);
@@ -352,6 +353,10 @@ module.exports = UserHandler = cls.Class.extend({
     sendLooksData: function (data) {
       this.sendToUserServer( new UserMessages.SavePlayerLooks(data));
     },
+
+    /*sendPlayerLoggedIn: function (username, playerName) {
+      this.sendToUserServer( new UserMessages.playerLoggedIn(username, playerName));
+    },*/
 
     sendPlayersList: function (data) {
       console.info("userHandler - sendPlayersList: "+JSON.stringify(data));
