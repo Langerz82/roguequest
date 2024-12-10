@@ -80,6 +80,8 @@ LOOKS_SAVED = false;
 var userHandler = null;
 //var main = null;
 var world = null;
+var server = null;
+
 //var userHandler;
 
 worlds = [];
@@ -451,6 +453,7 @@ main.closeServer = function () {
 }
 
 main.safe_exit = function () {
+  server.userHandler.connection.disconnect();
   setTimeout(function () { process.exit(0); }, 1000);
 };
 

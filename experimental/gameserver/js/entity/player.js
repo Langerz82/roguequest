@@ -162,7 +162,7 @@ module.exports = Player = Character.extend({
         this.sprites = [];
         this.colors = [];
 
-        this.shortcuts = [];
+        this.shortcuts = {};
 
         this.loaded = 0;
     },

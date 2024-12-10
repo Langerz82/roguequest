@@ -88,13 +88,13 @@ module.exports = Quest = cls.Class.extend({
         cols = cols.concat(this.object.toClient(this.object));
       }
       else {
-        cols = cols.concat(["","",""]);
+        cols = cols.concat([0,0,0]);
       }
       if (this.object2) {
         cols = cols.concat(this.object2.toClient(this.object2));
       }
       else {
-        cols = cols.concat(["","",""]);
+        cols = cols.concat([0,0,0]);
       }
       return cols;
     },

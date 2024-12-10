@@ -149,7 +149,7 @@ function main(config) {
 
       console.info(JSON.stringify(config));
       console.info("version sent");
-      console.info(GameTypes.UserMessages.UC_VERSION);
+      console.info("UC_VERSION: "+GameTypes.UserMessages.UC_VERSION);
 
       conn.sendUTF8(GameTypes.UserMessages.UC_VERSION+","+config.version+","+conn.hash);
 
@@ -207,7 +207,11 @@ function main(config) {
 	server._ioServer.on('connection', (socket) => {
 	  console.log('connected');
 	  socket.on('disconnect', function(){
-		console.log('disconnected');
+		   console.log('disconnected');
+       this.disconnect();
+       //this.close();
+       //this.server.removeConnection(this.id);
+       delete this;
 	  });
 
 	  server._ioServer.on('msg', (message) => {

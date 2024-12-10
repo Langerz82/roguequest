@@ -4,6 +4,7 @@
 var cls = require("./lib/class"),
     _ = require("underscore"),
     crypto = require('crypto'),
+    formatCheck = require("./format").check,
     UserMessages = require("./usermessage"),
     Utils = require("./utils"),
     Types = require("../shared/js/gametypes"),
@@ -64,14 +65,21 @@ module.exports = User = cls.Class.extend({
         this.listener = function(message) {
           console.info("recv[0]="+message);
           var action = parseInt(message[0]);
+          if (!action)
+            return;
+
+          if(!formatCheck(message)) {
+              self.connection.close("Invalid value "+action+" packet format: "+message);
+              return;
+          }
           message.shift();
 
           switch (action)
           {
             // NOTE - This has to be allowed as is packet that validates world server.
-            case Types.UserMessages.WU_GAMESERVER_INFO:
+            /*case Types.UserMessages.WU_GAMESERVER_INFO:
               self.handleGameServerInfo(message);
-              return;
+              return;*/
             case Types.UserMessages.CU_CREATE_USER:
               self.handleCreateUser(message);
               return;

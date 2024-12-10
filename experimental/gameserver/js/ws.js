@@ -181,7 +181,6 @@ WS.WebsocketServer = sServer.extend({
 
 });
 
-
 /**
  * Connection class for socket.io Socket
  * https://github.com/Automattic/socket.io
@@ -193,42 +192,40 @@ WS.socketioConnection = Connection.extend({
         this._super(id, connection, server);
         //this.conn = connection;
 
-        this._connection.on('message', function (message) {
-            //console.info("m="+message);
+        var fnOnMessage = function (msg) {
+          console.info("m="+msg);
+          var flag = msg.charAt(0);
+          if (flag == "2")
+          {
+              var buffer = Buffer.from(flag, 'base64');
+              zlib.gunzip(buffer, (err, buffer) => {
+                if (err)
+                  console.log(err.toString());
+                else {
+                  if (self.listenCallback) {
+                    if (useBison) {
+                      self.listenCallback(BISON.decode(buffer));
+                    } else {
+                      self.listenCallback(JSON.parse(buffer));
+                    }
+                  }
+                }
+              });
+          }
+          else
+          {
+            if (self.listenCallback) {
+              if (useBison) {
+                self.listenCallback(BISON.decode(msg.substr(1)));
+              } else {
+                 //console.info("message="+message.substr(1));
+                self.listenCallback(JSON.parse(msg.substr(1)));
+              }
+            }
+          }
+        };
 
-            var flag = message.charAt(0);
-            if (flag == "2")
-            {
-		        //console.info("recv:"+message);
-    				var buffer = Buffer.from(flag, 'base64');
-
-    				zlib.gunzip(buffer, (err, buffer) => {
-    					if (err)
-    						console.log(err.toString());
-    					else {
-    						if (self.listenCallback) {
-    							if (useBison) {
-    								self.listenCallback(BISON.decode(buffer));
-    							} else {
-    							//console.info("bufferend="+buffer);
-    								self.listenCallback(JSON.parse(buffer));
-    							}
-    						}
-    					}
-    				});
-    	    }
-    	    else
-    	    {
-        		if (self.listenCallback) {
-        			if (useBison) {
-        				self.listenCallback(BISON.decode(message.substr(1)));
-        			} else {
-        			   //console.info("message="+message.substr(1));
-        				self.listenCallback(JSON.parse(message.substr(1)));
-        			}
-        		}
-    	    }
-        });
+        this._connection.on('message', fnOnMessage);
 
         this._connection.on('disconnect', function () {
             console.info('Client closed socket ' + self._connection.conn.remoteAddress);
@@ -270,31 +267,22 @@ WS.socketioConnection = Connection.extend({
     },
 });
 
+
 WS.userConnection = Connection.extend({
     init: function (id, connection, server) {
         var self = this;
-        var config = MainConfig;
 
         this._super(id, connection, server);
     },
 
     connect: function (connectString) {
       var self = this;
-
-      this._connection = io_client.connect(connectString, {reconnect: true});
-
-      this._connection.on('connect_error', function(err){
-        console.info('Failed to establish a connection to the servers, or lost     connection');
-        console.info(JSON.stringify(err));
-      });
-
-      this._connection.on('message', function (msg) {
+      var fnOnMessage = function (msg) {
         console.info("m="+msg);
         var flag = msg.charAt(0);
         if (flag == "2")
         {
             var buffer = Buffer.from(flag, 'base64');
-
             zlib.gunzip(buffer, (err, buffer) => {
               if (err)
                 console.log(err.toString());
@@ -320,22 +308,35 @@ WS.userConnection = Connection.extend({
             }
           }
         }
+      };
+
+      this._connection = io_client.connect(connectString, {reconnect: true});
+
+      this._connection.on('connect_error', function(err){
+        console.info('Failed to establish a connection to the servers, or lost     connection');
+        console.info(JSON.stringify(err));
       });
+
+      this._connection.on('message', fnOnMessage);
 
       this._connection.on('connect', function (socket) {
           console.info('CONNECTED! YAYYYY');
 
+          //self._connection.off('message').on('message', fnOnMessage);
           if (self.connectionUserCallback)
             self.connectionUserCallback(self);
       });
 
-      this._connection.on('disconnect', function () {
+      var fnDisconnect = function () {
           console.info('Client closed socket.');
           if (self.closeCallback) {
               self.closeCallback();
           }
-          delete this._connection;
-      });
+          self._connection.disconnect();
+          self._connection.offAny();
+          delete self._connection;
+      };
+      this._connection.on('disconnect', fnDisconnect);
     },
 
     onConnectUser: function (callback) {
@@ -368,9 +369,9 @@ WS.userConnection = Connection.extend({
 
     disconnect: function () {
       console.info("userConnection - disconnect.");
-      this._connection.removeAllListeners(['message']);
+      //this._connection.removeAllListeners(['message']);
       this._connection.disconnect();
-      this._connection.off();
+      //this._connection.off();
     },
 
     sendUTF8: function(data) {

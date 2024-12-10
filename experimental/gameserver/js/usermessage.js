@@ -54,7 +54,7 @@ UserMessages.SavePlayersList = Message.extend({
         this.data = data;
     },
     serialize: function () {
-        return [Types.UserMessages.WU_SAVE_PLAYERS_LIST].concat(this.data);
+        return [Types.UserMessages.WU_SAVE_PLAYERS_LIST,this.data];
     }
 });
 
@@ -80,64 +80,3 @@ UserMessages.SavePlayerData = Message.extend({
           this.playerData];
     }
 });
-
-/*
-UserMessages.SaveUserInfo = Message.extend({
-    init: function (playerName, userName, data, hash) {
-    	this.userName = userName;
-      this.playerName = playerName;
-      this.hash = hash;
-      this.data = data;
-    },
-    serialize: function () {
-        var arr = [Types.UserMessages.WU_SAVE_USER_INFO, this.userName, this.playerName, this.hash];
-        return arr.concat(this.data);
-    }
-});
-
-
-UserMessages.SavePlayerInfo = Message.extend({
-    init: function (playerName, data) {
-    	this.playerName = playerName;
-      this.data = data;
-    },
-    serialize: function () {
-        var arr = [Types.UserMessages.WU_SAVE_PLAYER_INFO, this.playerName];
-        return arr.concat(this.data);
-    }
-});
-
-UserMessages.SavePlayerQuests = Message.extend({
-    init: function (playerName, data) {
-    	this.playerName = playerName;
-      this.data = data;
-    },
-    serialize: function () {
-        var arr = [Types.UserMessages.WU_SAVE_PLAYER_QUESTS, this.playerName];
-        return arr.concat(this.data);
-    }
-});
-
-UserMessages.SavePlayerAchievements = Message.extend({
-    init: function (playerName, data) {
-    	this.playerName = playerName;
-      this.data = data;
-    },
-    serialize: function () {
-        var arr = [Types.UserMessages.WU_SAVE_PLAYER_ACHIEVEMENTS, this.playerName];
-        return arr.concat(this.data);
-    }
-});
-
-UserMessages.SavePlayerItems = Message.extend({
-    init: function (playerName, type, data) {
-    	this.playerName = playerName;
-      this.type = type;
-      this.data = data;
-    },
-    serialize: function () {
-        var arr = [Types.UserMessages.WU_SAVE_PLAYER_ITEMS, this.playerName, this.type];
-        return arr.concat(this.data);
-    }
-});
-*/

@@ -69,14 +69,37 @@ var Types = require('../shared/js/gametypes');
             this.formats[Types.Messages.CW_REQUEST] = [['n',0,2]]
         },
 
-        checkFormat: function (type, message, format, ignoreLength) {
-          var format = format || this.formats[type];
-              ignoreLength = ignoreLength || false;
+        checkFormat: function (message, format, ignoreLength) {
+
+          //var format = format || this.formats[type];
+          var ignoreLength = ignoreLength || false;
 
           //message.shift();
 
           var formatTypes = function (data) {
 
+          };
+
+          var isType = function (fmt, msg) {
+            if (fmt === 'n' && !_.isNumber(msg)) {
+                return false;
+            }
+            if (fmt === 's' && !_.isString(msg)) {
+                return false;
+            }
+            if (fmt === 'no' && (_.isNull(msg) || !_.isNumber(msg))) {
+                return false;
+            }
+            if (fmt === 'so' && (_.isNull(msg) || !_.isString(msg))) {
+                return false;
+            }
+            if (fmt === 'array' && !Array.isArray(msg)) {
+                return false;
+            }
+            if (fmt === 'object' && !(typeof(msg) === 'object')) {
+                return false;
+            }
+            return true;
           };
 
           if (format) {
@@ -88,43 +111,30 @@ var Types = require('../shared/js/gametypes');
                   var msg = message[i];
                   if (Array.isArray(fmt))
                   {
-                    var fnn = fmt[0] === 'n' && (!_.isNumber(msg) || msg < fmt[1] || msg > fmt[2]);
-                    //var fno = fmt[0] === 'no' && (_.isNull(msg) || fn);
-                    if (fnn /*|| fno*/)
+                    var t = !isType(fmt[0], msg);
+
+                    var fnn = (t || msg < fmt[1] || msg > fmt[2]);
+                    if (fnn)
                       return false;
 
-                    var fss = fmt[0] === 's' && (!_.isString(msg) || msg.length < fmt[1] || msg.length > fmt[2]);
-                    //var fso = fmt[0] === 'so' && (_.isNull(msg) || fs);
-                    if (fss /*|| fso*/)
+                    var fss = (t || msg.length < fmt[1] || msg.length > fmt[2]);
+                    if (fss)
                       return false;
 
-                    //if (fmt[0] === 'n' && (!_.isNumber(msg) || msg < fmt[1] || msg > fmt[2])) {
-                      //return false;
-                    //}
-                    //if (fmt[0] === 's' && (!_.isString(msg) || msg.length < fmt[1] || msg.length > fmt[2])) {
-                      //return false;
-                    //}
+                    var faa = (t || msg.length < fmt[1] || msg.length > fmt[2]);
+                    if (faa)
+                      return this.checkFormat(fmt[3], msg);
                   }
                   else {
-                    if (fmt === 'n' && !_.isNumber(msg)) {
-                        return false;
-                    }
-                    if (fmt === 's' && !_.isString(msg)) {
-                        return false;
-                    }
-                    /*if (fmt === 'no' && (_.isNull(msg) || !_.isNumber(msg))) {
-                        return false;
-                    }
-                    if (fmt === 'so' && (_.isNull(msg) || !_.isString(msg))) {
-                        return false;
-                    }*/
-
+                    return isType(fmt, msg);
                   }
               }
               return true;
           }
           else {
-              console.error('Unknown message type: ' + type);
+              console.error('Unknown message type. ');
+              console.warn('message: ' + JSON.stringify(message));
+              console.warn('format: ' + JSON.stringify(format));
               return false;
           }
         },
@@ -137,11 +147,11 @@ var Types = require('../shared/js/gametypes');
 
             //console.info("type:"+type);
             if (this.formats[type]) {
-                return this.checkFormat(type, message, this.formats[type], false);
+                return this.checkFormat(message, this.formats[type]);
             }
             if (type === Types.Messages.CW_MOVEPATH) {
                 var format = [['n',this.dateMin,this.dateMax],['n',0,this.entityIdMax],['n',0,4],['n',0,1]];
-                if (!this.checkFormat(type, message, format, true))
+                if (!this.checkFormat(message, format, true))
                   return false;
 
                 var path = message.splice(format.length,message.length);
@@ -186,7 +196,7 @@ var Types = require('../shared/js/gametypes');
               if (message.length == 7) {
                 format = format.concat([['n',0,2], ['n',-1,this.inventoryMax], ['n',0,this.itemCountMax]]);
               }
-              return this.checkFormat(type, message, format, true);
+              return this.checkFormat(message, format, true);
             }
             else {
                 try{ throw new Error(); } catch (err) { console.info(err.stack); }

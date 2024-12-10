@@ -232,7 +232,6 @@ module.exports = UserHandler = cls.Class.extend({
       //player.hasLoggedIn = true;
       //player.packetHandler.loadedPlayer = true;
 
-      //this.handlePlayerLoaded();
     },
 
     handleLoadPlayerQuests: function (msg) {
@@ -254,7 +253,6 @@ module.exports = UserHandler = cls.Class.extend({
           player.quests.push(quest);
         }
       }
-      //this.handlePlayerLoaded();
     },
 
     handleLoadPlayerAchievements: function (msg) {
@@ -274,7 +272,6 @@ module.exports = UserHandler = cls.Class.extend({
       {
         player.achievements.push(achievements[i]);
       }
-      //this.handlePlayerLoaded();
     },
 
     handleLoadPlayerItems: function (type, msg) {
@@ -315,24 +312,7 @@ module.exports = UserHandler = cls.Class.extend({
         };
       }
       player.itemStore[type] = storeType;
-      //this.handlePlayerLoaded();
     },
-
-    /*handlePlayerLoaded: function () {
-        var player = this.player;
-        player.loaded++;
-        if (player.loaded == 6) {
-          //this.main.send([500, "Hello"]);
-          //player.initPacketHandler();
-          //player.sendPlayerToClient();
-          //players.push(player);
-          //player.sendPlayer(db_player);
-          console.info("player hash: "+player.hash);
-          hashes[player.hash] = player;
-          this.send([Types.UserMessages.WU_PLAYER_LOADED,
-            MainConfig.protocol,MainConfig.address,MainConfig.port]);
-        }
-    },*/
 
     sendToUserServer: function (msg) {
       if (this.connection)

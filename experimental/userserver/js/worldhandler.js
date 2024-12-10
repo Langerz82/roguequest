@@ -3,6 +3,7 @@
 
 var cls = require("./lib/class"),
     _ = require("underscore"),
+    formatCheck = require("./format").check,
     UserMessages = require("./usermessage"),
     Utils = require("./utils"),
     Types = require("../shared/js/gametypes"),
@@ -19,7 +20,7 @@ module.exports = WorldHandler = cls.Class.extend({
 
         this.SAVED_AUCTIONS = false;
         this.SAVED_LOOKS = false;
-        this.SAVED_PLAYERS = false;
+        this.SAVED_PLAYERS = true;
         this.savePlayers = [];
         this.playerLoadData = {};
         this.playerCreateData = {};
@@ -28,10 +29,17 @@ module.exports = WorldHandler = cls.Class.extend({
         this.listener = function(message) {
           console.info("recv[0]="+message);
           var action = parseInt(message[0]);
+          if (!action)
+            return;
+
+          if(!formatCheck(message)) {
+              self.connection.close("Invalid value "+action+" packet format: "+message);
+              return;
+          }
           message.shift();
 
-          if (!this.block)
-          {
+          //if (!this.block)
+          //{
             switch (action)
             {
               case Types.UserMessages.WU_GAMESERVER_INFO:
@@ -44,7 +52,7 @@ module.exports = WorldHandler = cls.Class.extend({
                 self.handlePlayerLoggedIn(message);
                 return;
             }
-          }
+          //}
           if (action == Types.UserMessages.WU_SAVE_PLAYERS_LIST) {
               self.handleSavePlayersList(message);
               return;
@@ -96,14 +104,16 @@ module.exports = WorldHandler = cls.Class.extend({
 
     handleSavePlayersList: function (msg) {
       console.info("handleSavePlayersList: "+JSON.stringify(msg));
-      this.SAVED_PLAYERS = false;
       this.savePlayers = {};
+      if (msg[0].length === 0) {
+        this.SAVED_PLAYERS = true;
+        return;
+      }
+      this.SAVED_PLAYERS = false;
       for (var rec of msg)
       {
         this.savePlayers[rec] = 0;
       }
-      if (Object.keys(this.savePlayers).length == 0)
-        this.SAVED_PLAYERS = true;
     },
 
     handleSavePlayerAuctions: function (msg) {
@@ -357,6 +367,9 @@ module.exports = WorldHandler = cls.Class.extend({
     },
 
     savedWorldState: function () {
+      console.info("WorldHandler, savedWorldState: SAVED_PLAYERS: "+ this.SAVED_PLAYERS);
+      console.info("WorldHandler, savedWorldState: SAVED_LOOKS: "+ this.SAVED_LOOKS);
+      console.info("WorldHandler, savedWorldState: SAVED_AUCTIONS: "+ this.SAVED_AUCTIONS);
       return this.SAVED_PLAYERS && this.SAVED_LOOKS && this.SAVED_AUCTIONS;
     },
 
