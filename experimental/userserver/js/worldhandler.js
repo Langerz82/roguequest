@@ -21,7 +21,7 @@ module.exports = WorldHandler = cls.Class.extend({
         this.SAVED_AUCTIONS = false;
         this.SAVED_LOOKS = false;
         this.SAVED_PLAYERS = true;
-        this.savePlayers = [];
+        this.playerSaveData = {};
         this.playerLoadData = {};
         this.playerCreateData = {};
 
@@ -104,16 +104,16 @@ module.exports = WorldHandler = cls.Class.extend({
 
     handleSavePlayersList: function (msg) {
       console.info("handleSavePlayersList: "+JSON.stringify(msg));
-      this.savePlayers = {};
+      //this.savePlayers = {};
       if (msg[0].length === 0) {
         this.SAVED_PLAYERS = true;
         return;
       }
       this.SAVED_PLAYERS = false;
-      for (var rec of msg)
+      /*for (var pname of msg)
       {
-        this.savePlayers[rec] = 0;
-      }
+        this.savePlayers[pname] = 0;
+      }*/
     },
 
     handleSavePlayerAuctions: function (msg) {
@@ -193,19 +193,25 @@ module.exports = WorldHandler = cls.Class.extend({
 
       var data = msg[1];
 
-      this.savePlayers[playerName] = 0;
+      if (!this.playerSaveData.hasOwnProperty(playerName)) {
+        console.warn("CANNOT SAVE PLAYER AS NOT SENT TO GAME SERVER.");
+        return;
+      }
+
+      this.playerSaveData[playerName] = 0;
 
       // NOTE - Remove the userame and hash from the data.
       var username = data[0].shift();
       var hash = data[0].shift();
 
       var checkPlayerSaved = function (playerName) {
-          self.savePlayers[playerName]++;
-          if (self.savePlayers[playerName] == 7)
-          delete self.savePlayers[playerName];
-          if (Object.keys(self.savePlayers).length == 0) {
-            self.SAVED_PLAYERS = true;
+          self.playerSaveData[playerName]++;
+          if (self.playerSaveData[playerName] == 7) {
+            delete self.playerSaveData[playerName];
             delete loggedInUsers[username];
+          }
+          if (Object.keys(self.playerSaveData).length == 0) {
+            self.SAVED_PLAYERS = true;
           }
       };
 
@@ -300,12 +306,11 @@ module.exports = WorldHandler = cls.Class.extend({
         objData.data[index] = data;
         if (objData.count == 7)
         {
+          self.playerSaveData[playerName] = 0;
           self.sendMessage( new UserMessages.SendLoadPlayerData(playerName, objData.data));
           delete self.playerCreateData[playerName];
         }
-        else {
-          self.playerCreateData[playerName] = objData;
-        }
+        self.playerCreateData[playerName] = objData;
       };
 
       DBH.loadPlayerUserInfo(username, function (username, data) {
@@ -388,6 +393,7 @@ module.exports = WorldHandler = cls.Class.extend({
         objData.data[index] = db_data;
         if (objData.count == 7)
         {
+          self.playerSaveData[playername] = 0;
           self.sendMessage( new UserMessages.SendLoadPlayerData(playername, objData.data));
           delete self.playerLoadData[playername];
         }

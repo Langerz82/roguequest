@@ -537,7 +537,7 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 											entity.getOrientation(path[0], path[1]),
                       (entity.interrupted ? 1 : 0)];
 
-            array = array.concat(simpath);
+            array.push(simpath);
         		this.sendMessage(array);
         },
 
@@ -571,16 +571,12 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
         },
 
         sendWho: function(ids) {
-						ids = ids || [];
-						ids.unshift((ids.length > 0) ? 2 : 1);
-						ids.unshift(Types.Messages.CW_WHO);
-            this.sendMessage(ids);
+						this.sendMessage([Types.Messages.CW_WHO,ids]);
         },
 
-				/*sendKnowWho: function(ids) {
-            ids.unshift(Types.Messages.CW_KNOWWHO);
-            this.sendMessage(ids);
-        },*/
+				sendWhoRequest: function() {
+						this.sendMessage([Types.Messages.CW_REQUEST,3]);
+        },
 
         sendDelist: function(ids) {
             ids.unshift(Types.Messages.CW_DELIST);

@@ -189,44 +189,107 @@ var _isTypeValid = function (fmt, msg) {
                   ['n',0,playerLooksTotalCost]] ]];
         },
 
+        checkFormatData: function (fmt, msg) {
+            var tfmt = (Array.isArray(fmt)) ? fmt[0] : fmt;
+            var t = isTypeValid(tfmt, msg);
+            if (!t) {
+              console.info("isType not type or invalid.");
+              return false;
+            }
+
+            var cfa = (fmt[0] === 'array');
+            if (cfa) {
+              console.info("format is Array and in length.");
+              if (fmt[3]) {
+                for(var i=0; i < msg.length; ++i) {
+                  var res = this.checkFormat(fmt[3], [msg[i]], true);
+                  if (!res) return false;
+                }
+              }
+            }
+
+            var cfo = (fmt[0] === 'object');
+            if (cfo) {
+              console.info("format is Object and in keys range.");
+              if (fmt[3]) {
+                for (var id in msg[i]) {
+                  var res = this.checkFormat(fmt[3], msg[i][id]);
+                  if (!res) return false;
+                }
+              }
+            }
+            return true;
+        },
+
+        checkFormatCSV: function (index, msg, fmt) {
+          console.info("fnCheckFormatCSV: index:"+index);
+          if (!_.isString(msg)) {
+            console.info("fnCheckFormatCSV: message not a string.");
+            return false;
+          }
+          var arr = msg.split(",");
+          if (arr.length != fmt.length)
+          {
+            console.info("fnCheckFormatCSV: message incorrect length.");
+            console.info("fnCheckFormatCSV: arr.length:"+arr.length);
+            return false;
+          }
+          var res = this.checkFormat(fmt, arr, false);
+          if (!res) {
+            console.info("fnCheckFormatCSV: message check format failed.");
+            console.info("fnCheckFormatCSV: fmt:"+JSON.stringify(fmt));
+            console.info("fnCheckFormatCSV: arr:"+JSON.stringify(arr));
+            return false;
+          }
+          return true;
+        },
+
+        checkPlayerItems: function (msg, type) {
+          console.info("fnItems: type:"+type);
+          var arr = null;
+          try {
+            if (!_.isString(msg)) {
+              console.info("fnItems: items data not a string.");
+              return false;
+            }
+            arr = JSON.parse(msg);
+          }
+          catch (err) {
+            console.info("fnItems: items data JSON parse failed.");
+            return false;
+          }
+
+          if (!arr)
+            console.info("fnItems: items data no data.");
+
+          if (!Array.isArray(arr))
+          {
+            console.info("fnItems: items data not a array of items.");
+            return false;
+          }
+          var fmt = [['array',0,getItemSlots(type),[
+              ['n',0,getItemSlots(type)], // slot index.
+              ['n',0,itemKindMax], // kind
+              ['n',0,itemNumberMax], // stack number and magic number.
+              ['n',0,itemDurabilityMax],
+              ['n',0,itemDurabilityMax],
+              ['n',0,itemExperienceMax]]
+            ]];
+          var res = this.checkFormat(fmt, [arr], true);
+          if (!res) {
+            console.info("fnItems: item array not correct format.");
+            console.info(JSON.stringify(fmt));
+            console.info(JSON.stringify(arr));
+            return false;
+          }
+          return true;
+        },
+
         checkFormat: function (format, message, ignoreLength) {
           var self = this;
           //var format = format || this.formats[type];
           var ignoreLength = ignoreLength || false;
 
-          var checkFormatData = function (fmt, msg) {
-              var tfmt = (Array.isArray(fmt)) ? fmt[0] : fmt;
-              var t = isTypeValid(tfmt, msg);
-              if (!t) {
-                console.info("isType not type or invalid.");
-                return false;
-              }
-
-              var cfa = (fmt[0] === 'array');
-              if (cfa) {
-                console.info("format is Array and in length.");
-                if (fmt[3]) {
-                  for(var i=0; i < msg.length; ++i) {
-                    var res = self.checkFormat(fmt[3], [msg[i]], true);
-                    if (!res) return false;
-                  }
-                }
-              }
-
-              var cfo = (fmt[0] === 'object');
-              if (cfo) {
-                console.info("format is Object and in keys range.");
-                if (fmt[3]) {
-                  for (var id in msg[i]) {
-                    var res = self.checkFormat(fmt[3], msg[i][id]);
-                    if (!res) return false;
-                  }
-                }
-              }
-              return true;
-          };
-
-          //message.shift();
           if (format) {
               console.info("message:"+message);
               console.info("format:"+format);
@@ -248,7 +311,7 @@ var _isTypeValid = function (fmt, msg) {
               }
 
               for (var i = 0, n = format.length; i < n; i += 1) {
-                  var res = checkFormatData(format[i], message[i]);
+                  var res = this.checkFormatData(format[i], message[i]);
                   if (!res) return false;
               }
               return true;
@@ -270,7 +333,8 @@ var _isTypeValid = function (fmt, msg) {
                 format = format || this.formats[type];
 
             //console.info("type:"+type);
-            if (type == Types.UserMessages.WU_SAVE_PLAYER_DATA) {
+            if (type == Types.UserMessages.WU_SAVE_PLAYER_DATA)
+            {
               console.info("WU_SAVE_PLAYER_DATA");
               if (message[0]) {
                 var fmt = [['s',this.playerNameMin,this.playerNameMax]];
@@ -301,9 +365,8 @@ var _isTypeValid = function (fmt, msg) {
                 }
               }
 
-
               // Player Data.
-              msg = message[1][1];
+              var msg = message[1][1];
               if (!Array.isArray(msg)) {
                 console.info("message 1-1 not an array.")
                 return false;
@@ -316,36 +379,13 @@ var _isTypeValid = function (fmt, msg) {
                 console.info("message[1][1] not defined.")
               }
 
-              var fnCheckFormatCSV = function (index, msg, fmt) {
-                console.info("fnCheckFormatCSV: index:"+index);
-                if (!_.isString(msg)) {
-                  console.info("fnCheckFormatCSV: message not a string.");
-                  return false;
-                }
-                var arr = msg.split(",");
-                if (arr.length != fmt.length)
-                {
-                  console.info("fnCheckFormatCSV: message incorrect length.");
-                  console.info("fnCheckFormatCSV: arr.length:"+arr.length);
-                  return false;
-                }
-                var res = self.checkFormat(fmt, arr, false);
-                if (!res) {
-                  console.info("fnCheckFormatCSV: message check format failed.");
-                  console.info("fnCheckFormatCSV: fmt:"+JSON.stringify(fmt));
-                  console.info("fnCheckFormatCSV: arr:"+JSON.stringify(arr));
-                  return false;
-                }
-                return true;
-              };
-
               // map data
               var fmt = [
                 ['n',0,mapsCountMax],
                 ['n',0,mapCoordsMax],
                 ['n',0,mapCoordsMax],
                 ['n',0,orientationsMax]];
-              var res = fnCheckFormatCSV(1, msg[1], fmt);
+              var res = this.checkFormatCSV(1, msg[1], fmt);
               if (!res) {
                 return false;
               }
@@ -358,7 +398,7 @@ var _isTypeValid = function (fmt, msg) {
                 ['n',0,playerStatPointsMax],
                 ['n',0,playerStatPointsMax],
                 ['n',0,playerStatFreePointsMax]];
-              var res = fnCheckFormatCSV(2, msg[2], fmt);
+              var res = this.checkFormatCSV(2, msg[2], fmt);
               if (!res) {
                 return false;
               }
@@ -375,7 +415,7 @@ var _isTypeValid = function (fmt, msg) {
                 ['n',0,playerXpMax],
                 ['n',0,playerXpMax],
                 ['n',0,playerXpMax]];
-              var res = fnCheckFormatCSV(3, msg[3], fmt);
+              var res = this.checkFormatCSV(3, msg[3], fmt);
               if (!res) {
                 return false;
               }
@@ -384,7 +424,7 @@ var _isTypeValid = function (fmt, msg) {
               var fmt = [
                 ['n',0,playerGoldMax],
                 ['n',0,playerGoldMax]];
-              var res = fnCheckFormatCSV(4, msg[4], fmt);
+              var res = this.checkFormatCSV(4, msg[4], fmt);
               if (!res) {
                 return false;
               }
@@ -396,7 +436,7 @@ var _isTypeValid = function (fmt, msg) {
                 ['n',0,playerSkillXpMax],
                 ['n',0,playerSkillXpMax],
                 ['n',0,playerSkillXpMax]];
-              var res = fnCheckFormatCSV(5, msg[5], fmt);
+              var res = this.checkFormatCSV(5, msg[5], fmt);
               if (!res) {
                 return false;
               }
@@ -405,7 +445,7 @@ var _isTypeValid = function (fmt, msg) {
               var fmt = [
                 ['n',0,playerPVPStatsMax],
                 ['n',0,playerPVPStatsMax]];
-              var res = fnCheckFormatCSV(6, msg[6], fmt);
+              var res = this.checkFormatCSV(6, msg[6], fmt);
               if (!res) {
                 return false;
               }
@@ -416,7 +456,7 @@ var _isTypeValid = function (fmt, msg) {
                 ['n',0,playerSpritesMax],
                 ['n',0,playerSpritesMax],
                 ['n',0,playerSpritesMax]];
-              var res = fnCheckFormatCSV(7, msg[7], fmt);
+              var res = this.checkFormatCSV(7, msg[7], fmt);
               if (!res) {
                 return false;
               }
@@ -425,7 +465,7 @@ var _isTypeValid = function (fmt, msg) {
               var fmt = [
                 ['s',0,playerColorsMaxLen],
                 ['n',0,playerColorsMaxLen]];
-              var res = fnCheckFormatCSV(8, msg[8], fmt);
+              var res = this.checkFormatCSV(8, msg[8], fmt);
               if (!res) {
                 return false;
               }
@@ -439,9 +479,14 @@ var _isTypeValid = function (fmt, msg) {
               try {
                 obj = JSON.parse(data);
               } catch {
-                console.info("shortcuts data, json parse invalid. i:"+i);
+                console.info("shortcuts data, json parse invalid.");
                 return false;
               }
+              if (typeof(obj) !== 'object') {
+                console.info("shortcuts data, data not object.");
+                return false;
+              }
+
               var len = Object.keys(obj).length;
               if (len > shortcutIndexMax) {
                 console.info("shortcuts data, length longer than 8");
@@ -454,7 +499,7 @@ var _isTypeValid = function (fmt, msg) {
               ]];
               var res = this.checkFormat(fmt, [obj], true);
               if (!res) {
-                console.info("shortcuts data, shortcut format failed. sc index="+i);
+                console.info("shortcuts data, shortcut format failed.");
                 console.info(JSON.stringify(fmt))
                 console.info(JSON.stringify(tsc))
                 return false;
@@ -462,7 +507,7 @@ var _isTypeValid = function (fmt, msg) {
 
               // completeQuests data
               var arr;
-              data = msg[10];
+              var data = msg[10];
               if (!_.isString(data)) {
                 console.info("complete quests data not a string.");
                 return false;
@@ -489,12 +534,13 @@ var _isTypeValid = function (fmt, msg) {
 
 
               // quests data.
-              msg = message[1][2];
+              var arr = null;
+              var data = message[1][2];
               try {
-                arr = JSON.parse(msg);
+                arr = JSON.parse(data);
               }
               catch {
-                console.info("quests JSON parse error msg:"+JSON.stringify(msg));
+                console.info("quests JSON parse error msg:"+JSON.stringify(data));
                 return false;
               }
               console.info(JSON.stringify(arr));
@@ -502,8 +548,7 @@ var _isTypeValid = function (fmt, msg) {
                 console.info("quests is not an array.");
                 return false;
               }
-              var len = arr.length;
-              if (len > 99) {
+              if (arr.length > 99) {
                 console.info("quests is over 99.");
                 return false;
               }
@@ -546,19 +591,18 @@ var _isTypeValid = function (fmt, msg) {
               }
 
               // achievements data.
-              var msg = message[1][3];
-              if (msg) {
-                if (!_.isString(msg)) {
+              var data = message[1][3];
+              if (data) {
+                if (!_.isString(data)) {
                   console.info("message arr1-3 is not a string.");
                   return false;
                 }
-                var arr = msg.split(',');
+                var arr = data.split(',');
                 var count = arr.length;
                 if (count % 3 != 0) {
                   console.info("message arr1-3 not correct achievement count.");
                   return false;
                 }
-                //for (var i=0; i < count; ++i) {
                 var fmt = [['array',0,achievementIndexMax,[
                     ['n',0,achievementIndexMax],
                     ['n',0,achievementRankMax],
@@ -571,72 +615,31 @@ var _isTypeValid = function (fmt, msg) {
                   console.info(JSON.stringify(arr))
                   return false;
                 }
-                //}
               }
 
               // inventory data
-              var fnItems = function (msg, type) {
-                var arr;
-                try {
-                  if (!_.isString(msg)) {
-                    console.info("fnItems: items data not a string. type:"+type);
-                    return false;
-                  }
-                  arr = JSON.parse(msg);
-                }
-                catch (err) {
-                  console.info("items data JSON parse failed. type:"+type);
-                  return false;
-                }
-
-                if (!arr)
-                    console.info("items data no data. type:"+type);
-
-                if (!Array.isArray(arr))
-                {
-                  console.info("fnItems: items data not a array of items. type:"+type);
-                  return false;
-                }
-                var fmt = [['array',0,getItemSlots(type),[
-                    ['n',0,getItemSlots(type)], // slot index.
-                    ['n',0,itemKindMax], // kind
-                    ['n',0,itemNumberMax], // stack number and magic number.
-                    ['n',0,itemDurabilityMax],
-                    ['n',0,itemDurabilityMax],
-                    ['n',0,itemExperienceMax]]
-                  ]];
-                var res = self.checkFormat(fmt, [arr], true);
-                if (!res) {
-                  console.info("fnItems. item array not correct format. i="+i);
-                  console.info(JSON.stringify(fmt));
-                  console.info(JSON.stringify(arr));
-                  return false;
-                }
-                return true;
-              };
-
-              var msg = message[1][4];
-              if (msg) {
-                if (!fnItems(msg, 0)) {
-                  console.info("inventory data msg1-4 format failed. "+JSON.stringify(msg));
+              var data = message[1][4];
+              if (data) {
+                if (!this.checkPlayerItems(data, 0)) {
+                  console.info("inventory data msg1-4 format failed. "+JSON.stringify(data));
                   return false;
                 }
               }
 
               // bank data
-              var msg = message[1][5];
-              if (msg) {
-                if (!fnItems(msg, 1)) {
-                  console.info("bank data msg1-5 format failed. "+JSON.stringify(msg));
+              var data = message[1][5];
+              if (data) {
+                if (!this.checkPlayerItems(data, 1)) {
+                  console.info("bank data msg1-5 format failed. "+JSON.stringify(data));
                   return false;
                 }
               }
 
               // equipment data
-              var msg = message[1][6];
-              if (msg) {
-                if (!fnItems(msg, 2)) {
-                  console.info("equipment data msg1-6 format failed. "+JSON.stringify(msg));
+              var data = message[1][6];
+              if (data) {
+                if (!this.checkPlayerItems(data, 2)) {
+                  console.info("equipment data msg1-6 format failed. "+JSON.stringify(data));
                   return false;
                 }
               }
@@ -660,7 +663,8 @@ var _isTypeValid = function (fmt, msg) {
 
               return this.checkFormat(fmt, [arr], true);
             }
-            else if (type == Types.UserMessages.WU_SAVE_PLAYER_LOOKS) {
+            else if (type == Types.UserMessages.WU_SAVE_PLAYER_LOOKS)
+            {
               console.info("WU_SAVE_PLAYER_LOOKS");
               var msg = message[0];
               if (!_.isString(msg)) {
@@ -671,11 +675,13 @@ var _isTypeValid = function (fmt, msg) {
               var arr = msg.split(',');
               return this.checkFormat(fmt, [arr], true);
             }
-            else if (this.formats[type]) {
+            else if (this.formats[type])
+            {
                 var res = this.checkFormat(this.formats[type], message, true);
                 return res;
             }
-            else {
+            else
+            {
                 try{ throw new Error(); } catch (err) { console.info(err.stack); }
                 console.error('Unknown message type: ' + type);
                 console.warn("message="+message);

@@ -665,7 +665,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                     (/*(player.x % ts == 0 || player.y % ts == 0) ||*/
                      !player.isMoving()) && player.canObserve(game.currentTime))
                 {
-                    game.client.sendWho();
+                    game.client.sendWhoRequest();
 
                     player.observeTimer.lastTime = game.currentTime;
                 }
@@ -2318,7 +2318,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   	delist.push(entity.id);
                   	self.removeEntity(entity);
                   }
-                  self.client.sendWho(delist);
+                  if (delist.length > 0)
+                    self.client.sendWho(delist);
                 }
             },
 

@@ -1264,7 +1264,7 @@ module.exports = PacketHandler = Class.extend({
       orientation = parseInt(message[2]),
       interrupted = (parseInt(message[3]) == 0) ? false : true;
       message.splice(0,4);
-    var path = message;
+    var path = message[0];
 
     var p = this.player;
     if (entityId != p.id)
@@ -1548,6 +1548,9 @@ module.exports = PacketHandler = Class.extend({
       case 2: // CW_PLAYERINFO
         this.handlePlayerInfo(msg);
         break;
+      case 3: // CW_WHO REQUEST
+        this.entities.processWho(this.player);
+        break;
     }
   },
 
@@ -1572,17 +1575,17 @@ module.exports = PacketHandler = Class.extend({
   },
 
   handleWho: function(message) {
-    var cmd = parseInt(message.shift());
+    //var cmd = parseInt(message.shift());
     var ids = [];
     if (message.length > 0)
       ids = message;
 
-    if (cmd === 1)
-      this.entities.processWho(this.player);
-    if (cmd === 2) {
+    //if (cmd === 1)
+    //  this.entities.processWho(this.player);
+    //if (cmd === 2) {
       for(var i=0; i < ids.length; ++i)
         this.player.knownIds.splice(this.player.knownIds.indexOf(ids[i]), 1);
-    }
+    //}
   },
 
   handleParty: function (msg) {
