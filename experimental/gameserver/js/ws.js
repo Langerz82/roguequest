@@ -273,42 +273,44 @@ WS.userConnection = Connection.extend({
         var self = this;
 
         this._super(id, connection, server);
+
+        this.fnOnMessage = function (msg) {
+          console.info("m="+msg);
+          var flag = msg.charAt(0);
+          if (flag == "2")
+          {
+              var buffer = Buffer.from(flag, 'base64');
+              zlib.gunzip(buffer, (err, buffer) => {
+                if (err)
+                  console.log(err.toString());
+                else {
+                  if (self.listenCallback) {
+                    if (useBison) {
+                      self.listenCallback(BISON.decode(buffer));
+                    } else {
+                      self.listenCallback(JSON.parse(buffer));
+                    }
+                  }
+                }
+              });
+          }
+          else
+          {
+            if (self.listenCallback) {
+              if (useBison) {
+                self.listenCallback(BISON.decode(msg.substr(1)));
+              } else {
+                 //console.info("message="+message.substr(1));
+                self.listenCallback(JSON.parse(msg.substr(1)));
+              }
+            }
+          }
+        };
+
     },
 
     connect: function (connectString) {
       var self = this;
-      var fnOnMessage = function (msg) {
-        console.info("m="+msg);
-        var flag = msg.charAt(0);
-        if (flag == "2")
-        {
-            var buffer = Buffer.from(flag, 'base64');
-            zlib.gunzip(buffer, (err, buffer) => {
-              if (err)
-                console.log(err.toString());
-              else {
-                if (self.listenCallback) {
-                  if (useBison) {
-                    self.listenCallback(BISON.decode(buffer));
-                  } else {
-                    self.listenCallback(JSON.parse(buffer));
-                  }
-                }
-              }
-            });
-        }
-        else
-        {
-          if (self.listenCallback) {
-            if (useBison) {
-              self.listenCallback(BISON.decode(msg.substr(1)));
-            } else {
-               //console.info("message="+message.substr(1));
-              self.listenCallback(JSON.parse(msg.substr(1)));
-            }
-          }
-        }
-      };
 
       this._connection = io_client.connect(connectString, {reconnect: true});
 
@@ -317,12 +319,12 @@ WS.userConnection = Connection.extend({
         console.info(JSON.stringify(err));
       });
 
-      this._connection.on('message', fnOnMessage);
+      this._connection.on('message', this.fnOnMessage);
 
       this._connection.on('connect', function (socket) {
           console.info('CONNECTED! YAYYYY');
 
-          //self._connection.off('message').on('message', fnOnMessage);
+          self._connection.off('message').on('message', self.fnOnMessage);
           if (self.connectionUserCallback)
             self.connectionUserCallback(self);
       });
@@ -376,6 +378,11 @@ WS.userConnection = Connection.extend({
 
     sendUTF8: function(data) {
         //console.info("sendUTF8 - "+data);
-        this._connection.emit("message", data);
+        if (this._connection)
+          this._connection.emit("message", data);
+        else {
+          console.error("this connection not set.");
+          try { throw new Error(); } catch (e) { console.warn(e.stack); }
+        }
     },
 });

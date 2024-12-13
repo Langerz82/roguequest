@@ -72,12 +72,12 @@ module.exports = WorldHandler = cls.Class.extend({
         };
         this.connection.listen(this.listener);
 
-        this.connection.onClose(function() {
+        /*this.connection.onClose(function() {
           console.info("onClose - called");
           self.onExit();
           this.close("onClose");
           self.onClose();
-        });
+        });*/
     },
 
     onClose: function (save) {

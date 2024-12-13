@@ -418,11 +418,14 @@ module.exports = User = cls.Class.extend({
     },
 
     getWorldHandler: function (worldIndex) {
-      if (worldIndex < 0 || worldIndex >= worlds.length)
+      if (worldIndex < 0 || worldIndex >= worldHandlers.length)
         return null;
 
       console.info("worldIndex: "+worldIndex);
       var worldHandler = worldHandlers[worldIndex];
+      if (!worldHandler) {
+        var a = 0;
+      }
       return worldHandler;
     },
 

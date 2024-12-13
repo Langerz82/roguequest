@@ -81,37 +81,37 @@ var isTypeValid = function (fmt,msg) {
   if (Array.isArray(fmt)) {
     var res = _isTypeValid(fmt[0],msg);
     if (!res) {
-      console.info("_isTypeValid = false");
+      //console.info("_isTypeValid = false");
       return false;
     }
 
     if (fmt[0] === 'no' || fmt[0] === 'so')
     {
-      console.info("format is optional and ok.");
+      //console.info("format is optional and ok.");
       return true;
     }
 
     var cfn = (fmt[0] === 'n' && msg >= fmt[1] && msg <= fmt[2]);
     if (cfn) {
-      console.info("format is number and in range.");
+      //console.info("format is number and in range.");
       return true;
     }
 
     var cfs = (fmt[0] === 's' && msg.length >= fmt[1] && msg.length <= fmt[2]);
     if (cfs) {
-      console.info("format is string and in range.");
+      //console.info("format is string and in range.");
       return true;
     }
 
     var cfa = (fmt[0] === 'array' && msg.length >= fmt[1] && msg.length <= fmt[2]);
     if (cfa) {
-      console.info("format is Array and in length.");
+      //console.info("format is Array and in length.");
       return true;
     }
 
     var cfo = (fmt[0] === 'object' && Object.keys(msg).length >= fmt[1] && Object.keys(msg).length <= fmt[2]);
     if (cfo) {
-      console.info("format is Object and in keys range.");
+      //console.info("format is Object and in keys range.");
       return true;
     }
   }
@@ -123,27 +123,27 @@ var isTypeValid = function (fmt,msg) {
 var _isTypeValid = function (fmt, msg) {
 
   if (fmt === 'n' && _.isNumber(parseInt(msg))) {
-      console.info("isType is number");
+      //console.info("isType is number");
       return true;
   }
   if (fmt === 's' && _.isString(msg)) {
-      console.info("isType is string");
+      //console.info("isType is string");
       return true;
   }
   if (fmt === 'no' && (_.isNull(msg) || _.isNumber(parseInt(msg)))) {
-      console.info("isType is optional number");
+      //console.info("isType is optional number");
       return true;
   }
   if (fmt === 'so' && (_.isNull(msg) || _.isString(msg))) {
-      console.info("isType is optional string");
+      //console.info("isType is optional string");
       return true;
   }
   if (fmt === 'array' && Array.isArray(msg)) {
-      console.info("isType is Array");
+      //console.info("isType is Array");
       return true;
   }
   if (fmt === 'object' && (typeof(msg) === 'object')) {
-      console.info("isType is Object");
+      //console.info("isType is Object");
       return true;
   }
   console.info("isType not type or invalid.");
@@ -291,8 +291,8 @@ var _isTypeValid = function (fmt, msg) {
           var ignoreLength = ignoreLength || false;
 
           if (format) {
-              console.info("message:"+message);
-              console.info("format:"+format);
+              //console.info("message:"+message);
+              //console.info("format:"+format);
               if (!ignoreLength && message.length !== format.length) {
                   console.info("checkFormat - length incorrect. fmt:"+JSON.stringify(message)+", msg:"+JSON.stringify(format));
                   return false;

@@ -191,6 +191,7 @@ function main(config) {
       }
 
       server.userConn.onConnectUser(function (conn) {
+        gConnection = conn;
         console.info("onConnectUser - Connected");
         this.send([GameTypes.UserMessages.WU_CONNECT_WORLD]);
 
@@ -199,7 +200,9 @@ function main(config) {
         server.userHandler = userHandler;
         world.userHandler = userHandler;
 
-        userHandler.sendWorldInfo(config);
+        //setTimeout(function () {
+          userHandler.sendWorldInfo(config);
+        //}, 10000);
       });
     })
     server.start();
@@ -453,7 +456,7 @@ main.closeServer = function () {
 }
 
 main.safe_exit = function () {
-  server.userHandler.connection.disconnect();
+  //server.userHandler.disconnect();
   setTimeout(function () { process.exit(0); }, 1000);
 };
 

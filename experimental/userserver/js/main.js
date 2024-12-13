@@ -35,6 +35,7 @@ PLAYERS_SAVED = false;
 /* global log, Player, databaseHandler */
 
 worlds = [];
+//worldHandlersId = {};
 worldHandlers = [];
 users = {};
 loggedInUsers = {};
@@ -137,6 +138,8 @@ function main(config) {
 
     self.handleConnectWorld = function (msg, conn) {
       var wh = new WorldHandler(self, conn);
+      conn._connection.worldHandler = wh;
+      //worldHandlersId[conn._connection.id] = wh;
       worldHandlers.push(wh);
     };
 
@@ -207,7 +210,16 @@ function main(config) {
 	server._ioServer.on('connection', (socket) => {
 	  console.log('connected');
 	  socket.on('disconnect', function(){
-		   console.log('disconnected');
+		   console.log('disconnected - client');
+
+       // Remove WorldHandler if there is one present.
+       var wh = socket.worldHandler;
+       if (wh) {
+         var index = worldHandlers.indexOf(wh);
+         worldHandlers.splice(index, 1);
+         delete wh;
+       }
+
        this.disconnect();
        //this.close();
        //this.server.removeConnection(this.id);

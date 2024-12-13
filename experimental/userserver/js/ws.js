@@ -242,6 +242,7 @@ WS.socketioConnection = Connection.extend({
 
     sendUTF8: function(data) {
         //console.info("sendUTF8 - "+data);
+        //try { throw new Error(); } catch (e) { console.warn(e.stack); }
         this._connection.send(data);
     }
 });
