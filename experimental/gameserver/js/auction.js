@@ -35,7 +35,7 @@ module.exports = Auction = cls.Class.extend({
       var self = this;
       console.info("auction - load: "+JSON.stringify(data));
 
-      if (!data)
+      if (Array.isArray(data) && data.length === 0)
         return;
 
       auctions = [];

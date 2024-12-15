@@ -29,23 +29,30 @@ UserMessages.WorldReady = Message.extend({
     }
 });
 
-UserMessages.PlayerAuctions = Message.extend({
+UserMessages.LoadPlayerAuctions = Message.extend({
     init: function (data) {
       this.data = data;
     },
     serialize: function () {
-        var arr = [Types.UserMessages.UW_LOAD_PLAYER_AUCTIONS];
-        return arr.concat(this.data);
+        return [Types.UserMessages.UW_LOAD_PLAYER_AUCTIONS].concat(this.data);
     }
 });
 
-UserMessages.PlayerLooks = Message.extend({
+UserMessages.LoadPlayerLooks = Message.extend({
     init: function (data) {
       this.data = data;
     },
     serialize: function () {
-        var arr = [Types.UserMessages.UW_LOAD_PLAYER_LOOKS];
-        return arr.concat(this.data);
+        return [Types.UserMessages.UW_LOAD_PLAYER_LOOKS].concat(this.data);
+    }
+});
+
+UserMessages.LoadUserBans = Message.extend({
+    init: function (data) {
+      this.data = data;
+    },
+    serialize: function () {
+        return [Types.UserMessages.UW_LOAD_USER_BANS].concat(this.data);
     }
 });
 

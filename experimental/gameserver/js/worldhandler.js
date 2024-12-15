@@ -40,7 +40,7 @@ module.exports = WorldHandler = cls.Class.extend({
     },
 
     handleLoginPlayer: function (msg) {
-      console.info("handleLoginPlayer: "+JSON.stringify(msg));
+      console.info("worldHandler, handleLoginPlayer: "+JSON.stringify(msg));
       var playerName = msg[0],
         playerHash = msg[1];
 
@@ -48,8 +48,19 @@ module.exports = WorldHandler = cls.Class.extend({
       if (hashes.hasOwnProperty(playerHash))
         player = hashes[playerHash];
 
-      if (!player)
+      if (!player) {
+        console.info("player hash does not exist.");
+        this.connection.disconnect();
         return;
+      }
+
+      var username = player.user.name;
+      var ban = player.world.userBans[username];
+      if (ban && ban > Date.now()) {
+        console.info("player user is banned from server.");
+        this.connection.disconnect();
+        return;
+      }
 
       player.start(this.connection);
 
@@ -161,9 +172,10 @@ module.exports = WorldHandler = cls.Class.extend({
     },
 
     savePlayer: function (player) {
+      console.info("worldHandler - savePlayer, name:"+player.name);
       var self = this;
 
-      console.info("SAVING PLAYER: "+player.name);
+      //console.info("SAVING PLAYER: "+player.name);
       //try { throw new Error(); } catch(err) { console.info(err.stack); }
       var username = player.user.name;
       var playerName = player.name;

@@ -84,7 +84,8 @@ var server = null;
 
 //var userHandler;
 
-worlds = [];
+//worlds = [];
+world = null;
 users = {};
 //players = [];
 hashes = {};
@@ -314,36 +315,41 @@ function main(config) {
 }
 
 function modgems (args) {
-  var world = worlds[0];
   var playerName = args[0];
   var gems = args[1];
 
   var player = world.getPlayerByName(playerName);
   if (player && player.user)
     player.user.modifyGems(gems);
-  else
-    databaseHandler.modifyGems(playerName, gems);
 }
 
 function modgold (args) {
-  var world = worlds[0];
   var playerName = args[0];
   var gold = args[1];
 
   var player = world.getPlayerByName(playerName);
   if (player)
     player.modifyGold(gold);
-  else
-    databaseHandler.modifyGold(playerName, gold);
 }
 
-function changePassword (args) {
-  var world = worlds[0];
-  var username = args[0];
-  var password = args[1];
+function banplayer(args) {
+  var playerName = args[0];
+  var duration = parseInt(args[1]);
+  if (!duration) {
+    console.info("banplayer - provide how many days banned.");
+    return;
+  }
+  world.banplayer(playerName, duration);
+}
 
-  var hash = crypto.createHash('sha1').update(username+password).digest('hex');
-  DBH.savePassword(username, hash);
+function banuser(args) {
+  var username = args[0];
+  var duration = parseInt(args[1]);
+  if (!duration) {
+    console.info("banuser - provide how many days banned.");
+    return;
+  }
+  world.banuser(username, duration);
 }
 
 function getInput(cmd) {
@@ -354,14 +360,17 @@ function getInput(cmd) {
 
     switch (cmdarg)
     {
+      case "banplayer":
+        banplayer(args);
+        break;
+      case "banuser":
+        banuser(args);
+        break;
       case "modgems":
         modgems(args);
         break;
       case "modgold":
         modgold(args);
-        break;
-      case "setpass":
-        changePassword(args);
         break;
       case "exit":
       case "quit":

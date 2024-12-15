@@ -36,6 +36,9 @@ module.exports = UserHandler = cls.Class.extend({
             case Types.UserMessages.UW_LOAD_PLAYER_LOOKS:
               self.handleLoadPlayerLooks(message);
               return;
+            case Types.UserMessages.UW_LOAD_USER_BANS:
+              self.handleLoadUserBans(message);
+              return;
             case Types.UserMessages.UW_WORLD_SAVE:
               self.handleWorldSave(message);
               return;
@@ -86,30 +89,6 @@ module.exports = UserHandler = cls.Class.extend({
       this.connection.send(message);
     },
 
-    /*loginPlayer: function (worldIndex, playerSummary)
-    {
-      if (worldIndex < 0 && worldIndex >= worlds.length)
-        return false;
-
-      console.info("worldIndex: "+worldIndex);
-      var world = worlds[worldIndex];
-      //console.info(JSON.stringify(world));
-
-// TODO FIND OUT PLAYER CONNECTION
-      var player = new Player(this.world, this, this.connection);
-
-      //player.start();
-      player.name = playerSummary.name;
-      player.hasLoggedIn = true;
-      player.packetHandler.loadedPlayer = true;
-
-      world.connect_callback(player);
-      this.currentPlayer = player;
-
-      this.loadedPlayer = true;
-      return true;
-    },*/
-
     handleWorldSave: function (msg) {
       console.info("handleWorldSave.");
       //this.world.save();
@@ -139,10 +118,29 @@ module.exports = UserHandler = cls.Class.extend({
       this.world.looks.load(msg);
     },
 
+    handleLoadUserBans: function (msg) {
+      console.info("handleLoadUserBans: "+JSON.stringify(msg));
+
+      if (!msg)
+        return;
+
+      this.world.loadBans(msg);
+    },
+
     handleLoadPlayerData: function (msg) {
+        console.info("userHandler, handleLoadPlayerData.");
+
         var playerName = msg[0];
         var data = msg[1];
         var username = data[0][1];
+
+        if (this.world.userBans.hasOwnProperty(username) &&
+          this.world.userBans[username] > Date.now())
+        {
+            console.info("USER IS BANNED.");
+            return;
+        }
+
         console.info("handleLoadPlayerData data: "+JSON.stringify(data));
         this.handleLoadUserInfo(playerName, data[0]);
         this.handleLoadPlayerInfo(data[1]);
@@ -192,7 +190,7 @@ module.exports = UserHandler = cls.Class.extend({
       player.worldHandler = user.worldHandler;
       this.player = player;
 
-      this.world.connect_callback(player);
+      //this.world.connect_callback(player);
       //this.currentPlayer = player;
 
       this.loadedPlayer = true;
@@ -322,8 +320,8 @@ module.exports = UserHandler = cls.Class.extend({
     },
 
     sendWorldInfo: function (config) {
-      var msg = new UserMessages.ServerInfo(config.world_name, 0, config.nb_players_per_world, config.address, config.port, config.user_password);
-      this.sendToUserServer( msg);
+      var msg = new UserMessages.ServerInfo(config, 0);
+      this.sendToUserServer(msg);
     },
 
     sendAuctionsData: function (data) {
@@ -332,6 +330,10 @@ module.exports = UserHandler = cls.Class.extend({
 
     sendLooksData: function (data) {
       this.sendToUserServer( new UserMessages.SavePlayerLooks(data));
+    },
+
+    sendBansData: function (data) {
+      this.sendToUserServer( new UserMessages.SaveUserBans(data));
     },
 
     /*sendPlayerLoggedIn: function (username, playerName) {

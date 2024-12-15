@@ -205,29 +205,18 @@ module.exports = PacketHandler = Class.extend({
 
     this.connection.onClose(function() {
       console.info("Player: " + self.player.name + " has exited the world.");
-      //if (self.player.user.loadedPlayer)
+
       self.player.save();
 
-      //if (players[self.player.name])
-        //players[self.player.name] = 0;
+      console.info("REMOVING PLAYER FROM WORLD.");
 
-      //if (users[self.player.user.name])
-        //users[self.player.user.name] = 0;
-
-      if (self.player && self.entities) {
-        console.info("deleting player connection");
-        self.entities.removePlayer(self.player);
+      if (self.exit_callback) {
+        console.info("exit callback.");
+        self.exit_callback(self.player);
       }
-
-      delete self.player;
-
-      //self.user.onClose(true);
 
       console.info("onClose - called");
       clearTimeout(this.disconnectTimeout);
-      if (this.exit_callback) {
-        this.exit_callback();
-      }
       this.close("onClose");
 
     });
@@ -261,6 +250,7 @@ module.exports = PacketHandler = Class.extend({
   },
 
   onExit: function(callback) {
+    console.info("packetHandler, onExit.");
     this.exit_callback = callback;
     /*try {
     throw new Error()

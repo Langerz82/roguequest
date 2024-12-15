@@ -61,6 +61,9 @@ module.exports = World = cls.Class.extend(
         self.maps = self.mapManager.maps;
 
         self.players = [];
+        self.objPlayers = {};
+        self.userBans = {};
+
         self.party = [];
 
         self.itemCount = 0;
@@ -94,18 +97,30 @@ module.exports = World = cls.Class.extend(
         self.PLAYERS_SAVED = false;
         self.AUCTIONS_SAVED = false;
         self.LOOKS_SAVED = false;
-
+        self.BANS_SAVED = false;
         /**
          * Handlers
          */
         self.onPlayerConnect(function(player)
         {
-          self.players.push(player);
+          console.info("worldServer - onPlayerConnect.");
+          try { throw new Error(); } catch (e) { console.info(e.stack); }
+          if (self.players.indexOf(player) < 0)
+            self.players.push(player);
+          self.objPlayers[player.name] = player;
+        });
+
+        self.onPlayerRemoved(function(player) {
+          console.info("worldServer - onPlayerRemoved.");
+          delete self.objPlayers[player.name];
+          var index = self.players.indexOf(player);
+          self.players.splice(index,1);
         });
 
         self.onPlayerEnter(function(player)
         {
             player.map = self.maps[1];
+            player.map.entities.addPlayer(self);
 
             console.info("Player: " + player.name + " has entered the " + player.map.name + " map.");
 
@@ -125,11 +140,10 @@ module.exports = World = cls.Class.extend(
                 player.map.entities.pushBroadcast(message, ignoreSelf ? player.id : null);
             });
 
-            player.packetHandler.onExit(function()
+            player.packetHandler.onExit(function(player)
             {
-                console.info("Player: " + player.name + " has exited the world.");
-
-                player.map.entities.removePlayer(player);
+                console.info("worldServer, packetHandler.onExit.");
+                //console.info("Player: " + player.name + " has exited the world.");
 
                 if (player.party)
                 {
@@ -139,7 +153,10 @@ module.exports = World = cls.Class.extend(
                 }
 
                 if (self.removed_callback)
-                    self.removed_callback();
+                    self.removed_callback(player);
+
+                player.map.entities.removePlayer(player);
+                delete player;
             });
 
             if (self.added_callback)
@@ -207,13 +224,56 @@ module.exports = World = cls.Class.extend(
     },
 
     isSaved: function () {
-      return this.PLAYERS_SAVED && this.AUCTIONS_SAVED && this.LOOKS_SAVED;
+      return this.PLAYERS_SAVED && this.AUCTIONS_SAVED && this.LOOKS_SAVED
+        && this.BANS_SAVED;
     },
 
     skipSave: function () {
       this.PLAYERS_SAVED = true;
       this.AUCTIONS_SAVED = true;
       this.LOOKS_SAVED = true;
+      this.BANS_SAVED = true;
+    },
+
+    saveBans: function () {
+        var now = Date.now();
+
+        var data = [];
+        for (var username in this.userBans)
+        {
+            var banTime = this.userBans[username];
+            if (banTime < now)
+              continue;
+
+            var rec = username+","+banTime;
+            data.push(rec);
+        }
+        return data;
+    },
+
+    loadBans: function (msg) {
+        var now = Date.now();
+
+        for(var rec of msg) {
+          var ban = rec.split(",");
+          if (now > (ban[1]))
+            continue;
+          this.userBans[ban[0]] = ban[1];
+        }
+    },
+
+    banplayer: function (name, duration) {
+      if (!this.objPlayers.hasOwnProperty(name)) {
+        console.info("worldServer, banplayer: player not in world.");
+        return;
+      }
+      var username = this.objPlayers[name].user.name;
+      this.banuser(username, duration);
+    },
+
+    banuser: function (username, duration) {
+      duration *= 86400 * 1000;
+      this.userBans[username] = Date.now() + duration;
     },
 
     save: function ()
@@ -237,6 +297,15 @@ module.exports = World = cls.Class.extend(
       this.AUCTIONS_SAVED = true;
       this.looks.save(this);
       this.LOOKS_SAVED = true;
+
+      if (this.userHandler) {
+        var data = this.saveBans();
+        this.userHandler.sendBansData(data);
+        this.BANS_SAVED = true;
+      }
+      else {
+        console.info("worldserver, save: userHandler not set");
+      }
     },
 
     update: function () {

@@ -265,6 +265,12 @@ WS.socketioConnection = Connection.extend({
         //console.info("sendUTF8 - "+data);
         this._connection.send(data);
     },
+
+    disconnect: function () {
+      //console.info("USER CONNECTION - DISCONNECT.");
+      this._connection.disconnect();
+    },
+
 });
 
 
@@ -330,13 +336,14 @@ WS.userConnection = Connection.extend({
       });
 
       var fnDisconnect = function () {
-          console.info('Client closed socket.');
+          console.info('USER CONNECTION CLOSED.');
           if (self.closeCallback) {
               self.closeCallback();
           }
-          self._connection.disconnect();
-          self._connection.offAny();
-          delete self._connection;
+          self.disconnect();
+          //self._connection.disconnect();
+          //self._connection.offAny();
+          //delete self._connection;
       };
       this._connection.on('disconnect', fnDisconnect);
     },
@@ -370,7 +377,7 @@ WS.userConnection = Connection.extend({
     },
 
     disconnect: function () {
-      console.info("userConnection - disconnect.");
+      console.info("USER CONNECTION - DISCONNECT.");
       //this._connection.removeAllListeners(['message']);
       this._connection.disconnect();
       //this._connection.off();
@@ -378,9 +385,9 @@ WS.userConnection = Connection.extend({
 
     sendUTF8: function(data) {
         //console.info("sendUTF8 - "+data);
-        if (this._connection)
+        if (this._connection) {
           this._connection.emit("message", data);
-        else {
+        } else {
           console.error("this connection not set.");
           try { throw new Error(); } catch (e) { console.warn(e.stack); }
         }

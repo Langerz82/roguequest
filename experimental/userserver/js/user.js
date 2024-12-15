@@ -145,27 +145,12 @@ module.exports = User = cls.Class.extend({
 
     onClose: function (save) {
       console.warn("User.onClose - called.")
-      /*if (this.name) {
-        console.warn("name:"+this.name);
-        users[this.name] = ;
-      }*/
-      //save = save || false;
 
-      /*var p = this.currentPlayer;
-      if (save && p)
-      {
-        if (this.loadedPlayer)
-          p.save();
-        players.splice(players.indexOf(p),1);
-        //console.warn(JSON.stringify(players));
-        delete this.currentPlayer;
-      }*/
-      //if (!this.player_loggedin)
-      //{
-        delete this;
-        delete users[this.name];
+      if (this.hasLoggedIn)
         delete loggedInUsers[this.name];
-      //}
+
+      delete users[this.name];
+      delete this;
 
       //delete users[this.name];
       //console.warn(JSON.stringify(users));
@@ -296,7 +281,8 @@ module.exports = User = cls.Class.extend({
 
       ///console.warn(JSON.stringify(users));
       console.info("LOGIN: " + this.name);
-      if (!skip_logged_in && loggedInUsers.hasOwnProperty(this.name)) {
+      console.info("loggedInUsers: "+JSON.stringify(loggedInUsers));
+      if (loggedInUsers.hasOwnProperty(this.name)) {
         this.connection.send([Types.UserMessages.UC_ERROR,"loggedin"]);
         return false;
       }
@@ -418,13 +404,16 @@ module.exports = User = cls.Class.extend({
     },
 
     getWorldHandler: function (worldIndex) {
-      if (worldIndex < 0 || worldIndex >= worldHandlers.length)
+      if (worldIndex < 0 || worldIndex >= worldHandlers.length) {
+        console.info("getWorldHandler - worldIndex out of range.");
         return null;
+      }
 
       console.info("worldIndex: "+worldIndex);
       var worldHandler = worldHandlers[worldIndex];
       if (!worldHandler) {
-        var a = 0;
+        console.info("No world Handler!");
+        return null;
       }
       return worldHandler;
     },
@@ -436,7 +425,11 @@ module.exports = User = cls.Class.extend({
       var playerName = playerSummary.name;
       this.playerName = playerName;
 
-      worldHandler.sendPlayerToWorld(this, this.name, playerName);
+      if (worldHandler) {
+        worldHandler.sendPlayerToWorld(this, this.name, playerName);
+      } else {
+        console.info("No world Handler!");
+      }
 
       player_users[playerName] = this;
 

@@ -29,23 +29,29 @@ UserMessages.SavePlayerLooks = Message.extend({
     }
 });
 
+UserMessages.SaveUserBans = Message.extend({
+    init: function (data) {
+      this.data = data;
+    },
+    serialize: function () {
+        return [Types.UserMessages.WU_SAVE_USER_BANS,this.data];
+    }
+});
+
 UserMessages.ServerInfo = Message.extend({
-    init: function (serverName, count, maxCount, serverIP, serverPort, password) {
-    	this.serverName = serverName;
-      this.count = count;
-      this.maxCount = maxCount;
-      this.serverIP = serverIP;
-      this.serverPort = serverPort;
-      this.password = password;
+    init: function (config, count) {
+    	this.config = config;
+      this.count = count || 0;
     },
     serialize: function () {
         return [Types.UserMessages.WU_GAMESERVER_INFO,
-          this.serverName,
+          this.config.world_name,
           this.count,
-          this.maxCount,
-          this.serverIP,
-          this.serverPort,
-          this.password];
+          this.config.nb_players_per_world,
+          this.config.address,
+          this.config.port,
+          this.config.user_password,
+          this.config.world_key];
     }
 });
 

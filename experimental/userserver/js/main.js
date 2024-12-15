@@ -34,13 +34,11 @@ PLAYERS_SAVED = false;
 
 /* global log, Player, databaseHandler */
 
-worlds = [];
-//worldHandlersId = {};
+//worlds = [];
 worldHandlers = [];
 users = {};
 loggedInUsers = {};
 
-//players = [];
 player_users = {};
 
 Log = require('log');
@@ -139,7 +137,6 @@ function main(config) {
     self.handleConnectWorld = function (msg, conn) {
       var wh = new WorldHandler(self, conn);
       conn._connection.worldHandler = wh;
-      //worldHandlersId[conn._connection.id] = wh;
       worldHandlers.push(wh);
     };
 
@@ -158,8 +155,12 @@ function main(config) {
 
       var reply = [GameTypes.UserMessages.UC_WORLDS];
       var i=0;
-      for (var world of worlds)
+      for (var wh of worldHandlers)
       {
+        var world = wh.world;
+        if (!world)
+          continue;
+
         reply.push(i++);
         reply.push(world.name);
         reply.push(world.count);
@@ -217,26 +218,22 @@ function main(config) {
        if (wh) {
          var index = worldHandlers.indexOf(wh);
          worldHandlers.splice(index, 1);
+         //worlds.splice(index, 1);
          delete wh;
        }
 
        this.disconnect();
-       //this.close();
-       //this.server.removeConnection(this.id);
        delete this;
 	  });
 
 	  server._ioServer.on('msg', (message) => {
-		console.log("msg="+JSON.stringify(message));
-		//io.emit('msg', message);
+		    console.log("msg="+JSON.stringify(message));
+		    //io.emit('msg', message);
 	  });
 	});
 
   var signalHandler = function () {
     closeServer();
-    //sleep(250);
-    //checkSaved();
-    //process.exit();
   };
 
   process.on('SIGINT', signalHandler)
@@ -264,12 +261,6 @@ function main(config) {
   };*/
 
   cmdPrompt();
-  //setInterval(cmdPrompt, 1000);
-  /*process.nextTick(function () {
-    for (var w of worlds)
-      worlds.update();
-  });*/
-
 }
 
 function changePassword (args) {

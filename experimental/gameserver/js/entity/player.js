@@ -651,7 +651,7 @@ module.exports = Player = Character.extend({
 
       if (self.world.enter_callback)
       {
-        self.map.entities.addPlayer(self);
+        
         self.world.enter_callback(self);
         //console.info(JSON.stringify(sendMessage));
         //self.send(sendMessage);
@@ -1145,7 +1145,7 @@ module.exports = Player = Character.extend({
   save: function () {
     //var self = this;
 
-    console.info("SAVING PLAYER: "+this.name);
+    console.info("Player - save, name:"+this.name);
 
     if (this.worldHandler)
       this.worldHandler.savePlayer(this);

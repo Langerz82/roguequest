@@ -59,6 +59,8 @@ var userServerPasswordLenMin = 10;
 var userServerPasswordLenMax = 128;
 var maxWorldCount = 10;
 var maxPlayersPerUser = 20;
+var worldKeyLenMin = 2;
+var worldKeyLenMax = 16;
 
 var serverAddressLenMin = 7;
 var serverAddressLenMax = 15;
@@ -69,6 +71,10 @@ var serverProtocolLenMax = 2;
 
 var playerLooksTotal = 177;
 var playerLooksTotalCost = 10000;
+
+var userBansTotal = 1000;
+var banDateMin = 1730000000000;
+var banDateMax = 1800000000000;
 
 var getItemSlots = function (type) {
   if (type==0) return 48;
@@ -160,33 +166,42 @@ var _isTypeValid = function (fmt, msg) {
             this.formats = {};
             this.formats[Types.UserMessages.CU_CREATE_USER] = [
                 ['s',usernameLenMin,usernameLenMax],
-                ['s',userHashLenMin,userHashLenMax]],
+                ['s',userHashLenMin,userHashLenMax]];
             this.formats[Types.UserMessages.CU_LOGIN_USER] = [
                 ['s',usernameLenMin,usernameLenMax],
-                ['s',userHashLenMin,userHashLenMax]],
+                ['s',userHashLenMin,userHashLenMax]];
             this.formats[Types.UserMessages.CU_LOGIN_PLAYER] = [
                 ['n',0,maxWorldCount],
-                ['n',0,maxPlayersPerUser]],
+                ['n',0,maxPlayersPerUser]];
+            this.formats[Types.UserMessages.CU_CREATE_PLAYER] = [
+                ['n',0,maxWorldCount],
+                ['s',playerNameLenMin,playerNameLenMax]];
+
             this.formats[Types.UserMessages.WU_GAMESERVER_INFO] = [
                 ['s',worldNameLenMin,worldNameLenMax],
                 ['n',0,worldUsersCountMax],
                 ['n',worldUsersCountMin,worldUsersCountMax],
                 ['s',serverAddressLenMin,serverAddressLenMin],
                 ['n',serverPortMin,serverPortMax],
-                ['s',userServerPasswordLenMin,userServerPasswordLenMax]],
+                ['s',userServerPasswordLenMin,userServerPasswordLenMax],
+                ['s',worldKeyLenMin,worldKeyLenMax]];
             this.formats[Types.UserMessages.WU_PLAYER_LOGGED_IN] = [
                 ['s',usernameLenMin,usernameLenMax],
-                ['s',playerNameLenMin,playerNameLenMax]],
+                ['s',playerNameLenMin,playerNameLenMax]];
             this.formats[Types.UserMessages.WU_SAVE_PLAYERS_LIST] = [
                 ['array',0,worldUsersCountMax, [
-                  ['s',playerNameLenMin,playerNameLenMax]] ]],
+                  ['s',playerNameLenMin,playerNameLenMax]] ]];
             this.formats[Types.UserMessages.WU_PLAYER_LOADED] = [
                 ['s',serverProtocolLenMin,serverProtocolLenMax],
                 ['s',serverAddressLenMin,serverAddressLenMax],
-                ['n',serverPortMin,serverPortMax]],
+                ['n',serverPortMin,serverPortMax]];
             this.formats[Types.UserMessages.WU_SAVE_PLAYER_LOOKS] = [
                 ['array',0,playerLooksTotal, [
                   ['n',0,playerLooksTotalCost]] ]];
+            this.formats[Types.UserMessages.WU_SAVE_USER_BANS] = [
+                ['array',0,userBansTotal, [
+                  ['s',usernameLenMin,usernameLenMax],
+                  ['n',banDateMin,banDateMax]] ]];
         },
 
         checkFormatData: function (fmt, msg) {
@@ -677,8 +692,8 @@ var _isTypeValid = function (fmt, msg) {
             }
             else if (this.formats[type])
             {
-                var res = this.checkFormat(this.formats[type], message, true);
-                return res;
+              var res = this.checkFormat(this.formats[type], message, true);
+              return res;
             }
             else
             {

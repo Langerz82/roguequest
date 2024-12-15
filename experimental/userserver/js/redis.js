@@ -86,54 +86,88 @@ module.exports = DatabaseHandler = cls.Class.extend({
     // client.connect(); // v4
 
     client.hgetarray = hgetarray;
-    self.ready = true;
+    this.ready = true;
     //self.removeLegacyItems();
     //self.removeAchievements();
+    //this.createPlayerKeys();
+    /*this.ExistsUsername("ca", function (name, res) {
+      console.info("ExistsUsername test:"+res);
+    });*/
+  },
+
+  createPlayerKeys: function () {
+    client.keys('p:*', function (err, arr) {
+      for (var rec of arr) {
+        console.info("rec="+rec);
+        var playerName = rec.substr(2);
+        if (playerName.length > 0)
+          client.sadd("player", playerName);
+      }
+    });
+  },
+
+  ExistsUsername: function (name, callback) {
+    return this.isNameInSet("usr", name, callback);
+  },
+
+  ExistsPlayerName: function (name, callback) {
+    return this.isNameInSet("player", name, callback);
+  },
+
+  isNameInSet: function (setName, name, callback) {
+    var nameLower = name.toLowerCase();
+    client.smembers(setName, function (err, reply) {
+      reply = reply.map(function (rec) { return rec.toLowerCase(); });
+      var res = reply.findIndex(function (rec) { return (rec == name); })
+      if (callback)
+        callback(name, (res >= 0 ? true : false));
+    });
   },
 
   createUser: function(user) {
     var self = this;
     var uKey = "u:" + user.name;
-    var curTime = new Date().getTime();
-
-    var lenLooks = AppearanceData.Data.length;
-    user.looks = new Uint8Array(lenLooks);
-    for(var i=0; i < lenLooks; ++i)
-      user.looks[i] = 0;
-
-    user.looks[0] = 1;
-    user.looks[50] = 1;
-    user.looks[77] = 1;
-    user.looks[151] = 1;
-
-    user.gems = 2000;
 
     // Check if username is taken
-    client.sismember('usr', user.name, function(err, reply) {
-      if (reply === 1) {
+    this.ExistsUsername(user.name, function(name, res) {
+      if (res) {
         user.connection.send([Types.UserMessages.UC_ERROR,"userexists"]);
         user.connection.close("Username not available: " + user.name);
-      } else {
-        data = [
-          user.hash,
-          user.salt,
-          0,
-          '',
-          curTime,
-          0,
-          '',
-          user.gems,
-          Utils.BinToHex(user.looks),
-          user.connection._connection.remoteAddress];
-
-        self.saveUserInfo(user.name, data, function (username, data) {
-          user.hasLoggedIn = true;
-          users[user.name] = 1;
-          usersLoggedIn[user.name] = 1;
-
-          self.sendPlayers(user);
-        });
+        return;
       }
+
+      var lenLooks = AppearanceData.Data.length;
+      user.looks = new Uint8Array(lenLooks);
+      for(var i=0; i < lenLooks; ++i)
+        user.looks[i] = 0;
+
+      user.looks[0] = 1;
+      user.looks[50] = 1;
+      user.looks[77] = 1;
+      user.looks[151] = 1;
+
+      user.gems = 2000;
+
+      var curTime = new Date().getTime();
+      var data = [
+        user.hash,
+        user.salt,
+        0,
+        '',
+        curTime,
+        0,
+        '',
+        user.gems,
+        Utils.BinToHex(user.looks),
+        user.connection._connection.remoteAddress];
+
+      self.saveUserInfo(user.name, data, function (username, data) {
+        user.hasLoggedIn = true;
+        users[user.name] = 1;
+        loggedInUsers[user.name] = 1;
+
+        self.sendPlayers(user);
+      });
     });
   },
 
@@ -218,74 +252,73 @@ module.exports = DatabaseHandler = cls.Class.extend({
     var self = this;
     var uKey = "u:" + user.name;
     var curTime = new Date().getTime();
-    client.sismember("usr", user.name, function(err, reply) {
-      //console.info("reply: "+reply);
-      if (reply !== 1)
-      {
-        user.connection.send([Types.UserMessages.UC_ERROR,"invalidlogin"]);
-        return false;
-      }
 
-      client.hgetall(uKey, function(err, data) {
-        console.info("replies: "+data);
-        console.info(JSON.stringify(data));
-        if (data === null || !(typeof data === 'object'))
+    this.ExistsUsername(user.name, function(name, res) {
+        if (!res) {
+          user.connection.send([Types.UserMessages.UC_ERROR,"invalidlogin"]);
           return false;
-        //console.info(replies.toString());
-
-        var db_user = {
-          "hash": data.hash,
-          "salt": data.salt,
-          "banTime": data.banTime,
-          "banDuration": data.banDuration,
-          "lastLoginTime": data.lastLoginTime,
-          "membership": data.membership,
-          "players": data.players,
-          "ipAddresses": data.ipAddresses,
-          "gems": data.gems
-        };
-
-        if (!data.gems)
-          db_user.gems = 1000;
-        else
-          db_user.gems = parseInt(data.gems);
-
-        if (!data.looks || parseInt(data.looks, 16) === 0 || data.looks.toLowerCase().includes("nan")) {
-          var len = AppearanceData.Data.length;
-          db_user.looks = new Uint8Array(len);
-          for(var i=0; i < len; ++i)
-            db_user.looks[i] = 0;
-        }
-        else {
-          db_user.looks = Utils.HexToBin(data.looks);
         }
 
-        // [77,0,151,50] - Beginner Looks values.
-        db_user.looks[0] = 1;
-        db_user.looks[50] = 1;
-        db_user.looks[77] = 1;
-        db_user.looks[151] = 1;
+        client.hgetall(uKey, function(err, data) {
+          console.info("replies: "+data);
+          console.info(JSON.stringify(data));
+          if (data === null || !(typeof data === 'object'))
+            return false;
+          //console.info(replies.toString());
 
-        console.info(JSON.stringify(db_user));
+          var db_user = {
+            "hash": data.hash,
+            "salt": data.salt,
+            "banTime": data.banTime,
+            "banDuration": data.banDuration,
+            "lastLoginTime": data.lastLoginTime,
+            "membership": data.membership,
+            "players": data.players,
+            "ipAddresses": data.ipAddresses,
+            "gems": data.gems
+          };
 
-        user.looks = db_user.looks.slice();
-        user.gems = db_user.gems;
+          if (!data.gems)
+            db_user.gems = 1000;
+          else
+            db_user.gems = parseInt(data.gems);
 
-        if(user.checkUser(db_user)) {
-          var ipAddress = user.connection._connection.remoteAddress;
-          if (!data.ipAddesses)
-            client.hset(uKey, "ipAddresses", ipAddress);
-          else {
-            if (!toString(data.ipAddesses).includes(ipAddress))
-              client.hset(uKey, "ipAddresses", db_user.ipAddresses + "," + ipAddress);
+          if (!data.looks || parseInt(data.looks, 16) === 0 || data.looks.toLowerCase().includes("nan")) {
+            var len = AppearanceData.Data.length;
+            db_user.looks = new Uint8Array(len);
+            for(var i=0; i < len; ++i)
+              db_user.looks[i] = 0;
           }
-          client.hset(uKey, "lastLoginTime", new Date().getTime());
+          else {
+            db_user.looks = Utils.HexToBin(data.looks);
+          }
 
-          self.sendPlayers(user);
-          return true;
-        }
-      });
-      return false;
+          // [77,0,151,50] - Beginner Looks values.
+          db_user.looks[0] = 1;
+          db_user.looks[50] = 1;
+          db_user.looks[77] = 1;
+          db_user.looks[151] = 1;
+
+          console.info(JSON.stringify(db_user));
+
+          user.looks = db_user.looks.slice();
+          user.gems = db_user.gems;
+
+          if(user.checkUser(db_user)) {
+            var ipAddress = user.connection._connection.remoteAddress;
+            if (!data.ipAddesses)
+              client.hset(uKey, "ipAddresses", ipAddress);
+            else {
+              if (!toString(data.ipAddesses).includes(ipAddress))
+                client.hset(uKey, "ipAddresses", db_user.ipAddresses + "," + ipAddress);
+            }
+            client.hset(uKey, "lastLoginTime", new Date().getTime());
+
+            self.sendPlayers(user);
+            return true;
+          }
+          return false;
+        });
     });
   },
 
@@ -319,7 +352,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
       for(var i=0; i < playernames.length; ++i)
       {
         var pKey = "p:"+playernames[i];
-        hgetarray(pKey, ["name","map","exps","colors","sprites"], function(err, reply) {
+        console.info("pKey:"+pKey);
+        var keyArray = ["name","map","exps","colors","sprites"];
+        hgetarray(pKey, keyArray, function(err, reply) {
           if (err || !reply[0]) {
             console.info("redis - sendPlayers, err:"+JSON.stringify(err));
             ++count;
@@ -347,12 +382,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
 // TODO SOME WACKKK SHIT
   createPlayer: function(playername, callback) {
     var self = this;
-    var pKey = "p:" + playername;
-    var curTime = new Date().getTime();
+    //var pKey = "p:" + playername;
+    //var curTime = new Date().getTime();
 
     // Check if playername is taken
-    client.hget(pKey, "name", function(err, reply) {
-      if (reply) {
+    this.ExistsPlayerName(playername, function (name, res) {
+      if (res) {
         if (callback)
           callback(playername, false);
         return;
@@ -361,6 +396,17 @@ module.exports = DatabaseHandler = cls.Class.extend({
       if (callback)
         callback(playername, true);
     });
+
+    /*client.hget(pKey, "name", function(err, reply) {
+      if (reply) {
+        if (callback)
+          callback(playername, false);
+        return;
+      }
+      console.info("CREATING PLAYER");
+      if (callback)
+        callback(playername, true);
+    });*/
   },
 
   loadUserInfo: function(username, callback) {
@@ -423,6 +469,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     var pKey = "p:" + playername;
 
     client.multi()
+      .sadd("player", data[0])
       .hset(pKey, "name", data[0])
       .hset(pKey, "map", data[1])
       .hset(pKey, "stats", data[2])
@@ -505,7 +552,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-// TODO - FN NOT WORKING PROPERLY.
   saveItems: function(playername, type, data, callback)
   {
     var pKey = "p:" + playername;
@@ -604,72 +650,108 @@ loadAchievements: function(playername, callback) {
 // ACHIEVEMENTS - END.
 
 // AUCTION DATABASE CALLS.
-  loadAuctions: function(worldIndex, callback) {
-    client.hgetall('s:auction'+worldIndex, function(err, data) {
-      var auctions = {};
-
-      if (data === null || !(typeof data === 'object'))
+  loadAuctions: function(worldKey, callback) {
+    var key = 's:auction-'+worldKey;
+    client.smembers(key, function(err, reply) {
+      if (err || reply === null || !(typeof reply === 'object'))
       {
         console.warn("loadAuctions - err: "+JSON.stringify(err));
-        console.warn("loadAuctions - data: "+JSON.stringify(data));
+        console.warn("loadAuctions - data: "+JSON.stringify(reply));
         return;
       }
       if (callback)
-        callback(worldIndex, data);
+        callback(worldKey, reply);
       return;
     });
   },
 
-  saveAuctions: function(worldIndex, data, callback) {
+  saveAuctions: function(worldKey, data, callback) {
     console.info("redis - saveAuctions: "/*+JSON.stringify(data)*/);
     client.del('s:auction');
-    client.del('s:auction'+worldIndex);
+    var key = 's:auction-'+worldKey;
+    client.del(key);
     var multi = client.multi();
     for (var i = 0; i < data.length; ++i) {
-        multi.hset('s:auction'+worldIndex, i, data[i]);
+        multi.sadd(key, data[i]);
     }
-    multi.exec(function(err, data) {
+    multi.exec(function(err, reply) {
       if (err) {
         console.error("redis - saveAuctions: "+JSON.stringify(err));
         return;
       }
       if (callback)
-        callback();
+        callback(worldKey, reply);
     });
   },
 // END AUCTION DB CALLS.
 
 // START LOOKS DB CALLS.
-  loadLooks: function (worldIndex, callback) {
-    client.hget("l:looks"+worldIndex, "prices", function (err, data)
+  loadLooks: function (worldKey, callback) {
+    var key = 'l:looks-'+worldKey;
+    client.hget(key, "prices", function (err, reply)
     {
-      if (err || !data || data == "") {
+      if (err || !reply || reply == "") {
         console.warn(err);
-        console.warn(JSON.stringify(data));
+        console.warn(JSON.stringify(reply));
         return;
       }
-      if (data) {
-        data = data.split(",");
+      if (reply) {
+        //data = data.split(",");
         if (callback)
-          callback(worldIndex, data);
+          callback(worldKey, reply);
       }
     });
   },
 
-  saveLooks: function (worldIndex, looks, callback) {
+  saveLooks: function (worldKey, looks, callback) {
     console.info("redis - saveLooks: "/*+JSON.stringify(looks)*/);
     client.del('l:looks');
-    client.del('l:looks'+worldIndex);
-    client.hset('l:looks'+worldIndex, 'prices', looks.join(","), function(err, data) {
+    var key = 'l:looks-'+worldKey;
+    client.del(key);
+    client.hset(key, 'prices', looks.join(","), function(err, reply) {
       if (err) {
         console.error("redis - saveLooks:" + JSON.stringify(err));
         return;
       }
       if (callback)
-        callback();
+        callback(worldKey, reply);
     });
   },
 // END LOOKS DB CALLS.
 
+// BANNED USERS
+  loadBans: function(worldKey, callback) {
+    var key = 'b:bans-'+worldKey;
+    client.smembers(key, function(err, reply) {
+      if (err || reply === null || !(typeof reply === 'object'))
+      {
+        console.warn("loadBans - err: "+JSON.stringify(err));
+        console.warn("loadBans - data: "+JSON.stringify(reply));
+        return;
+      }
+      if (callback)
+        callback(worldKey, reply);
+      return;
+    });
+  },
 
+  saveBans: function(worldKey, data, callback) {
+    console.info("redis - saveBans: "/*+JSON.stringify(data)*/);
+    client.del('b:bans');
+    var key = 'b:bans-'+worldKey;
+    client.del(key);
+    var multi = client.multi();
+    for (var i = 0; i < data.length; ++i) {
+        multi.sadd(key, data[i]);
+    }
+    multi.exec(function(err, reply) {
+      if (err) {
+        console.error("redis - saveBans: "+JSON.stringify(err));
+        return;
+      }
+      if (callback)
+        callback(worldKey, reply);
+    });
+  },
+// END BANNED USERS
 });

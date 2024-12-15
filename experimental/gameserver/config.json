@@ -23,5 +23,6 @@
   "version":92,
   "verify_email": "",
   "verify_key": "",
-  "world_name": "North America"
+  "world_name": "North America",
+  "world_key": "test123"
 }
