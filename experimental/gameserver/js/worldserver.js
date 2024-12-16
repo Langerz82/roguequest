@@ -104,7 +104,7 @@ module.exports = World = cls.Class.extend(
         self.onPlayerConnect(function(player)
         {
           console.info("worldServer - onPlayerConnect.");
-          try { throw new Error(); } catch (e) { console.info(e.stack); }
+          //try { throw new Error(); } catch (e) { console.info(e.stack); }
           if (self.players.indexOf(player) < 0)
             self.players.push(player);
           self.objPlayers[player.name] = player;
@@ -371,11 +371,11 @@ module.exports = World = cls.Class.extend(
                 {
                   for (var id in map.entities.players)
                   {
-                      var player = map.entities.players[id];
-                      if ((Date.now() - player.user.lastPacketTime) >= 300000)
-                      {
-                          player.connection.close("idle timeout");
-                      }
+                    var player = map.entities.players[id];
+                    if (player.user && (Date.now() - player.user.lastPacketTime) >= 300000)
+                    {
+                        player.connection.close("idle timeout");
+                    }
                   }
                 }
             }

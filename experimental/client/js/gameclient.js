@@ -148,7 +148,25 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 							self.onMessage(e);
 							return false;
 					});
+
+					this.connection.on('disconnect', function() {
+							log.debug("Connection closed");
+							if(self.disconnected_callback) {
+									if(self.isTimeout) {
+											self._onError(["You have been disconnected for being inactive for too long"]);
+									} else {
+											self._onError(["The connection to RRO2 has been lost."]);
+									}
+							}
+					});
 				},
+
+				_onError: function (data) {
+	          var message = data[0];
+	          $('#container').addClass('error');
+	          $('#errorwindow .errordetails').html("<p>"+message+"</p>");
+	          app.loadWindow('playerwindow','errorwindow');
+	      },
 
 				onConnected: function (data) {
 					this.sendLoginPlayer(data[0], data[1]);

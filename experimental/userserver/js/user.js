@@ -378,9 +378,7 @@ module.exports = User = cls.Class.extend({
         };
         DBH.createPlayer(playername, function (playername, res) {
           if (res) {
-            DBH.createPlayerNameInUser(self.name, playername, function () {
-              worldHandler.createPlayerToWorld(self, self.name, playername);
-            });
+            worldHandler.createPlayerToWorld(self, self.name, playername);
           }
           else {
             self.connection.send([Types.UserMessages.UC_ERROR,"playerexists"]);

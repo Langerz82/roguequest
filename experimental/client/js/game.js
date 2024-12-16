@@ -1004,7 +1004,17 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 if (processTarget()) return;
               }
 
+              // If the player is next to and facing a Harvest Tile.
               var pos = p.nextTile();
+              var type = p.getWeaponType();
+              if (type != null) {
+                var gpos = getGridPosition(px, py);
+                if (this.mapContainer.isHarvestTile(gpos, type)) {
+                  game.processInput(pos[0], pos[1], true);
+                  return;
+                }
+              }
+
               entity = this.getEntityAt(pos[0], pos[1]);
               if (entity && entity != p && !fnIsDead(entity)) {
                 p.setTarget(entity);
@@ -1026,11 +1036,11 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 if (processTarget()) return;
               }
 
-              if (this.mapContainer.isColliding(pos[0], pos[1])) {
+              /*if (this.mapContainer.isColliding(pos[0], pos[1])) {
                 p.clearTarget();
                 this.processInput(pos[0], pos[1], true);
                 return;
-              }
+              }*/
 
               entity = null;
               var entities = Object.values(this.camera.entities);

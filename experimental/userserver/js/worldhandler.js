@@ -41,38 +41,39 @@ module.exports = WorldHandler = cls.Class.extend({
           }
           message.shift();
 
-          //if (!this.block)
-          //{
-            switch (action)
-            {
-              case Types.UserMessages.WU_GAMESERVER_INFO:
-                self.handleGameServerInfo(message);
-                return;
-              case Types.UserMessages.WU_SAVE_PLAYER_DATA:
-                self.handleSavePlayerData(message);
-                return;
-              case Types.UserMessages.WU_PLAYER_LOGGED_IN:
-                self.handlePlayerLoggedIn(message);
-                return;
-            }
-          //}
-          if (action == Types.UserMessages.WU_SAVE_PLAYERS_LIST) {
+          if (action == Types.UserMessages.WU_GAMESERVER_INFO) {
+            self.handleGameServerInfo(message);
+            return;
+          }
+
+          if (!self.game_server)
+            return;
+
+          if (action == Types.UserMessages.WU_SAVE_PLAYER_DATA) {
+              self.handleSavePlayerData(message);
+              return;
+          }
+          else if (action == Types.UserMessages.WU_PLAYER_LOGGED_IN) {
+              self.handlePlayerLoggedIn(message);
+              return;
+          }
+          else if (action == Types.UserMessages.WU_SAVE_PLAYERS_LIST) {
               self.handleSavePlayersList(message);
               return;
           }
-          if (action == Types.UserMessages.WU_PLAYER_LOADED) {
+          else if (action == Types.UserMessages.WU_PLAYER_LOADED) {
               self.handlePlayerLoaded(message);
               return;
           }
-          if (action == Types.UserMessages.WU_SAVE_PLAYER_AUCTIONS) {
+          else if (action == Types.UserMessages.WU_SAVE_PLAYER_AUCTIONS) {
               self.handleSavePlayerAuctions(message);
               return
           }
-          if (action == Types.UserMessages.WU_SAVE_PLAYER_LOOKS) {
+          else if (action == Types.UserMessages.WU_SAVE_PLAYER_LOOKS) {
               self.handleSavePlayerLooks(message);
               return;
           }
-          if (action == Types.UserMessages.WU_SAVE_USER_BANS) {
+          else if (action == Types.UserMessages.WU_SAVE_USER_BANS) {
               self.handleSaveUserBans(message);
               return;
           }
@@ -164,7 +165,6 @@ module.exports = WorldHandler = cls.Class.extend({
       var username = msg[0];
       var playerName = msg[1];
       loggedInUsers[username] = playerName;
-      //this.users[username] = playerName;
     },
 
     handleGameServerInfo: function (msg) {
@@ -188,27 +188,6 @@ module.exports = WorldHandler = cls.Class.extend({
         return;
       }
 
-      /*var index = 0
-      for (var wh of worldHandlers)
-      {
-        var tworld = wh.world;
-        if (!tworld)
-          continue;
-        if (world.ipAddress == tworld.ipAddress &&
-            world.port == tworld.port)
-        {
-          tworld.name = world.name;
-          tworld.count = world.count;
-          tworld.maxCount = world.maxCount;
-          break;
-          //return;
-        }
-        index++;
-      }*/
-
-      //this.worldIndex = index;
-      //if (index == worlds.length)
-        //worlds.push(world);
       this.world = world;
 
       this.sendAuctionsToWorld(this.worldIndex);
@@ -240,6 +219,7 @@ module.exports = WorldHandler = cls.Class.extend({
       var checkPlayerSaved = function (playerName) {
           self.playerSaveData[playerName]++;
           if (self.playerSaveData[playerName] == 7) {
+            DBH.createPlayerNameInUser(username, playerName);
             delete self.playerSaveData[playerName];
             console.info("loggedInUsers: "+JSON.stringify(loggedInUsers));
             delete loggedInUsers[username];

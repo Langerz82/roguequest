@@ -651,7 +651,7 @@ module.exports = Player = Character.extend({
 
       if (self.world.enter_callback)
       {
-        
+
         self.world.enter_callback(self);
         //console.info(JSON.stringify(sendMessage));
         //self.send(sendMessage);
@@ -1648,7 +1648,8 @@ module.exports = Player = Character.extend({
     if (!type) {
       res = false;
     }*/
-    if (!this.hasWeaponType(entity.weaponType)) {
+    var type = entity.weaponType;
+    if (!this.hasWeaponType(type)) {
       this.pushToPlayer(new Messages.Notify("CHAT", "HARVEST_WRONG_TYPE", type));
       res = false;
     }
@@ -1663,7 +1664,7 @@ module.exports = Player = Character.extend({
     this._harvest(x, y, function (p) {
       p.server.taskHandler.processEvent(p, PlayerEvent(EventType.USE_NODE, entity, 1));
 
-      if (entity.weaponType == "hammer")
+      if (type == "hammer")
         p.exp.mining += 10;
       entity.die();
       var item = p.server.getDrop(p, entity, false);

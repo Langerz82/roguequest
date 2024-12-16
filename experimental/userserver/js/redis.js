@@ -322,16 +322,19 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  createPlayerNameInUser: function (username, playername, callback) {
+  createPlayerNameInUser: function (username, playerName, callback) {
     var uKey = "u:" + username;
     // Create Player Name in User account.
     client.hget(uKey, "players", function (err, reply) {
       var db_players = [];
       if (reply)
         db_players = reply.split(",");
-      db_players.push(playername);
-      client.hset(uKey, "players", db_players.join(","));
 
+      if (!db_players.includes(playerName))
+      {
+        db_players.push(playerName);
+        client.hset(uKey, "players", db_players.join(","));
+      }
       if (callback)
         callback();
     });
@@ -604,7 +607,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
     client.hget(pKey, "newquests2", function (err, data) {
         if (err || !data || data == "") {
           console.warn(err);
-          console.warn(JSON.stringify(replies));
           console.warn(JSON.stringify(data));
           return;
         }

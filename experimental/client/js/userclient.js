@@ -235,11 +235,6 @@ define(['gameclient', 'skillhandler', 'quest', 'config', 'achievement'], functio
 
       _onError: function (data) {
           var message = data[0];
-          /*if (message == 'playerexists') {
-            app.addValidationError(null, 'The playername you entered is not available.');
-            return;
-          }*/
-
           $('#container').addClass('error');
           $('#errorwindow .errordetails').html("<p>"+message+"</p>");
           app.loadWindow('loginwindow','errorwindow');
