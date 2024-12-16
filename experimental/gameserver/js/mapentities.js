@@ -65,7 +65,7 @@ var MapEntities = cls.Class.extend({
 
   		self.zoneGroupsReady = false;
 
-  		self.maxPackets = 8;
+  		self.maxPackets = 10;
 
   		self.entityCount = 0;
 
@@ -86,12 +86,15 @@ var MapEntities = cls.Class.extend({
 
         //console.info("getSpatialEntities - x1:"+x1+",y1:"+y1+",x2:"+x2+",y2:"+y2);
         var res = {};
+        var l1 = this.spatial.length;
+        var l2 = 0;
         for(var j = y1; j <= y2; ++j)
         {
+          l2 = this.spatial[j].length;
           for(var i = x1; i <= x2; ++i) {
-            if (j < 0 || j >= this.spatial.length)
+            if (j < 0 || j >= l1)
               continue;
-            if (i < 0 || i >= this.spatial[j].length)
+            if (i < 0 || i >= l2)
               continue;
             for (var [id, entity] of Object.entries(this.spatial[j][i])) {
               if (!entity) continue;
@@ -148,9 +151,9 @@ var MapEntities = cls.Class.extend({
 			console.info("pathinggrid height:"+map.height+", width:"+map.width);
 
 		var grid = new Uint8Array(map.height);
-		for(var i=0; i < map.height; i += 1) {
+		for(var i=0; i < map.height; ++i) {
 			grid[i] = new Uint8Array(map.width);
-			for(var j=0; j < map.width; j += 1) {
+			for(var j=0; j < map.width; ++j) {
         if (map.grid[i][j])
           grid[i][j] = 1;
         else
@@ -251,26 +254,28 @@ var MapEntities = cls.Class.extend({
         {
             if (id != null && typeof id !== 'undefined')
             {
+                var packetId;
+                var len;
                 if (self.packets.hasOwnProperty(id))
                 {
-                    if (self.packets[id].length > 0 && typeof self.packets[id] != 'undefined' && self.packets[id] != null)
+                    packetId = self.packets[id];
+                    len = packetId.length;
+                    if (len > 0 && typeof packetId != 'undefined' && packetId != null)
                     {
-                    	var player = self.getEntityById(id);
-                        if (player && player.mapStatus >= 2 && self.server.socket.getConnection(id) != null && typeof self.server.socket.getConnection(id) != 'undefined')
+                    	 var player = self.getEntityById(id);
+                        var conn = self.server.socket.getConnection(id);
+                        if (player && player.mapStatus >= 2 && conn != null && typeof conn != 'undefined')
                         {
-                            connection = self.server.socket.getConnection(id);
-
-                            var packetCount = self.packets[id].length;
                             var packet = [];
                             for (var i =0; i < self.maxPackets; ++i)
                             {
-                            	if (self.packets[id].length == 0)
-                            		break;
-                            	packet.push(self.packets[id].shift());
+                              	if (len == 0)
+                              		break;
+                              	packet.push(packetId.shift());
                             }
-                            connection.send(packet);
+                            conn.send(packet);
                         } else
-                            delete self.server.socket.getConnection(id);
+                            delete conn;
                     }
                 }
             }
@@ -659,9 +664,9 @@ var MapEntities = cls.Class.extend({
     getPlayerByName: function(name)
     {
         for (var id in this.players) {
-          var player = this.players[id];
-          if (player.name === name)
-            return player;
+          var p = this.players[id];
+          if (p.name === name)
+            return p;
         }
         return null;
     },

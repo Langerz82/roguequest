@@ -313,6 +313,7 @@ module.exports = World = cls.Class.extend(
 
       this.lastUpdateTime = Date.now();
       //console.info("world update called.");
+      var mapId;
       for (mapId in self.maps)
       {
           var map = self.maps[mapId];
@@ -350,6 +351,7 @@ module.exports = World = cls.Class.extend(
 
         setInterval(function()
         {
+            var mapId;
             for (mapId in self.maps)
             {
                 var map = self.maps[mapId];
@@ -363,18 +365,22 @@ module.exports = World = cls.Class.extend(
 
         setInterval(function()
         {
+            var mapId;
             for (mapId in self.maps)
             {
                 var map = self.maps[mapId];
-                if (map && map.ready && map.entities.players &&
-                    Object.keys(map.entities.players).length > 0)
+                if (!map.entities)
+                  return;
+                var players = map.entities.players;
+                if (map && map.ready && players &&
+                    Object.keys(players).length > 0)
                 {
-                  for (var id in map.entities.players)
+                  for (var id in players)
                   {
-                    var player = map.entities.players[id];
-                    if (player.user && (Date.now() - player.user.lastPacketTime) >= 300000)
+                    var p = players[id];
+                    if (p.user && (Date.now() - p.user.lastPacketTime) >= 300000)
                     {
-                        player.connection.close("idle timeout");
+                        p.connection.close("idle timeout");
                     }
                   }
                 }
@@ -391,6 +397,7 @@ module.exports = World = cls.Class.extend(
 
         setInterval(function()
         {
+            var mapId;
             for (mapId in self.maps)
             {
                 var map = self.maps[mapId];
@@ -398,12 +405,12 @@ module.exports = World = cls.Class.extend(
                 if (map && map.ready && map.mobArea &&
                     Object.keys(players).length > 0)
                 {
-                  var player;
+                  var p;
                   var pid;
                   for (pid in players) {
-                    player = players[pid];
-                    if (player)
-                      map.entities.mobAI.Roaming(player);
+                    p = players[pid];
+                    if (p)
+                      map.entities.mobAI.Roaming(p);
                   }
                 }
             }
@@ -411,16 +418,20 @@ module.exports = World = cls.Class.extend(
 
         setInterval(function()
         {
+            var mapId;
+            var id;
             for (mapId in self.maps)
             {
                 var map = self.maps[mapId];
                 if (map && map.ready)
                 {
-                    for (id in map.players)
+                    var players = map.players;
+                    var p;
+                    for (id in players)
                     {
-                        var player = map.players[id];
-                        if (player.idleTimer.isOver());
-                          player.packetHandler.exit_callback();
+                        var p = players[id];
+                        if (p.idleTimer.isOver());
+                          p.packetHandler.exit_callback();
                     }
                 }
             }
@@ -452,18 +463,22 @@ module.exports = World = cls.Class.extend(
     {
         var self = this;
 
+        var mapId;
         for (mapId in self.maps)
         {
             var map = self.maps[mapId];
             if (map.ready && map.entities)
             {
-                for (var id in map.entities.players)
+                var players = map.entities.players;
+                var p;
+                for (var id in players)
                 {
-                    if (map.entities.players.hasOwnProperty(id))
+                    if (players.hasOwnProperty(id))
                     {
-                        if (map.entities.players[id].name == name)
+                        p = players[id];
+                        if (p.name == name)
                         {
-                            if (!map.entities.players[id].isDead)
+                            if (!p.isDead)
                             {
                                 console.info("loggedInPlayer: true");
                                 return true;
@@ -486,13 +501,16 @@ module.exports = World = cls.Class.extend(
             var map = self.maps[mapId];
             if (map.ready && map.entities)
             {
-                for (var id in map.entities.players)
+                var players = map.entities.players;
+                var p;
+                for (var id in players)
                 {
-                    if (map.entities.players.hasOwnProperty(id))
+                    if (players.hasOwnProperty(id))
                     {
-                        if (map.entities.players[id].name == name)
+                        p = players[id];
+                        if (p.name == name)
                         {
-                            return map.entities.players[id];
+                            return p;
                         }
                     }
                 }
@@ -820,11 +838,14 @@ module.exports = World = cls.Class.extend(
         for (var mapId in self.maps)
         {
             var map = self.maps[mapId];
-            if (map.entities && Object.keys(map.entities.packets).length > 0)
+            if (!map.entities)
+              continue;
+            var packets = map.entities.packets;
+            if (Object.keys(packets).length > 0)
             {
-                for (var id in map.entities.packets)
+                for (var id in packets)
                 {
-                    map.entities.packets[id].push(message.serialize());
+                    packets[id].push(message.serialize());
                 }
             }
         }
@@ -834,9 +855,10 @@ module.exports = World = cls.Class.extend(
     {
       var self = this;
       var count = 0;
+      var map = null;
       for (var id in self.maps)
       {
-          var map = self.maps[id];
+          map = self.maps[id];
           count += Object.keys(map.entities.players).length;
       }
       return count;

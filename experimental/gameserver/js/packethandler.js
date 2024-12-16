@@ -931,13 +931,14 @@ module.exports = PacketHandler = Class.extend({
   processAttack: function () {
     //console.info("processAttack");
     var self = this;
+    var p = this.player;
 
-    for (var msg of this.player.attackQueue)
+    for (var msg of p.attackQueue)
     {
       console.info("processAttack, handle hit");
       //this.handleHitEntity(this.player, msg);
       setTimeout(function () {
-        self.handleHitEntity(self.player, msg);
+        self.handleHitEntity(p, msg);
       }, G_LATENCY);
     }
     this.player.attackQueue = [];
@@ -1573,8 +1574,8 @@ module.exports = PacketHandler = Class.extend({
     //if (cmd === 1)
     //  this.entities.processWho(this.player);
     //if (cmd === 2) {
-      for(var i=0; i < ids.length; ++i)
-        this.player.knownIds.splice(this.player.knownIds.indexOf(ids[i]), 1);
+      for(var id of ids)
+        this.player.knownIds.splice(this.player.knownIds.indexOf(id), 1);
     //}
   },
 
