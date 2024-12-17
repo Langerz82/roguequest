@@ -43,10 +43,10 @@ var MapEntities = cls.Class.extend({
       self.spatial = [];
       var spatialWidth = Math.ceil(self.map.width / G_SPATIAL_SIZE);
       var spatialHeight = Math.ceil(self.map.height / G_SPATIAL_SIZE);
-      for(var i=0; i < spatialHeight; i++) {
+      for(var i=0, j=0; i < spatialHeight; i++) {
         self.spatial[i] = [];
-        for(var j=0; j < spatialWidth; j++) {
-          self.spatial[i][j] = {};
+        for(j=0; j < spatialWidth; j++) {
+          self.spatial[i][j] = [];
         }
       }
 
@@ -85,22 +85,22 @@ var MapEntities = cls.Class.extend({
         var y2 = ~~(Math.min(arr[3],this.map.height) / G_SPATIAL_SIZE);
 
         //console.info("getSpatialEntities - x1:"+x1+",y1:"+y1+",x2:"+x2+",y2:"+y2);
-        var res = {};
+        var res = [];
         var l1 = this.spatial.length;
         var l2 = 0;
-        for(var j = y1; j <= y2; ++j)
+        for(var j = y1, i=0; j <= y2; ++j)
         {
           l2 = this.spatial[j].length;
-          for(var i = x1; i <= x2; ++i) {
+          for(i = x1; i <= x2; ++i) {
             if (j < 0 || j >= l1)
               continue;
             if (i < 0 || i >= l2)
               continue;
-            for (var [id, entity] of Object.entries(this.spatial[j][i])) {
+            for (var entity of this.spatial[j][i]) {
               if (!entity) continue;
               //console.info("id:"+id);
               //console.info("entity.id:"+entity.id);
-              res[id] = entity;
+              res.push(entity);
             }
           }
         }
@@ -151,9 +151,9 @@ var MapEntities = cls.Class.extend({
 			console.info("pathinggrid height:"+map.height+", width:"+map.width);
 
 		var grid = new Uint8Array(map.height);
-		for(var i=0; i < map.height; ++i) {
+		for(var i=0, j=0; i < map.height; ++i) {
 			grid[i] = new Uint8Array(map.width);
-			for(var j=0; j < map.width; ++j) {
+			for(j=0; j < map.width; ++j) {
         if (map.grid[i][j])
           grid[i][j] = 1;
         else
@@ -193,12 +193,12 @@ var MapEntities = cls.Class.extend({
         var entities = this.getSpatialEntities([x1,y1,x2,y2]);
 
         //console.info("self.entities.length: "+Object.keys(self.entities).length);
-        _.each(entities, function(entity) {
+        for (var entity of entities) {
           if (entity && !(entity == player) && self.isOffset(player, entity))
             screens.push(entity.id);
           //else if (entity && !(entity == player) && self.isOffset(player, entity, 20))
             //neighbours.push(entity.id);
-        });
+        }
         //console.info("screens:"+JSON.stringify(screens));
         //console.info("ids:"+JSON.stringify(ids));
 
@@ -244,7 +244,7 @@ var MapEntities = cls.Class.extend({
         }
     },
 
-    processPackets: function() {
+    /*processPackets: function() {
         var self = this;
         var connection;
 
@@ -254,32 +254,57 @@ var MapEntities = cls.Class.extend({
         {
             if (id != null && typeof id !== 'undefined')
             {
-                var packetId;
-                var len;
                 if (self.packets.hasOwnProperty(id))
                 {
-                    packetId = self.packets[id];
-                    len = packetId.length;
-                    if (len > 0 && typeof packetId != 'undefined' && packetId != null)
+                    if (self.packets[id].length > 0 && typeof self.packets[id] != 'undefined' && self.packets[id] != null)
                     {
-                    	 var player = self.getEntityById(id);
-                        var conn = self.server.socket.getConnection(id);
-                        if (player && player.mapStatus >= 2 && conn != null && typeof conn != 'undefined')
+                    	var player = self.getEntityById(id);
+                        if (player && player.mapStatus >= 2 && self.server.socket.getConnection(id) != null && typeof self.server.socket.getConnection(id) != 'undefined')
                         {
+                            connection = self.server.socket.getConnection(id);
+
+                            var packetCount = self.packets[id].length;
                             var packet = [];
                             for (var i =0; i < self.maxPackets; ++i)
                             {
-                              	if (len == 0)
-                              		break;
-                              	packet.push(packetId.shift());
+                            	if (self.packets[id].length == 0)
+                            		break;
+                            	packet.push(self.packets[id].shift());
                             }
-                            conn.send(packet);
+                            connection.send(packet);
                         } else
-                            delete conn;
+                            delete self.server.socket.getConnection(id);
                     }
                 }
             }
         }
+    },*/
+
+    processPackets: function() {
+        var self = this;
+
+        if (self.packets.length > 0)
+        	console.info(JSON.stringify(self.packets));
+        Utils.forEach(this.packets, (packet, id) => {
+          len = packet.length;
+          if (len > 0 && typeof packet != 'undefined' && packet != null)
+          {
+             var player = self.getEntityById(id);
+              var conn = self.server.socket.getConnection(id);
+              if (player && player.mapStatus >= 2 && conn != null && typeof conn != 'undefined')
+              {
+                  var packets = [];
+                  for (var i =0; i < self.maxPackets; ++i)
+                  {
+                      if (packet.length == 0)
+                        break;
+                      packets.push(packet.shift());
+                  }
+                  conn.send(packets);
+              } else
+                  delete conn;
+          }
+        });
     },
 
     pushToPlayer: function(player, message) {
@@ -299,15 +324,12 @@ var MapEntities = cls.Class.extend({
         if (!message)
         	return;
 
-    	var self = this;
-        for (var id in self.packets) {
-            if (self.packets.hasOwnProperty(id)) {
-                if (id != ignoredPlayer)
-                {
-                    self.packets[id].push(message.serialize());
-                }
-            }
-        }
+        Utils.forEach(this.packets, function (packet, id) {
+          if (id != ignoredPlayer)
+          {
+              packet.push(message.serialize());
+          }
+        });
     },
 
     pushNeighbours: function(entity, message, ignoredPlayer, areaLength)  {
@@ -315,21 +337,18 @@ var MapEntities = cls.Class.extend({
     	var self = this;
     	//console.info(JSON.stringify(message.serialize()));
       areaLength = areaLength || 48;
-    	var entities = self.getPlayerAround(entity, areaLength);
-      if (entity instanceof Player) entities.push(entity);
+    	var players = self.getPlayerAround(entity, areaLength);
+      if (entity instanceof Player) players.push(entity);
 
     	//console.info(entities.length);
-        for (var entityId in entities) {
-            var neighbour = entities[entityId];
-            if (neighbour instanceof Player)
-            {
-                if (self.packets.hasOwnProperty(neighbour.id) && !ignoredPlayer || (ignoredPlayer && neighbour != ignoredPlayer))
-                {
-                     //console.info("neighbour.id:"+neighbour.id);
-                     self.packets[neighbour.id].push(message.serialize());
-                }
-            }
-        }
+      for (var player of players) {
+          if (self.packets.hasOwnProperty(player.id) && !ignoredPlayer || (ignoredPlayer && player != ignoredPlayer))
+          {
+               //console.info("neighbour.id:"+neighbour.id);
+               self.packets[player.id].push(message.serialize());
+          }
+      }
+
     },
 
     isMobsOnSameTile: function(mob) {
@@ -709,32 +728,46 @@ var MapEntities = cls.Class.extend({
     },
 
     forEachEntity: function(callback) {
-        var self = this;
+        //var self = this;
         //console.info("forEachEntity, count:"+Object.keys(self.entities).length);
-        for (var id in self.entities) {
+        /*for (var id in self.entities) {
             if (self.entities.hasOwnProperty(id))
                 callback(self.entities[id]);
-        }
+        }*/
+        Utils.forEach(this.entities, function (entity) {
+          callback(entity);
+        });
     },
 
     forEachPlayer: function(callback) {
-        var self = this;
-        for (var id in self.players) {
+        //var self = this;
+        /*(for (var id in self.players) {
             if (self.players.hasOwnProperty(id))
                 callback(self.players[id]);
-        }
+        }*/
+        Utils.forEach(this.players, function (entity) {
+          callback(entity);
+        });
+
     },
 
-    forEachPartyPlayer: function(callback) {
-        var self = this;
+    /*forEachPartyPlayer: function(callback) {
+        //var self = this;
+        Utils.forEach(this.players, function (entity) {
+          callback(entity);
+        });
         for (var id in self.players) {
             if (self.players.hasOwnProperty(id))
                 callback(self.players[id]);
         }
-    },
+    },*/
 
     forEachMob: function(callback) {
-        var self = this;
+        Utils.forEach(this.mobs, function (entity) {
+          callback(entity);
+        });
+
+        /*var self = this;
         //try { throw new Error(); } catch (e) { console.info(e.stack); }
         //console.info("forEachMob, count:"+Object.keys(self.mobs).length);
         for (var id in self.mobs) {
@@ -742,47 +775,33 @@ var MapEntities = cls.Class.extend({
             if (self.mobs.hasOwnProperty(id)) {
               callback(self.mobs[id]);
             }
-        }
+        }*/
     },
 
     forEachCharacter: function(callback) {
-        var self = this;
+        Utils.forEach(this.entities, function (entity) {
+          if (entity instanceof Character)
+            callback(entity);
+        });
+
+        /*var self = this;
         //console.info("forEachCharacter, count:"+Object.keys(self.entities).length);
         for (var id in self.entities) {
             if (self.entities.hasOwnProperty(id) && self.entities[id] instanceof Character)
                 callback(self.entities[id]);
-        }
+        }*/
     },
 
     forEachNpcPlayer: function(callback) {
-        var self = this;
+      Utils.forEach(this.npcplayers, function (entity) {
+        if (entity instanceof Character)
+          callback(entity);
+      });
+        /*var self = this;
         for (var id in self.npcplayers) {
             if (self.npcplayers.hasOwnProperty(id))
                 callback(self.npcplayers[id]);
-        }
-    },
-
-    getEntityCount: function(group, entity, range, conditional) {
-      range *= G_TILESIZE;
-      var x = entity.x;
-      var y = entity.y;
-      var r = range >> 1;
-      var count = 0;
-      var def_conditional = function (e,e2) { return e !== e2; };
-      conditional = conditional || def_conditional;
-      var e2 = null;
-      for (var id in group) {
-          if (group.hasOwnProperty(id))
-          {
-            e2 = group[id];
-            if (Math.abs(e2.x-x) <= range && Math.abs(e2.y-y) <= range &&
-                conditional(entity,e2))
-            {
-                count++;
-            }
-          }
-      }
-      return count;
+        }*/
     },
 
 // TODO - Minimize function calls so you can pass type to loop through, and the additional condition.
@@ -795,8 +814,8 @@ var MapEntities = cls.Class.extend({
       var def_conditional = function (e1,e2) { return e1 !== e2; };
       conditional = conditional || def_conditional;
       var group = this.getSpatialEntities([x-r,y-r,x+r,y+r]);
-      for (var e2 in group) {
-          if (conditional(entity, e2))
+      for (var e2 of group) {
+          if (conditional(e1, e2))
             count++;
       }
       return count;
@@ -813,9 +832,7 @@ var MapEntities = cls.Class.extend({
       //console.info("getEntityAround, range: "+range+",x:"+x+",y:"+y);
       var e2;
       var group = this.getSpatialEntities([x-r,y-r,x+r,y+r]);
-      for (var id in group) {
-          e2 = group[id];
-          if (!e2) continue;
+      for (var e2 of group) {
           if (conditional(entity,e2))
           {
               //console.info("getEntityAround, pushed:"+e2.id);
@@ -825,25 +842,46 @@ var MapEntities = cls.Class.extend({
       return entities;
     },
 
-    getEntityAround: function(group, entity, range, conditional) {
+    getEntityCount: function(group, e1, range, conditional) {
       range *= G_TILESIZE;
-      var x = entity.x;
-      var y = entity.y;
+      conditional = conditional || function (e1, e2) { return e1 !== e2; };
+      var compare = function (e1, e2) {
+        return (Math.abs(e2.x-e1.x) <= range && Math.abs(e2.y-e1.y) <= range &&
+            conditional(e1,e2))
+      };
+      var count=0;
+      if (Array.isArray(group)) {
+        for (var e2 of group) {
+            if (compare(e1,e2))
+              count++;
+        }
+      } else {
+        Utils.forEach(group, function (e2) {
+          if (compare(e1,e2))
+            count++;
+        })
+      }
+      return count;
+    },
+
+    getEntityAround: function(group, e1, range, conditional) {
+      range *= G_TILESIZE;
       var entities = [];
-      //var def_conditional = function (e1,e2) { return e1 !== e2; };
-      //conditional = (conditional == null) ? def_conditional : conditional;
-      conditional = conditional || function (e1,e2) { return e1 !== e2; };
-      //console.info("getEntityAround, range: "+range+",x:"+x+",y:"+y);
-      var e2;
-      for (var id in group) {
-          e2 = group[id];
-          if (!e2) continue;
-          if (Math.abs(e2.x-x) <= range && Math.abs(e2.y-y) <= range &&
-              conditional(entity,e2))
-          {
-              //console.info("getEntityAround, pushed:"+e2.id);
+      conditional = conditional || function (e1, e2) { return e1 !== e2; };
+      var compare = function (e1, e2) {
+        return (Math.abs(e2.x-e1.x) <= range && Math.abs(e2.y-e1.y) <= range &&
+            conditional(e1,e2))
+      };
+      if (Array.isArray(group)) {
+        for (var e2 of group) {
+            if (compare(e1,e2))
               entities.push(e2);
-          }
+        }
+      } else {
+        Utils.forEach(group, function (e2) {
+          if (compare(e1,e2))
+            entities.push(e2);
+        })
       }
       return entities;
     },
@@ -877,7 +915,7 @@ var MapEntities = cls.Class.extend({
     },
 
     getAroundCount: function(entities, entity, range) {
-      return this.getEntityCount(entities, entity, range);
+      return this.getEntityAround(entities, entity, range);
     },
 
     getEntityAroundCount: function(entity, range) {

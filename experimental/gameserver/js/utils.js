@@ -379,6 +379,18 @@ Utils.getGridPosition = function (x, y) {
   return {gx: x >> 4, gy: y >> 4};
 }
 
+Utils.forEach = function (obj, fn) {
+  var prop = null;
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key))
+    {
+      if (fn && fn(obj[key], key))
+        return true;
+    }
+  }
+  return false;
+}
+
 /*
 module.exports = removeEmpty = function (obj) {
   return Object.fromEntries(

@@ -76,15 +76,12 @@ module.exports = World = cls.Class.extend(
 
         self.mapManager.onMapsReady(function ()
         {
-             console.info("ALL MAPS LOADED BITCHES!");
-             //self.Wheather = new Wheather(self);
-             self.maps = self.mapManager.maps;
-             for (mapId in self.maps)
-             {
-               var map = self.maps[mapId];
-               map.updater = new Updater(self, map);
-
-             }
+          console.info("ALL MAPS LOADED BITCHES!");
+          //self.Wheather = new Wheather(self);
+          self.maps = self.mapManager.maps;
+          Utils.forEach(self.maps, function (map, k) {
+            map.updater = new Updater(self, map);
+          });
         });
 
         //self.products = JSON.parse(JSON.stringify(Products));
@@ -166,54 +163,54 @@ module.exports = World = cls.Class.extend(
 
         self.onRegenTick(function()
         {
-            for (mapId in self.maps)
+            var fnPlayer = function(character)
             {
-                var map = self.maps[mapId];
-                if (map && map.isLoaded && map.entities)
+                if (character instanceof Player)
                 {
-                    map.entities.forEachPlayer(function(character)
+                    if (!character.isDead && !character.hasFullHealth() && !character.isAttacked())
                     {
-                        if (character instanceof Player)
-                        {
-                            if (!character.isDead && !character.hasFullHealth() && !character.isAttacked())
-                            {
-                                var packet = character.modHealthBy(Math.floor(character.stats.hpMax / 8));
-                            }
-                        }
-                    });
-                    map.entities.forEachMob(function(character)
-                    {
-                        if (character instanceof Mob)
-                        {
-                            if (!character.isDead && !character.hasFullHealth() && !character.isAttacked() &&
-                                character.x == character.spawnX && character.y == character.spawnY)
-                            {
-                                //console.info("stats="+JSON.stringify(character.stats));
-                                var packet = character.modHealthBy(Math.floor(character.stats.hpMax / 8));
-                            }
-                        }
-                    });
+                        var packet = character.modHealthBy(Math.floor(character.stats.hpMax / 8));
+                    }
                 }
-            }
+            };
+
+            var fnMob = function(character)
+            {
+                if (character instanceof Mob)
+                {
+                    if (!character.isDead && !character.hasFullHealth() && !character.isAttacked() &&
+                        character.x == character.spawnX && character.y == character.spawnY)
+                    {
+                        //console.info("stats="+JSON.stringify(character.stats));
+                        var packet = character.modHealthBy(Math.floor(character.stats.hpMax / 8));
+                    }
+                }
+            };
+
+            Utils.forEach(self.maps, function (map) {
+              if (map && map.isLoaded && map.entities)
+              {
+                map.entities.forEachPlayer(fnPlayer);
+                map.entities.forEachMob(fnMob);
+              }
+            });
         });
 
         // Notifications.
         self.notify = NotifyData.Notifications;
-        for (var id in self.notify)
-        {
-            self.notify[id].lastTime = Date.now() - this._idleStart;
-        }
+        Utils.forEach(self.notify, function (notify) {
+            notify.lastTime = Date.now() - self._idleStart;
+        });
+
         setInterval(function()
         {
-            for (var id in self.notify)
-            {
-                var notify = self.notify[id];
-                if (Date.now() - notify.lastTime >= notify.interval * 60000)
-                {
-                    self.pushWorld(new Messages.Notify("NOTICE", notify.textid));
-                    notify.lastTime = Date.now();
-                }
-            }
+            Utils.forEach(self.notify, function (notify) {
+              if (Date.now() - notify.lastTime >= notify.interval * 60000)
+              {
+                  self.pushWorld(new Messages.Notify("NOTICE", notify.textid));
+                  notify.lastTime = Date.now();
+              }
+            });
         }, 60000);
 
     },
@@ -280,17 +277,18 @@ module.exports = World = cls.Class.extend(
     {
       if (this.userHandler) {
         var playerNameList = [];
-        for (var p of this.players) {
+        Utils.forEach(this.players, function (p) {
           playerNameList.push(p.name);
-        }
+        });
         this.userHandler.sendPlayersList(playerNameList);
       } else {
         console.warn("worldServer save: no user server connection aborting save.");
       }
 
-      for (var p of this.players) {
+      Utils.forEach(this.players, function (p) {
         p.save();
-      }
+      });
+
       this.PLAYERS_SAVED = true;
 
       this.auction.save(this);
@@ -313,17 +311,14 @@ module.exports = World = cls.Class.extend(
 
       this.lastUpdateTime = Date.now();
       //console.info("world update called.");
-      var mapId;
-      for (mapId in self.maps)
-      {
-          var map = self.maps[mapId];
-          if (map && map.ready && map.entities && map.updater &&
-              Object.keys(map.entities.players).length > 0)
-          {
-              //map.entities.processPackets();
-              map.updater.update();
-          }
-      }
+
+      Utils.forEach(self.maps, function (map) {
+        if (map && map.ready && map.entities && map.updater &&
+            Object.keys(map.entities.players).length > 0)
+        {
+            map.updater.update();
+        }
+      });
     },
 
     run: function()
@@ -335,56 +330,44 @@ module.exports = World = cls.Class.extend(
         }, G_UPDATE_INTERVAL);
 
         var processPackets = function () {
-          var maps = self.maps;
-          var mapId;
-          for (mapId in maps)
-          {
-              var map = maps[mapId];
+          Utils.forEach(self.maps, function (map) {
               if (map && map.ready && map.entities && map.updater &&
                   Object.keys(map.entities.players).length > 0)
               {
                   map.entities.processPackets();
               }
-          };
+          });
         };
         setInterval(processPackets, 16);
 
         setInterval(function()
         {
-            var mapId;
-            for (mapId in self.maps)
-            {
-                var map = self.maps[mapId];
-                if (map && map.ready && map.entities &&
-                    Object.keys(map.entities.players).length > 0)
-                {
-                  map.entities.mobAI.update();
-                }
-            }
+            Utils.forEach(self.maps, function (map) {
+              if (map && map.ready && map.entities &&
+                  Object.keys(map.entities.players).length > 0)
+              {
+                map.entities.mobAI.update();
+              }
+            });
         }, 256);
 
         setInterval(function()
         {
-            var mapId;
-            for (mapId in self.maps)
+          Utils.forEach(self.maps, function (map) {
+            if (!map.entities)
+              return;
+            var players = map.entities.players;
+            if (map && map.ready && players &&
+                Object.keys(players).length > 0)
             {
-                var map = self.maps[mapId];
-                if (!map.entities)
-                  return;
-                var players = map.entities.players;
-                if (map && map.ready && players &&
-                    Object.keys(players).length > 0)
+              Utils.forEach(players, function (p) {
+                if (p.user && (Date.now() - p.user.lastPacketTime) >= 300000)
                 {
-                  for (var id in players)
-                  {
-                    var p = players[id];
-                    if (p.user && (Date.now() - p.user.lastPacketTime) >= 300000)
-                    {
-                        p.connection.close("idle timeout");
-                    }
-                  }
+                    p.connection.close("idle timeout");
                 }
+              });
             }
+          });
         }, 60000);
 
         setInterval(function()
@@ -397,44 +380,31 @@ module.exports = World = cls.Class.extend(
 
         setInterval(function()
         {
-            var mapId;
-            for (mapId in self.maps)
-            {
-                var map = self.maps[mapId];
+            Utils.forEach(self.maps, function (map) {
                 var players = map.entities.players;
                 if (map && map.ready && map.mobArea &&
                     Object.keys(players).length > 0)
                 {
-                  var p;
-                  var pid;
-                  for (pid in players) {
-                    p = players[pid];
+                  Utils.forEach(players, function (p) {
                     if (p)
                       map.entities.mobAI.Roaming(p);
-                  }
+                  });
                 }
-            }
+            });
         }, 1000);
 
         setInterval(function()
         {
-            var mapId;
-            var id;
-            for (mapId in self.maps)
-            {
-                var map = self.maps[mapId];
+            Utils.forEach(self.maps, function (map) {
+                var players = map.entities.players;
                 if (map && map.ready)
                 {
-                    var players = map.players;
-                    var p;
-                    for (id in players)
-                    {
-                        var p = players[id];
-                        if (p.idleTimer.isOver());
-                          p.packetHandler.exit_callback();
-                    }
+                    Utils.forEach(players, function (p) {
+                      if (p.idleTimer.isOver());
+                        p.packetHandler.exit_callback();
+                    });
                 }
-            }
+            });
         }, 300000);
 
         setInterval(function()
@@ -464,9 +434,8 @@ module.exports = World = cls.Class.extend(
         var self = this;
 
         var mapId;
-        for (mapId in self.maps)
-        {
-            var map = self.maps[mapId];
+        for (var id in self.maps) {
+            var map = self.maps[id];
             if (map.ready && map.entities)
             {
                 var players = map.entities.players;
@@ -496,25 +465,24 @@ module.exports = World = cls.Class.extend(
     {
         var self = this;
 
-        for (mapId in self.maps)
-        {
-            var map = self.maps[mapId];
-            if (map.ready && map.entities)
-            {
-                var players = map.entities.players;
-                var p;
-                for (var id in players)
-                {
-                    if (players.hasOwnProperty(id))
-                    {
-                        p = players[id];
-                        if (p.name == name)
-                        {
-                            return p;
-                        }
-                    }
-                }
-            }
+        for (var id in self.maps) {
+          var map = self.maps[id];
+          if (map.ready && map.entities)
+          {
+              var players = map.entities.players;
+              var p;
+              for (var id in players)
+              {
+                  if (players.hasOwnProperty(id))
+                  {
+                      p = players[id];
+                      if (p.name == name)
+                      {
+                          return p;
+                      }
+                  }
+              }
+          }
         }
         return null;
     },
@@ -561,11 +529,11 @@ module.exports = World = cls.Class.extend(
       if (entity.effects) {
         console.info("entity.effects: "+JSON.stringify(entity.effects));
         var effects = [];
-        for (let [k,v] of Object.entries(entity.effects))
-        {
+
+        Utils.forEach(entity.effects, function (v, k) {
           if (v == 1)
             effects.push(parseInt(k));
-        }
+        });
       }
 
       var hpMod = -damage;
@@ -835,33 +803,24 @@ module.exports = World = cls.Class.extend(
     pushWorld: function(message)
     {
         var self = this;
-        for (var mapId in self.maps)
-        {
-            var map = self.maps[mapId];
+        Utils.forEach(self.maps, function (map) {
             if (!map.entities)
-              continue;
+              return;
             var packets = map.entities.packets;
             if (Object.keys(packets).length > 0)
             {
-                for (var id in packets)
-                {
-                    packets[id].push(message.serialize());
-                }
+                Utils.forEach(packets, function (packet) {
+                  packet.push(message.serialize());
+                });
             }
-        }
+        });
     },
 
     getPopulation: function()
     {
-      var self = this;
       var count = 0;
       var map = null;
-      for (var id in self.maps)
-      {
-          map = self.maps[id];
-          count += Object.keys(map.entities.players).length;
-      }
-      return count;
+      return this.players.length;
     },
 
 });

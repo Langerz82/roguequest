@@ -190,9 +190,11 @@ module.exports = WorldHandler = cls.Class.extend({
 
       this.world = world;
 
-      this.sendAuctionsToWorld(this.worldIndex);
-      this.sendLooksToWorld(this.worldIndex);
-      this.sendBansToWorld(this.worldIndex);
+      setTimeout(function () {
+        self.sendAuctionsToWorld(self.worldIndex);
+      },10000);
+      self.sendLooksToWorld(self.worldIndex);
+      self.sendBansToWorld(self.worldIndex);
     },
 
 // TODO FIX - Add playername in packet.

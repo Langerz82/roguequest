@@ -27,7 +27,7 @@ module.exports = AuctionRecord = cls.Class.extend({
 
 module.exports = Auction = cls.Class.extend({
     init: function(){
-        this.auctions = {};
+        this.auctions = [];
     },
 
     load: function (data)
@@ -39,8 +39,9 @@ module.exports = Auction = cls.Class.extend({
         return;
 
       auctions = [];
-      for (var i = 0; i < Object.keys(data[0]).length; ++i) {
-        var sData = data[0][i].split(",");
+      for (var rec of data)
+      {
+        var sData = rec.split(",");
         var record = new AuctionRecord(sData[0],
           parseInt(sData[1]),
           new ItemRoom(parseInt(sData[2]),
@@ -60,22 +61,21 @@ module.exports = Auction = cls.Class.extend({
       console.info("auction - save: "+JSON.stringify(this.auctions));
 
       var data = [];
-      var auctions = this.auctions;
-      for(var i in auctions) {
-        auction = auctions[i];
-        data.push(auction.save(i));
+      for(var auction of this.auctions) {
+        if (auction)
+          data.push(auction.save(i));
       }
 
       if (world.userHandler) {
         world.userHandler.sendAuctionsData(data);
+      } else {
+        console.info("save: world.userHandler not set.");
       }
     },
 
     add: function(player, item, price, invIndex) {
-        var count = 0;
-        if (this.auctions)
-          count = Object.keys(this.auctions).length;
-        this.auctions[count] = new AuctionRecord(player.name, price, item);
+        var auction = new AuctionRecord(player.name, price, item);
+        this.auctions.push(auction);
         player.inventory.setItem(invIndex, null);
         player.map.entities.pushToPlayer(player, new Messages.Notify("AUCTION","AUCTION_ADDED"));
     },
@@ -87,20 +87,17 @@ module.exports = Auction = cls.Class.extend({
     list: function (player, type) {
       var msg = [Types.Messages.WC_AUCTIONOPEN, type, 0];
       var recCount = 0;
-      for (var i in this.auctions) {
-        var rec = this.auctions[i];
-        if (!rec) {
-          //msg.push(parseInt(i));
-          //msg.push(-1);
+      for (var auction of this.auctions) {
+        if (!auction) {
           continue;
         }
-        var kind = rec.item.itemKind;
-        var pc = player.name === rec.playerName;
+        var kind = auction.item.itemKind;
+        var pc = player.name === auction.playerName;
         if ((type === 1 && !pc && ItemTypes.isArmor(kind)) ||
           (type === 2 && !pc && ItemTypes.isWeapon(kind)) ||
           (type === 0 && pc))
         {
-          msg = msg.concat(rec.toArray(i));
+          msg = msg.concat(auction.toArray(i));
           ++recCount;
         }
       }

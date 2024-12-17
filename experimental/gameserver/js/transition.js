@@ -25,12 +25,11 @@ module.exports = Transition = Class.extend({
 
           var j = 0;
           if(this.updateFunction) {
-            var it;
             var itCount = Math.abs(inc);
 
             var start=0;
             var mod = (inc > 0) ? 1 : -1;
-            for (it=1; it <= itCount; ++it)
+            for (var it=0; it < itCount; ++it)
             {
               if (this.updateFunction(this.object, mod))
               {
