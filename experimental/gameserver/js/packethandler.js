@@ -644,7 +644,7 @@ module.exports = PacketHandler = Class.extend({
 
       var consume = ItemTypes.isConsumableItem(itemKind);
       if (consume || (!consume && this.player.inventory.hasRoom())) {
-        var item = new ItemRoom(itemKind, itemCount, 0, 0);
+        var item = new ItemRoom([itemKind, itemCount, 0, 0, 0]);
         var res = this.player.inventory.putItem(item);
         if (res == -1)
           return;
@@ -738,7 +738,7 @@ module.exports = PacketHandler = Class.extend({
     if (ItemTypes.isWeapon() || ItemTypes.isArmor())
       durability = 900;
 
-    var item = new ItemRoom(itemKind, itemCount, durability, durability);
+    var item = new ItemRoom([itemKind, itemCount, durability, durability]);
     if (this.player.inventory.putItem(item) == -1)
       return;
 
@@ -1234,6 +1234,12 @@ module.exports = PacketHandler = Class.extend({
       return;
     }
 
+    if (state==1)
+    {
+      if (!p.checkStartMove(x,y))
+        return;
+    }
+
     var arr = [time, state, orientation, x, y];
     if (state) {
       p.move([time, false, p.orientation, x, y]);
@@ -1265,6 +1271,9 @@ module.exports = PacketHandler = Class.extend({
 
     var x = path[0][0],
         y = path[0][1];
+
+    if (!p.checkStartMove(x,y))
+      return;
 
     if (p.mapStatus < 2)
       return;
@@ -1393,8 +1402,8 @@ module.exports = PacketHandler = Class.extend({
 
     p.knownIds = [];
 
-    this.entities.processWho(p);
     p.setPosition(x,y);
+    this.entities.processWho(p);
     this.entities.pushNeighbours(p, new Messages.Spawn(p), p);
   },
 

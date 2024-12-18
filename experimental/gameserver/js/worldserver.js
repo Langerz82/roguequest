@@ -117,7 +117,7 @@ module.exports = World = cls.Class.extend(
         self.onPlayerEnter(function(player)
         {
             player.map = self.maps[1];
-            player.map.entities.addPlayer(self);
+            player.map.entities.addPlayer(player);
 
             console.info("Player: " + player.name + " has entered the " + player.map.name + " map.");
 
@@ -142,7 +142,7 @@ module.exports = World = cls.Class.extend(
                 console.info("worldServer, packetHandler.onExit.");
                 //console.info("Player: " + player.name + " has exited the world.");
 
-                if (player.party)
+                if (player.hasOwnProperty("party") && player.party)
                 {
                     var party = player.party;
                     party.removePlayer(player);
@@ -386,6 +386,7 @@ module.exports = World = cls.Class.extend(
                     Object.keys(players).length > 0)
                 {
                   Utils.forEach(players, function (p) {
+                    //;
                     if (p)
                       map.entities.mobAI.Roaming(p);
                   });
@@ -401,7 +402,7 @@ module.exports = World = cls.Class.extend(
                 {
                     Utils.forEach(players, function (p) {
                       if (p.idleTimer.isOver());
-                        p.packetHandler.exit_callback();
+                        p.packetHandler.exit_callback(p);
                     });
                 }
             });
@@ -640,7 +641,7 @@ module.exports = World = cls.Class.extend(
       if (itemId2) {
         //console.info("itemName: "+itemName);
         //var kind = ItemTypes.getKindFromString(itemName);
-        var itemRoom = new ItemRoom(parseInt(itemId2), 1, 0, 0, 0);
+        var itemRoom = new ItemRoom([parseInt(itemId2), 1, 0, 0, 0]);
         var lootItem = target.map.entities.createItem(itemRoom, target.x, target.y, 1);
         lootItem.count = 1;
         lootItem.experience = 0;
@@ -705,11 +706,11 @@ module.exports = World = cls.Class.extend(
       if (ItemTypes.isEquippable(itemId2))
       {
         var count = Utils.setEquipmentBonus(itemId2)
-        itemRoom = new ItemRoom(itemId2, count, 0, 0, 900, 900, 0);
+        itemRoom = new ItemRoom([itemId2, count, 0, 0, 900, 900]);
         itemRoom.itemExperience = ItemTypes.itemExpForLevel[count - 1];
       }
       else {
-        itemRoom = new ItemRoom(itemId2, 1, 0, 0, 0, 0, 0);
+        itemRoom = new ItemRoom([itemId2, 1, 0, 0, 0, 0]);
       }
       var item = target.map.entities.createItem(itemRoom, target.x, target.y, 1);
 

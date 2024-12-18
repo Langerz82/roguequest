@@ -282,12 +282,12 @@ module.exports = UserHandler = cls.Class.extend({
       dataJSON = JSON.parse(msg);
       for (var itemData of dataJSON) {
         if (itemData) {
-          var item = new ItemRoom(
+          var item = new ItemRoom([
             parseInt(itemData[1]),
             parseInt(itemData[2]),
             parseInt(itemData[3]),
             parseInt(itemData[4]),
-            parseInt(itemData[5]));
+            parseInt(itemData[5])]);
           item.slot = parseInt(itemData[0]);
           items.push(item);
         }
@@ -305,8 +305,9 @@ module.exports = UserHandler = cls.Class.extend({
         player.equipment = new Equipment(player, 5, items);
         storeType = player.equipment;
         player.equipment.setItem = function (index, item) {
-          player.equipment._setItem(index, item);
+          var res = player.equipment._setItem(index, item);
           player.setRange();
+          return res;
         };
       }
       player.itemStore[type] = storeType;

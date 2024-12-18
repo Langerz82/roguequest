@@ -44,11 +44,11 @@ module.exports = Auction = cls.Class.extend({
         var sData = rec.split(",");
         var record = new AuctionRecord(sData[0],
           parseInt(sData[1]),
-          new ItemRoom(parseInt(sData[2]),
+          new ItemRoom([parseInt(sData[2]),
              parseInt(sData[3]),
              parseInt(sData[4]),
              parseInt(sData[5]),
-             parseInt(sData[6]))
+             parseInt(sData[6])])
           );
         auctions.push(record);
       }

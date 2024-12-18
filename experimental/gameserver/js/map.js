@@ -98,8 +98,8 @@ var Map = cls.Class.extend({
     loadTileGrid: function(tiles) {
         this.tile = new Array(this.height);
         for(var i = 0; i < this.height; ++i) {
-            var line = tiles.slice(i * this.width, ((i+1) * this.width) );
-            this.tile[i] = new Array(line);
+            var arr = tiles.slice(i * this.width, ((i+1) * this.width) );
+            this.tile[i] = arr;
         }
         delete tiles;
     },
@@ -107,7 +107,8 @@ var Map = cls.Class.extend({
     loadCollisionGrid: function(collisions) {
         this.grid = new Array(this.height);
         for(var i = 0; i < this.height; ++i) {
-            this.grid[i] = collisions.slice(i * this.width, ((i+1) * this.width) );
+            var arr = collisions.slice(i * this.width, ((i+1) * this.width) );
+            this.grid[i] = arr;
         }
         delete collisions;
     },
@@ -447,8 +448,12 @@ var Map = cls.Class.extend({
           if (!types.hasOwnProperty(type))
             return false;
 
-          //var harvestTiles = [678, 679, 698, 699, 855, 875];
-          var res = types[type].some(function (tile) { return tiles.includes(tile); });
+          var res = false;
+          if (Array.isArray(tiles)) {
+            res = types[type].some(function (tile) { return tiles.includes(tile); });
+          } else {
+            res = types[type].includes(tiles);
+          }
           return res;
         },
 

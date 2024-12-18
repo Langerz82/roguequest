@@ -81,27 +81,27 @@ module.exports = Entity = cls.Class.extend({
             var sameMap = (this.spatialMap == this.map);
             if (!sameMap) {
               var spatial = this.spatialMap.entities.spatial[this.spy][this.spx];
-              var index = spatial.indexOf(this);
-              if (index >= 0)
-                spatial.splice(index,1);
-            }
-            if (this.spx != spx || this.spy != spy)
-            {
-              var spatial = this.map.entities.spatial[this.spy][this.spx];
-              var index = spatial.indexOf(this);
-              if (index >= 0)
-                spatial.splice(index,1);
+              Utils.removeFromArray(spatial, this);
             }
             else {
-              var spatial = this.map.entities.spatial[spy][spx];
-              var index = spatial.indexOf(this);
-              if (index == -1) {
-                spatial.push(this);
+              if (this.spx != spx || this.spy != spy)
+              {
+                var spatial = this.map.entities.spatial[this.spy][this.spx];
+                Utils.removeFromArray(spatial, this);
+              }
+              else {
+                var spatial = this.map.entities.spatial[spy][spx];
+                if (!spatial.includes(this))
+                  spatial.push(this);
+                /*var index = spatial.indexOf(this);
+                if (index == -1) {
+                  spatial.push(this);
+                }*/
               }
             }
-
             this.spx = spx;
             this.spy = spy;
+
             this.spatialMap = this.map;
         },
 

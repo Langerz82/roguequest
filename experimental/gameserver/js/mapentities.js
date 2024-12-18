@@ -81,8 +81,8 @@ var MapEntities = cls.Class.extend({
     {
         var x1 = ~~(Math.max(arr[0],0) / G_SPATIAL_SIZE);
         var y1 = ~~(Math.max(arr[1],0) / G_SPATIAL_SIZE);
-        var x2 = ~~(Math.min(arr[2],this.map.width) / G_SPATIAL_SIZE);
-        var y2 = ~~(Math.min(arr[3],this.map.height) / G_SPATIAL_SIZE);
+        var x2 = ~~(Math.min(arr[2],this.map.width-1) / G_SPATIAL_SIZE);
+        var y2 = ~~(Math.min(arr[3],this.map.height-1) / G_SPATIAL_SIZE);
 
         //console.info("getSpatialEntities - x1:"+x1+",y1:"+y1+",x2:"+x2+",y2:"+y2);
         var res = [];
@@ -92,10 +92,10 @@ var MapEntities = cls.Class.extend({
         {
           l2 = this.spatial[j].length;
           for(i = x1; i <= x2; ++i) {
-            if (j < 0 || j >= l1)
+            /*if (j < 0 || j >= l1)
               continue;
             if (i < 0 || i >= l2)
-              continue;
+              continue;*/
             for (var entity of this.spatial[j][i]) {
               if (!entity) continue;
               //console.info("id:"+id);
@@ -243,42 +243,6 @@ var MapEntities = cls.Class.extend({
             return false;
         }
     },
-
-    /*processPackets: function() {
-        var self = this;
-        var connection;
-
-        if (self.packets.length > 0)
-        	console.info(JSON.stringify(self.packets));
-        for (var id in self.packets)
-        {
-            if (id != null && typeof id !== 'undefined')
-            {
-                if (self.packets.hasOwnProperty(id))
-                {
-                    if (self.packets[id].length > 0 && typeof self.packets[id] != 'undefined' && self.packets[id] != null)
-                    {
-                    	var player = self.getEntityById(id);
-                        if (player && player.mapStatus >= 2 && self.server.socket.getConnection(id) != null && typeof self.server.socket.getConnection(id) != 'undefined')
-                        {
-                            connection = self.server.socket.getConnection(id);
-
-                            var packetCount = self.packets[id].length;
-                            var packet = [];
-                            for (var i =0; i < self.maxPackets; ++i)
-                            {
-                            	if (self.packets[id].length == 0)
-                            		break;
-                            	packet.push(self.packets[id].shift());
-                            }
-                            connection.send(packet);
-                        } else
-                            delete self.server.socket.getConnection(id);
-                    }
-                }
-            }
-        }
-    },*/
 
     processPackets: function() {
         var self = this;

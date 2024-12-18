@@ -115,8 +115,7 @@ module.exports = Player = Character.extend({
         this.attackSkill = [];
         this.attackTimer = 0;
 
-        this.idleTimer = new Timer(30000);
-
+        this.idleTimer = new Timer(300000);
 
     		this.playerController = new PlayerController(this);
 
@@ -1222,10 +1221,13 @@ module.exports = Player = Character.extend({
       time=data[0],
       interrupted=data[1];
 
+    this.idleTimer.restart();
+
     console.info("set path");
 
     if (this.keyMove) {
       this.move(this.orientation, 0, this.ex, this.ey);
+      //return;
     }
 
     this.sx = this.x;
@@ -1233,10 +1235,10 @@ module.exports = Player = Character.extend({
     this.ex = this.x2;
     this.ey = this.y2;
 
-    if (!(this.x == x && this.y == y)) {
+    /*if (!(this.x == x && this.y == y)) {
       console.warn("movePath - Start Position not correct!");
       console.info("movePath - x:"+x+",y:"+y+",p.x:"+this.x+",p.y:"+this.y);
-    }
+    }*/
     this.forceStop();
     //this.setPosition(x,y);
     orientation = this.getOrientationTo({x: path[1][0], y: path[1][1]});
@@ -1246,16 +1248,27 @@ module.exports = Player = Character.extend({
     this.interrupted = interrupted;
     //this.estDelay = Date.now() - time;
     //this.startMovePathTime = Date.now();
-    var delay=~~((Date.now()+G_UPDATE_INTERVAL)-(G_LATENCY + time));
-    this.unclampedDelay = delay;
-    delay=Utils.clamp(0, G_LATENCY, delay);
-    this.latencyDiff = Date.now() - time;
-    this.startMovePathTime = time + delay;
+    var delay = Utils.getLockDelay(time);
+    //var delay=~~((Date.now()+G_UPDATE_INTERVAL)-(G_LATENCY + time));
+    //this.unclampedDelay = delay;
+    //delay=Utils.clamp(0, G_LATENCY, delay);
+    //this.latencyDiff = Date.now() - time;
+    this.startMovePathTime = Date.now()+delay;
     //var delay=Utils.clamp(0, G_LATENCY, G_LATENCY+(time-Date.now()));
     console.warn("movePath: delay:"+delay);
 
     if (delay > 0)
-      this.setFreeze(delay);
+      this.setFreeze(delay, function (p) {
+        //p.startMovePathTime = Date.now();
+        /*if (!(p.x == x && p.y == y))
+        {
+          console.error("PLAYER NOT IN CORRECT POSITION");
+          console.info("p.x:"+p.x+",p.y:"+p.y);
+          console.info("c.x:"+x+",c.y:"+y);
+          p.resetMove(p.x,p.y);
+          return;
+        }*/
+      });
   },
 
   move: function (nm) {
@@ -1272,6 +1285,8 @@ module.exports = Player = Character.extend({
       //entity.stopInPath(x,y);
       return;
     }
+
+    this.idleTimer.restart();
 
     if (this.moving_callback)
     {
@@ -1292,17 +1307,16 @@ module.exports = Player = Character.extend({
     }
 
     if (state==1) {
-        var delay=Math.max(~~((G_LATENCY + time)-(Date.now()+G_UPDATE_INTERVAL)),0);
-        console.warn("unclamped delay="+delay);
-        this.unclampedDelay = delay;
-        delay=Utils.clamp(0, G_LATENCY, delay);
+        var delay = Utils.getLockDelay(time);
         console.warn("delay="+delay);
-        this.latencyDiff = Date.now() - time;
-        this.startMoveTime = time + delay;
+        //var delay=Math.max(~~((G_LATENCY + time)-(Date.now()+G_UPDATE_INTERVAL)),0);
+        //this.latencyDiff = Date.now() - time;
+        //this.startMoveTime = time + delay;
         this.sx = this.x;
         this.sy = this.y;
         this.ex = -1;
         this.ey = -1;
+        this.startMoveTime = Date.now()+delay;
         var execMove = function () {
           if (self.movement.inProgress) {
             self.forceStop();
@@ -1310,13 +1324,9 @@ module.exports = Player = Character.extend({
           self.moving_timeout = null;
           self.startMoving = true;
           self.moveOrientation = o;
-          //self.sx = self.x;
-          //self.sy = self.y;
-          //self.ex = -1;
-          //self.ey = -1;
           self.keyMove = true;
-          self.startMoveTime = Date.now();
-          self.startMoveSysTime = Date.now() + delay;
+          //self.startMoveTime = Date.now();
+          //self.startMoveSysTime = Date.now() + delay;
           return;
         };
         if (delay <= 0)
@@ -1358,7 +1368,7 @@ module.exports = Player = Character.extend({
       }
 
       //var tMoves = [[this.sx,this.sy],[x,y]];
-      if (this.map.entities.pathfinder.isPathTicksTooFast(this, path, this.startMoveSysTime))
+      if (this.map.entities.pathfinder.isPathTicksTooFast(this, path, this.startMoveTime))
       {
         this.setPosition(this.sx,this.sy);
       } else {
@@ -1709,6 +1719,7 @@ module.exports = Player = Character.extend({
       return;
     }
 
+// TODO CHECK WHY NOT ADDING ITEM AND NOT NOTIFYING CLIENT.
     var duration = 6000;
     p._harvest(x, y, function (p) {
       p.server.taskHandler.processEvent(p, PlayerEvent(EventType.HARVEST, p, 1));
@@ -1719,7 +1730,7 @@ module.exports = Player = Character.extend({
         var kind;
         if (p.getWeaponType() == "axe")
           kind = 320;
-        var item = new ItemRoom(kind, 1, 0, 0);
+        var item = new ItemRoom([kind, 1, 0, 0]);
         if (self.inventory.putItem(item) == -1)
           return;
         var data = ItemTypes.getData(item.itemKind);
@@ -1729,9 +1740,11 @@ module.exports = Player = Character.extend({
   },
 
   resetMove: function (x,y) {
-    this.setPosition(x, y);
-    this.sendCurrentMove();
     this.forceStop();
+    this.setPosition(x, y);
+    this.sx = x;
+    this.sy = y;
+    this.sendCurrentMove();
     this.ex = -1;
     this.ey = -1;
   },

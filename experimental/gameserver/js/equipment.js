@@ -216,14 +216,10 @@ module.exports = Equipment = cls.Class.extend({
       var i=0;
       var itemString = "" + this.maxNumber + ",";
 
-      for(i=0; i<this.maxNumber; i++){
+      for(var i in this.rooms){
           var item = this.rooms[i];
-          itemArray = [item.itemKind,
-            item.itemNumber,
-            item.itemDurability,
-            item.itemDurabilityMax,
-            item.itemExperience];
-          itemString += itemArray.join(',');
+          if (!item) continue;
+          itemString += item.toArray().join(',');
       }
       return itemString;
     },
@@ -235,13 +231,7 @@ module.exports = Equipment = cls.Class.extend({
       for(var i=0; i<this.maxNumber; i++){
           var item = this.rooms[i];
           if (!item) continue;
-          itemArray = [i,
-            item.itemKind,
-            item.itemNumber,
-            item.itemDurability,
-            item.itemDurabilityMax,
-            item.itemExperience];
-          itemString += "["+itemArray.join(',')+"],"
+          itemString += "["+item.toArray().join(',')+"],"
           isItems = true;
       }
       itemString = itemString.slice(0, -1);

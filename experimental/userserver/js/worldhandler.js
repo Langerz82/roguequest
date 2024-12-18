@@ -19,7 +19,7 @@ module.exports = WorldHandler = cls.Class.extend({
         this.connection = connection;
         this.world = null;
 
-        //this.users = {};
+        this.users = {};
         this.SAVED_AUCTIONS = false;
         this.SAVED_LOOKS = false;
         this.SAVED_BANS = false;
@@ -80,19 +80,24 @@ module.exports = WorldHandler = cls.Class.extend({
         };
         this.connection.listen(this.listener);
 
-        /*this.connection.onClose(function() {
+        this.connection.onClose(function() {
           console.info("onClose - called");
-          self.onExit();
+          //self.onExit();
           this.close("onClose");
           self.onClose();
-        });*/
+        });
     },
 
-    onClose: function (save) {
+    onClose: function () {
+      console.info("worldHandler, onClose.")
+      for (var username in this.users) {
+        console.info("username:"+username);
+        delete loggedInUsers[username];
+      }
     },
 
-    onExit: function() {
-    },
+    /*onExit: function() {
+    },*/
 
     send: function(message) {
       this.connection.send(message);
@@ -165,6 +170,7 @@ module.exports = WorldHandler = cls.Class.extend({
       var username = msg[0];
       var playerName = msg[1];
       loggedInUsers[username] = playerName;
+      this.users[username] = username;
     },
 
     handleGameServerInfo: function (msg) {
@@ -190,9 +196,9 @@ module.exports = WorldHandler = cls.Class.extend({
 
       this.world = world;
 
-      setTimeout(function () {
-        self.sendAuctionsToWorld(self.worldIndex);
-      },10000);
+      //setTimeout(function () {
+      self.sendAuctionsToWorld(self.worldIndex);
+      //},10000);
       self.sendLooksToWorld(self.worldIndex);
       self.sendBansToWorld(self.worldIndex);
     },

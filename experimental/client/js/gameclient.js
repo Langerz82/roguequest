@@ -170,6 +170,7 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 
 				onConnected: function (data) {
 					this.sendLoginPlayer(data[0], data[1]);
+					this.sendSyncTime();
 				},
 
 				onVersion: function (data) {
@@ -509,6 +510,10 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 				},
 
 // SEND FUNCTIONS.
+				sendSyncTime: function() {
+						log.info("sendSyncTime");
+						this.sendMessage([Types.Messages.BI_SYNCTIME,Date.now()]);
+				},
 
 				sendLoginPlayer: function (playername, playerhash) {
 					this.sendMessage([Types.Messages.CW_LOGIN_PLAYER,
@@ -532,6 +537,7 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 
         sendMoveEntity: function(entity, action) {
 						//try { throw new Error(); } catch(err) { console.error(err.stack); }
+						console.info("DEBUG: sendMoveEntity: x:"+entity.x+",entity.y:"+entity.y);
             this.sendMessage([Types.Messages.CW_MOVE,
 											getWorldTime(),
             		      entity.id,

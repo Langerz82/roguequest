@@ -44,10 +44,15 @@ module.exports = PlayerController = Class.extend({
       console.info("onStopPathing");
       var p = self.player;
 
-      if (self.entities.pathfinder.isPathTicksTooFast(p, p.fullpath, p.startMovePathTime))
-        p.setPosition(p.sx,p.sy);
-      else
-        p.setPosition(x,y);
+      // TODO - Maybe just remove.
+      if (self.entities.pathfinder.isPathTicksTooFast(p, p.fullpath, p.startMovePathTime)) {
+        console.error("path - isPathTicksTooFast = true.");
+        p.resetMove(p.sx,p.sy);
+        return;
+      }
+      //p.setPosition(p.sx,p.sy);
+      //else
+      p.setPosition(x,y);
 
       p.sx = p.x;
       p.sy = p.y;
@@ -76,7 +81,7 @@ module.exports = PlayerController = Class.extend({
       }
       if (c.x == c.ex && c.y == c.ey)
       {
-        console.warn("checkStopDanger - coordinates equal");
+        //console.warn("checkStopDanger - coordinates equal");
         return true;
       }
 
@@ -109,17 +114,26 @@ module.exports = PlayerController = Class.extend({
       return res;
     };
 
-    self.player.setMoveStopCallback(function () {
+    self.player.checkStartMove = function (x,y) {
       var p = self.player;
-      //p.moveOrientation = 0;
-      console.info("setMoveStopCallback");
-      console.info("player, x:"+p.x+",y:"+p.y);
-      //console.info("player, ex:"+p.x+",ey:"+p.y);
-      //console.info("player, cx:"+p.sx+",cy:"+p.sy);
+      if (!(p.x == x && p.y == y))
+      {
+        var dx = Math.abs(p.x-x), dy = Math.abs(p.y-y);
+        //if ((dx+dy) < 32)
+          //return true;
+        console.error("PLAYER NOT IN CORRECT POSITION");
+        console.info("p.x:"+p.x+",p.y:"+p.y);
+        console.info("c.x:"+x+",c.y:"+y);
+        console.error("dx:"+dx+",dy:"+dy);
+        p.resetMove(p.x,p.y);
+        return false;
+      }
+      return true;
+    }
 
-      p.checkStopDanger(p, p.moveOrientation);
-
-      if (!(p.ex == -1 && p.ey == -1) && !(p.x == p.ex && p.y == p.ey))
+    self.player.correctMove = function (x, y) {
+      var p = self.player;
+      if (!(p.ex == -1 && p.ey == -1) && !(p.x == x && p.y == y))
       {
         //try { throw new Error(); } catch(err) { console.info(err.stack); }
         console.warn("ERROR - MOVING NOT SYNCHED PROPERLY, FORCING CLIENT UPDATE");
@@ -130,7 +144,19 @@ module.exports = PlayerController = Class.extend({
 
         p.resetMove(p.sx,p.sy);
       }
+    };
 
+    self.player.setMoveStopCallback(function () {
+      var p = self.player;
+      //p.moveOrientation = 0;
+      console.info("setMoveStopCallback");
+      console.info("player, x:"+p.x+",y:"+p.y);
+      //console.info("player, ex:"+p.x+",ey:"+p.y);
+      //console.info("player, cx:"+p.sx+",cy:"+p.sy);
+
+      p.checkStopDanger(p, p.moveOrientation);
+
+      p.correctMove(p.ex,p.ey);
       //p.sendCurrentMove();
       //console.info("p.x:"+p.x+",p.y="+p.y);
       attackFunc(p);

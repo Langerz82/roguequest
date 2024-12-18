@@ -391,6 +391,18 @@ Utils.forEach = function (obj, fn) {
   return false;
 }
 
+Utils.removeFromArray = function (arr, element) {
+    var index = arr.indexOf(element);
+    if (index >= 0)
+      arr.splice(index, 1);
+}
+
+Utils.getLockDelay = function (time) {
+  //var delay=(G_LATENCY)-Math.max((Date.now()-time),0);
+  //return Utils.clamp(0,G_LATENCY,delay);
+  return 0;
+}
+
 /*
 module.exports = removeEmpty = function (obj) {
   return Object.fromEntries(

@@ -505,15 +505,16 @@ function(InfoManager, HoveringInfo, BubbleManager,
               if (!(p.x==x && p.y==y))
               {
                 console.warn("PLAYER NOT IN CORRECT POSITION.");
-                log.info("p.x="+p.x+",x="+x+"p.y="+p.y+",y="+y);
-
+                //log.info("DEBUG: p.x="+p.x+",x="+x+"p.y="+p.y+",y="+y);
+                // Dirty hack to avoid sending a incorrect packet in forcestop.
+                p.keyMove = false;
                 p.forceStop();
                 p.setPositionGrid(x,y);
                 game.player.user.client.sendSyncTime();
-                //game.mapContainer.moveGrid();
                 game.renderer.forceRedraw;
+                //log.info("DEBUG: p.x="+p.x+",x="+x+"p.y="+p.y+",y="+y);
+                return;
               }
-              return;
             }
 
             entity.setMoveRate(moveSpeed);
@@ -564,7 +565,7 @@ function(InfoManager, HoveringInfo, BubbleManager,
 
             entity.forceStop();
             entity.setPosition(path[0][0], path[0][1]);
-            entity.orientation = orientation;
+            entity.setOrientation(orientation);
 
             var movePathFunc = function () {
               if (entity.isDying || entity.isDead) {
@@ -820,9 +821,8 @@ function(InfoManager, HoveringInfo, BubbleManager,
             if(game.disconnect_callback) {
                 game.disconnect_callback(message);
             }
-            for(var index = 0; index < game.dialogs.length; index++) {
-                game.dialogs[index].hide();
-            }
+            for (var dialog of game.dialogs)
+              dialog.hide();
         });
 
         var questSpeech = function (quest) {
@@ -1349,7 +1349,7 @@ function(InfoManager, HoveringInfo, BubbleManager,
 
           }
           if (action == 2) {
-            p.harvestOff();
+            p.forceStop();
           }
 
         });

@@ -305,11 +305,6 @@ define(['gameclient', 'skillhandler', 'quest', 'config', 'achievement'], functio
           this.sendMessage([Types.UserMessages.CU_CONNECT_USER]);
       },
 
-      sendSyncTime: function() {
-          log.info("sendSyncTime");
-          this.sendMessage([Types.Messages.BI_SYNCTIME,Date.now()]);
-      },
-
       sendLoginUser: function (user) {
         this.sendMessage([Types.UserMessages.CU_LOGIN_USER,
                           user.username,

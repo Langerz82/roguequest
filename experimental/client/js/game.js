@@ -795,7 +795,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                       return;
                     }
 
-                    p.orientation = dest.orientation;
+                    p.setOrientation(dest.orientation);
 
                     p.buttonMoving = false;
                     p.forceStop();
@@ -838,29 +838,31 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
                   checkTeleport(p, x, y);
 
-                  if(self.player.target instanceof NpcStatic || self.player.target instanceof NpcMove) {
-                      self.makeNpcTalk(self.player.target);
-                  } else if(self.player.target instanceof Chest) {
-                      self.client.sendOpen(self.player.target);
+                  if(p.target instanceof NpcStatic || p.target instanceof NpcMove) {
+                      self.makeNpcTalk(p.target);
+                  } else if(p.target instanceof Chest) {
+                      self.client.sendOpen(p.target);
                       self.audioManager.playSound("chest");
                   }
               });
 
               self.player.onRequestPath(function(x, y) {
-              	var ignored = [self.player]; // Always ignore self
+                var p = self.player;
+              	var ignored = [p]; // Always ignore self
               	var included = [];
 
-                  if(self.player.hasTarget() && !self.player.target.isDead) {
+                  if(p.hasTarget() && !p.target.isDead) {
 
-                      ignored.push(self.player.target);
+                      ignored.push(p.target);
                   }
 
-                  var path = self.findPath(self.player, x, y, ignored);
+                  var path = self.findPath(p, x, y, ignored);
 
                   if (path && path.length > 0)
                   {
-                    self.player.orientation = self.player.getOrientationTo([path[1][0],path[1][1]]);
-                    self.client.sendMovePath(self.player,
+                    var orientation = p.getOrientationTo([path[1][0],path[1][1]]);
+                    p.setOrientation(orientation);
+                    self.client.sendMovePath(p,
                       path.length,
                       path);
 	                }
@@ -1008,7 +1010,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               var pos = p.nextTile();
               var type = p.getWeaponType();
               if (type != null) {
-                var gpos = getGridPosition(px, py);
+                var gpos = getGridPosition(pos[0], pos[1]);
                 if (this.mapContainer.isHarvestTile(gpos, type)) {
                   game.processInput(pos[0], pos[1], true);
                   return;
@@ -1461,6 +1463,10 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                       if (!entity) continue;
 
                       //log.info("x2:"+entity.x+",y2:"+entity.y);
+                      if (entity == game.player)
+                      {
+                        var a=0;
+                      }
                       if (entity.isOver(x, y))
                         return entity;
                   }
@@ -1783,6 +1789,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   var entity2 = entities[k];
                   //if (entity2 instanceof Item)
                     //continue;
+                  if (entity2 instanceof Player)
+                    continue;
                   if (entity instanceof Player && entity.holdingBlock == entity2)
                     continue;
                   if (!entity2 || entity == entity2)
@@ -1861,10 +1869,9 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 this.clickMove = true;
                 //this.playerPopupMenu.close();
 
-                for(var i = 0; i < this.dialogs.length; i++) {
-                    if(this.dialogs[i].visible){
-                        this.dialogs[i].hide();
-                    }
+                for (var dialog of this.dialogs) {
+                  if (dialog.visible)
+                    dialog.hide();
                 }
 
                 var entity = this.getEntityAt(pos.x, pos.y);
