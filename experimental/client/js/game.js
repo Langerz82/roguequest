@@ -1193,7 +1193,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               if (!npc) return;
 
-              if (!game.player.isNextToo(npc.x, npc.y))
+              if (!game.player.isNextTooEntity(npc))
                 return;
 
               if (npc.type == Types.EntityTypes.NPCMOVE) {
@@ -1457,13 +1457,13 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 //log.info("x:"+x+",y:"+y);
                 if(len > 0) {
                   var entity = null;
-                  var pos = {x:x,y:y};
+                  //var pos = {x:x,y:y};
                   for (var k in entities) {
                       entity = entities[k];
                       if (!entity) continue;
 
                       //log.info("x2:"+entity.x+",y2:"+entity.y);
-                      if (entity.isOver(x, y))
+                      if (entity.isOverPosition(x,y))
                         return entity;
                   }
                 }
@@ -1795,7 +1795,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                     continue;
 
                   if (!entity2.isNextTooEntity(entity) &&
-                      entity2.isNextToo(x, y))
+                      entity2.isNextTooPosition(x, y))
                     return true;
                 }
                 return false;
@@ -1940,7 +1940,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
           	    //this.playerPopupMenu.close();
                 //this.player.clearTarget();
                 var colliding = this.mapContainer.isColliding(px,py);
-                if (colliding && p.isNextToo(px, py)) {
+                if (colliding && p.isNextTooPosition(px, py)) {
                     // Start hit animation and send to Server harvest packet.
                     this.makePlayerHarvest(px, py);
                     return;

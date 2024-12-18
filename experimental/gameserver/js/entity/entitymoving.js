@@ -88,10 +88,6 @@ module.exports = EntityMoving = Entity.extend({
     }
   },
 
-  isNextTooEntity: function (entity) {
-      return this.isNextToo(entity.x, entity.y);
-  },
-
   /**
    * Changes the character's orientation so that it is facing its target.
    */
@@ -392,21 +388,15 @@ module.exports = EntityMoving = Entity.extend({
 
  isOverlapping: function() {
    var entities = this.map.entities.getCharactersAround(this, 1);
-       res = false,
-       ts = G_TILESIZE;
-
    for(var entity of entities) {
      if (!entity || this == entity)
        continue;
-     var tx = entity.x;
-     var ty = entity.y;
-     if ( Math.abs(this.x-tx) < ts && Math.abs(this.y-ty) < ts)
+     if (this.isOverlappingEntity(entity))
      {
-       res = true;
-       break;
+       return true;
      }
    }
-   return res;
+   return false;
  },
 
 /*******************************************************************************

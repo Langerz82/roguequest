@@ -240,25 +240,31 @@ module.exports = Entity = cls.Class.extend({
 				this.orientation = Types.Orientations.DOWN;
 	    },
 
-      isNextToo: function (x,y,dist) {
+      isWithinDist: function (x,y,dist) {
         dist = dist || G_TILESIZE;
-        return (Math.abs(this.x-x) <= dist && Math.abs(this.y-y) <= dist);
+        var dx = Math.abs(this.x-x);
+        var dy = Math.abs(this.y-y);
+        return (dx <= dist && dy <= dist);
       },
 
       isNextTooEntity: function (entity) {
-          return this.isNextToo(entity.x, entity.y);
+          return this.isWithinDist(entity.x, entity.y, G_TILESIZE);
       },
 
-      isWithin: function (entity) {
-        return this.isNextToo(entity.x,entity.y, (G_TILESIZE >> 1));
+      isNextTooPosition: function (x, y) {
+          return this.isWithinDist(x, y, G_TILESIZE);
       },
 
-      isTouching: function (entity) {
-        return this.isNextToo(entity.x,entity.y, (G_TILESIZE-1));
+      isOverEntity: function (entity) {
+          return this.isWithinDist(entity.x, entity.y, (G_TILESIZE >> 1));
       },
 
-      isOver: function (x, y) {
-          return this.isNextToo(x, y, (G_TILESIZE >> 1));
+      isOverPosition: function (x, y) {
+          return this.isWithinDist(x, y, (G_TILESIZE >> 1));
+      },
+
+      isOverlappingEntity: function (entity) {
+        return this.isWithinDist(entity.x,entity.y, G_TILESIZE-1);
       },
 
       getSpriteName: function (spriteNum) {

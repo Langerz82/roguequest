@@ -1641,7 +1641,7 @@ module.exports = Player = Character.extend({
 
   _checkHarvest: function (x, y) {
     var p = this;
-    if (!p.isNextToo(x,y))
+    if (!p.isNextTooPosition(x,y))
       return false;
 
     if (!p.hasWeaponType())

@@ -74,7 +74,7 @@ module.exports = TrapArea = EntityArea.extend({
     if (!this.checkTimer.isOver())
       return;
 
-    if (!this.isTouching(entity))
+    if (!this.isTouchingEntity(entity))
       return;
 
     for (var group of this.groups) {

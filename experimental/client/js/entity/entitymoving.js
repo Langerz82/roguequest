@@ -661,10 +661,6 @@ define(['./entity', '../transition', '../timer'], function(Entity, Transition, T
       return this.isFacing(entity.x, entity.y);
   },
 
-  isNextTooEntity: function (entity) {
-      return this.isNextToo(entity.x, entity.y);
-  },
-
 /*******************************************************************************
  * END - Orientation Functions.
  ******************************************************************************/

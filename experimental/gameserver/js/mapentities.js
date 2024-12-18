@@ -1032,7 +1032,7 @@ var MapEntities = cls.Class.extend({
       if (entities.length == 0)
         return true;
       for (var entity of entities) {
-        if (entity.isWithin(pos))
+        if (entity.isOverPosition(pos))
           return false;
       }
       return true;

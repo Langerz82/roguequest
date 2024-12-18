@@ -79,13 +79,13 @@ module.exports = TrapGroup = cls.Class.extend({
     if (!this.damaging)
       return;
 
-    if (!this.isTouching(entity))
+    if (!this.isTouchingEntity(entity))
       return;
 
     var victim = null;
     for(var trap of this.traps)
     {
-      if (trip.isTouching(entity)) {
+      if (trip.isTouchingEntity(entity)) {
         victim = entity;
         break;
       }
@@ -99,7 +99,7 @@ module.exports = TrapGroup = cls.Class.extend({
     }
 
     if(this.entities.getOwnProperty(id) && this.entities[id]) {
-      if (this.entities[id].isWithin(player))
+      if (this.entities[id].isOverEntity(player))
         player.onDamage(this, this.damage);
     }
     else {

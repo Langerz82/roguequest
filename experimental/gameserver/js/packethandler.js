@@ -890,7 +890,7 @@ module.exports = PacketHandler = Class.extend({
     var x = parseInt(message[1]),
         y = parseInt(message[2]);
 
-    if (!this.player.isNextToo(x,y)) {
+    if (!this.player.isNextTooPosition(x,y)) {
       console.info("Player is not close enough to item.")
       return;
     }
