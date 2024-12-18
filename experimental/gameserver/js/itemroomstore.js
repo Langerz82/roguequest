@@ -104,9 +104,8 @@ module.exports = ItemStore = cls.Class.extend({
       if (consume || loot || craft)
       {
         for(var i in this.rooms){
-          var slot = this.combineItem(item, this.rooms[i]);
-          if (slot >= 0)
-            return slot;
+          if (this.combineItem(item, this.rooms[i]))
+            return i;
         }
       }
       return this._putItem(item);
@@ -117,16 +116,17 @@ module.exports = ItemStore = cls.Class.extend({
       console.info(JSON.stringify(item2));
 
       if(!item || !item2)
-        return -1;
+        return false;
 
       if(item.itemKind != item2.itemKind)
-        return -1;
+        return false;
 
       if (ItemTypes.isEquippable(item.itemKind) ||
           ItemTypes.isEquippable(item2.itemKind)) {
-        return -1;
+        return false;
       }
 
+      var res = false;
       var slot = item.slot;
       var slot2 = item2.slot;
 
@@ -136,19 +136,20 @@ module.exports = ItemStore = cls.Class.extend({
         if (item2.itemNumber > maxStack) {
           item.itemNumber = item2.itemNumber - maxStack;
           item2.itemNumber = Math.min(item2.itemNumber, maxStack);
+          slot = this.getEmptyIndex();
         } else {
           item = null;
         }
-      } else {
-        return this._putItem(item);
+        res = true;
       }
+
       if(item2.itemNumber <= 0) {
         item2 = null;
       }
 
       this.setItem(slot, item);
       this.setItem(slot2, item2);
-      return slot2;
+      return res;
     },
 
     _putItem: function(item){
