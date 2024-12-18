@@ -99,7 +99,7 @@ module.exports = TrapGroup = cls.Class.extend({
     }
 
     if(this.entities.getOwnProperty(id) && this.entities[id]) {
-      if (this.entities[id].isOver())
+      if (this.entities[id].isWithin(player))
         player.onDamage(this, this.damage);
     }
     else {

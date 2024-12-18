@@ -394,7 +394,7 @@ module.exports = World = cls.Class.extend(
             });
         }, 1000);
 
-        setInterval(function()
+        /*setInterval(function()
         {
             Utils.forEach(self.maps, function (map) {
                 var players = map.entities.players;
@@ -406,7 +406,7 @@ module.exports = World = cls.Class.extend(
                     });
                 }
             });
-        }, 300000);
+        }, 300000);*/
 
         setInterval(function()
         {

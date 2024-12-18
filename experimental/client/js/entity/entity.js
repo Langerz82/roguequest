@@ -287,7 +287,7 @@ define(['../timer'], function(Timer) {
         },
 
         isTouching: function (entity) {
-          return this.isNextToo(entity.x,entity.y, (G_TILESIZE-1));
+          return this.isNextToo(entity.x,entity.y, (G_TILESIZE));
         },
 
         isOver: function (x, y) {

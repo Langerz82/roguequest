@@ -1031,7 +1031,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 p.clearTarget();
               }
 
-              if (target && p.isNextToo(target)) {
+              if (target && p.isNextTooEntity(target)) {
                 if (p.isMoving())
                   p.forceStop();
                 p.lookAtEntity(target);
@@ -1457,16 +1457,12 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 //log.info("x:"+x+",y:"+y);
                 if(len > 0) {
                   var entity = null;
-                  var dx, dy;
+                  var pos = {x:x,y:y};
                   for (var k in entities) {
                       entity = entities[k];
                       if (!entity) continue;
 
                       //log.info("x2:"+entity.x+",y2:"+entity.y);
-                      if (entity == game.player)
-                      {
-                        var a=0;
-                      }
                       if (entity.isOver(x, y))
                         return entity;
                   }
@@ -1798,8 +1794,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   if (entity2.isDead || entity2.isDying)
                     continue;
 
-                  if (!entity2.isWithin(entity) &&
-                      entity2.isWithin({x:x, y:y}))
+                  if (!entity2.isNextTooEntity(entity) &&
+                      entity2.isNextToo(x, y))
                     return true;
                 }
                 return false;
