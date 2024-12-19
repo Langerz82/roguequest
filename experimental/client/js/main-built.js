@@ -3524,88 +3524,111 @@ SkillEffects = {
 };
 
 Types = {
+    UserMessages: {
+      CU_CONNECT_USER: 1,
+      CU_CREATE_USER: 2,
+      CU_LOGIN_USER: 3,
+      CU_CREATE_PLAYER: 4,
+      CU_LOGIN_PLAYER: 5,
+      CU_REMOVE_USER: 6,
+
+      UC_WORLD_READY: 101,
+      UC_WORLDS: 102,
+      UC_VERSION: 103,
+      UC_PLAYER_SUM: 104,
+      UC_ERROR: 105,
+
+      WU_CONNECT_WORLD: 501,
+      WU_GAMESERVER_INFO: 502,
+      WU_PLAYER_LOADED: 503,
+      WU_SAVE_PLAYER_AUCTIONS: 504,
+      WU_SAVE_PLAYER_LOOKS: 505,
+      WU_SAVE_PLAYERS_LIST: 506,
+      WU_SAVE_PLAYER_DATA: 507,
+
+      UW_LOAD_PLAYER_AUCTIONS: 601,
+      UW_LOAD_PLAYER_LOOKS: 602,
+      UW_WORLD_SAVE: 603,
+      UW_WORLD_CLOSE: 604,
+      UW_LOAD_PLAYER_DATA: 605
+    },
+
     Messages: {
       BI_SYNCTIME: 200,
 
-      CS_CREATE_USER: 1,
-      CS_LOGIN_USER: 2,
-      CS_CREATE_PLAYER: 3,
-      CS_LOGIN_PLAYER: 4,
-      CS_REMOVE_USER: 5,
-      CS_ITEMSLOT: 6,
-      CS_APPEARANCEUNLOCK: 7,
-      CS_ATTACK: 8,
-      CS_AUCTIONBUY: 9,
-      CS_AUCTIONDELETE: 10,
-      CS_AUCTIONOPEN: 11,
-      CS_AUCTIONSELL: 12,
-      CS_BANKRETRIEVE: 13,
-      CS_BANKSTORE: 14,
-      CS_CHAT: 15,
-      CS_COLOR_TINT: 16,
-      CS_BLOCK_MODIFY: 17,
-      CS_GOLD: 18,
-      CS_PARTY: 19,
-      CS_HARVEST: 20,
-      CS_USE_NODE: 21,
-      CS_LOOKUPDATE: 22,
-      CS_LOOT: 23,
-      CS_MOVE: 24,
-      CS_MOVEPATH: 25,
-      CS_QUEST: 26,
-      CS_STATADD: 27,
-      CS_STOREBUY: 28,
-      CS_STORE_MODITEM: 29,
-      CS_STORESELL: 30,
-      CS_TALKTONPC: 31,
-      CS_CRAFT: 32,
-      CS_TELEPORT_MAP: 33,
-      CS_WHO: 34,
-      CS_SKILL: 35,
-      CS_SHORTCUT: 36,
-      CS_REQUEST: 37,
+      CW_LOGIN_PLAYER: 201,
+      CW_ITEMSLOT: 202,
+      CW_APPEARANCEUNLOCK: 203,
+      CW_ATTACK: 204,
+      CW_AUCTIONBUY: 205,
+      CW_AUCTIONDELETE: 206,
+      CW_AUCTIONOPEN: 207,
+      CW_AUCTIONSELL: 208,
+      CW_BANKRETRIEVE: 209,
+      CW_BANKSTORE: 210,
+      CW_CHAT: 211,
+      CW_COLOR_TINT: 212,
+      CW_BLOCK_MODIFY: 213,
+      CW_GOLD: 214,
+      CW_PARTY: 215,
+      CW_HARVEST: 216,
+      CW_USE_NODE: 217,
+      CW_LOOKUPDATE: 218,
+      CW_LOOT: 219,
+      CW_MOVE: 220,
+      CW_MOVEPATH: 221,
+      CW_QUEST: 222,
+      CW_STATADD: 223,
+      CW_STOREBUY: 224,
+      CW_STORE_MODITEM: 225,
+      CW_STORESELL: 226,
+      CW_TALKTONPC: 227,
+      CW_CRAFT: 228,
+      CW_TELEPORT_MAP: 229,
+      CW_WHO: 230,
+      CW_SKILL: 231,
+      CW_SHORTCUT: 232,
+      CW_REQUEST: 233,
 
-      SC_ERROR: 100,
-      SC_WORLDS: 101,
-      SC_VERSION: 102,
-      SC_PLAYER_SUM: 103,
-      SC_PLAYER: 104,
-      SC_ACHIEVEMENT: 105,
-      SC_AUCTIONOPEN: 106,
-      SC_ITEMSLOT: 107,
-      SC_CHANGEPOINTS: 108,
-      SC_CHAT: 109,
-      SC_COLOR_TINT: 110,
-      SC_DAMAGE: 111,
-      SC_DESPAWN: 112,
-      SC_SWAPSPRITE: 113,
-      SC_APPEARANCE: 114,
-      SC_GOLD: 115,
-      SC_PARTY: 116,
-      SC_PLAYERINFO: 117,
-      SC_ITEMLEVELUP: 118,
-      SC_STAT: 119,
-      SC_LEVELUP: 120,
-      SC_LIST: 121,
-      SC_LOOKS: 122,
-      SC_LOG: 123,
-      SC_HARVEST: 124,
-      SC_MOVE: 125,
-      SC_MOVEPATH: 126,
-      SC_NOTIFY: 127,
-      SC_QUEST: 128,
-      SC_SKILLEFFECTS: 129,
-      SC_SKILLLOAD: 130,
-      SC_SPAWN: 131,
-      SC_SPEECH: 132,
-      SC_STATINFO: 133,
-      SC_TELEPORT_MAP: 134,
-      SC_SKILL_XP: 135,
-      SC_DIALOGUE: 136,
-      SC_SET_SPRITE: 137,
-      SC_SET_ANIMATION: 138,
-      SC_BLOCK_MODIFY: 139,
-      SC_PLAYERINFO: 140
+      WC_ERROR: 300,
+      WC_PLAYER: 301,
+      WC_ACHIEVEMENT: 302,
+      WC_AUCTIONOPEN: 303,
+      WC_ITEMSLOT: 304,
+      WC_CHANGEPOINTS: 305,
+      WC_CHAT: 306,
+      WC_COLOR_TINT: 307,
+      WC_DAMAGE: 308,
+      WC_DESPAWN: 309,
+      WC_SWAPSPRITE: 310,
+      WC_APPEARANCE: 311,
+      WC_GOLD: 312,
+      WC_PARTY: 313,
+      WC_PLAYERINFO: 314,
+      WC_ITEMLEVELUP: 315,
+      WC_STAT: 316,
+      WC_LEVELUP: 317,
+      WC_LIST: 318,
+      WC_LOOKS: 319,
+      WC_LOG: 320,
+      WC_HARVEST: 321,
+      WC_MOVE: 322,
+      WC_MOVEPATH: 323,
+      WC_NOTIFY: 324,
+      WC_QUEST: 325,
+      WC_SKILLEFFECTS: 326,
+      WC_SKILLLOAD: 327,
+      WC_SPAWN: 328,
+      WC_SPEECH: 329,
+      WC_STATINFO: 330,
+      WC_TELEPORT_MAP: 331,
+      WC_SKILL_XP: 332,
+      WC_DIALOGUE: 333,
+      WC_SET_SPRITE: 334,
+      WC_SET_ANIMATION: 335,
+      WC_BLOCK_MODIFY: 336,
+      WC_PLAYERINFO: 337,
+      WC_VERSION: 338
     },
 
     Orientations: {
@@ -6221,13 +6244,18 @@ define('timer',[],function() {
 
     var Timer = Class.extend({
         init: function(duration, startTime) {
-            this.lastTime = startTime;
-            if (isNaN(startTime) || startTime === null || startTime === 0)
-            {
-              this.lastTime = Date.now();
-            }
+            this.restart(startTime);
 
             this.duration = duration;
+        },
+
+        restart: function (startTime)
+        {
+          this.lastTime = startTime;
+          if (isNaN(startTime) || startTime === null || startTime === 0)
+          {
+            this.lastTime = Date.now();
+          }
         },
 
         isOver: function(time) {
@@ -6526,7 +6554,7 @@ define('entity/entity',['../timer'], function(Timer) {
           }
           return this.fadingTimer.getRatio(time);
         },
-
+/*
         isNextToo: function (x,y,dist) {
           dist = dist || G_TILESIZE;
           return (Math.abs(this.x-x) <= dist && Math.abs(this.y-y) <= dist);
@@ -6541,32 +6569,39 @@ define('entity/entity',['../timer'], function(Timer) {
         },
 
         isTouching: function (entity) {
-          return this.isNextToo(entity.x,entity.y, (G_TILESIZE-1));
+          return this.isNextToo(entity.x,entity.y, (G_TILESIZE));
         },
 
         isOver: function (x, y) {
             return this.isNextToo(x, y, (G_TILESIZE >> 1));
         },
+*/
+        isWithinDist: function (x,y,dist) {
+          dist = dist || G_TILESIZE;
+          var dx = Math.abs(this.x-x);
+          var dy = Math.abs(this.y-y);
+          return (dx <= dist && dy <= dist);
+        },
 
-        isOverlapping: function() {
-          var entities = this.map.entities.getCharactersAround(this, 1);
-              res = false,
-              ts = G_TILESIZE;
+        isNextTooEntity: function (entity) {
+            return this.isWithinDist(entity.x, entity.y, G_TILESIZE);
+        },
 
-          for(var entity of entities) {
-            //var entity2 = entities[k];
-            if (!entity || this == entity)
-              continue;
-            var tx = entity.x;
-            var ty = entity.y;
-            if (this.isTouching(entity.x, entity.y))
-            {
-              res = true;
-              break;
-            }
-          }
-          return res;
-        }
+        isNextTooPosition: function (x, y) {
+            return this.isWithinDist(x, y, G_TILESIZE);
+        },
+
+        isOverEntity: function (entity) {
+            return this.isWithinDist(entity.x, entity.y, (G_TILESIZE >> 1));
+        },
+
+        isOverPosition: function (x, y) {
+            return this.isWithinDist(x, y, (G_TILESIZE >> 1));
+        },
+
+        isOverlappingEntity: function (entity) {
+          return this.isWithinDist(entity.x,entity.y, G_TILESIZE-1);
+        },
 
     });
 
@@ -6932,7 +6967,9 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
       if (!p || i > (p.length-1))
         return;
 
-      this.orientation = this.getOrientation([this.x,this.y], p[i]);
+      var orientation = this.getOrientation([this.x,this.y], p[i]);
+      this.orientation = orientation;
+      this.setOrientation(orientation);
       this.walk(this.orientation);
   },
 
@@ -7047,7 +7084,7 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
   },
 
   movePath: function (path, orientation) {
-    this.orientation = this.getOrientationTo([path[1][0],path[1][1]]);
+    this.setOrientation(this.getOrientationTo([path[1][0],path[1][1]]));
     this.walk();
 
     this.path = path;
@@ -7060,7 +7097,7 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
 
   move: function (time, orientation, state, x, y) {
 
-    this.orientation = orientation;
+    this.setOrientation(orientation);
     if (state == 1 && orientation != Types.Orientations.NONE)
     {
       this.forceStop();
@@ -7201,6 +7238,9 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
 
   setOrientation: function(orientation) {
     if (orientation) {
+      if (orientation != this.orientation && this.isMoving()) {
+        try { throw new Error() } catch (e) { log.error(e.stack); }
+      }
       this.orientation = orientation || 0;
     }
   },
@@ -7213,7 +7253,7 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
    * Changes the character's orientation so that it is facing its target.
    */
    lookAt: function(x, y) {
-       this.orientation = this.getOrientationTo([x, y]);
+       this.setOrientation(this.getOrientationTo([x, y]));
        this.idle(this.orientation);
        return this.orientation;
    },
@@ -7237,14 +7277,14 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
     this.lookAt(pos.x+tsh,pos.y+tsh);
   },
 
-  isNextToo: function (x,y,o) {
+  /*isNextToo: function (x,y,o) {
     var o = o || this.orientation;
     var ts = G_TILESIZE;
     //log.info("isNextToo:");
     //log.info("dx:"+Math.abs(this.x-x));
     //log.info("dy:"+Math.abs(this.y-y));
     return (Math.abs(this.x-x) <= ts && Math.abs(this.y-y) <= ts);
-  },
+  },*/
 
   isInReach: function (x,y,o,r,rs) {
     var o = o || this.orientation;
@@ -7293,10 +7333,6 @@ define('entity/entitymoving',['./entity', '../transition', '../timer'], function
 
   isFacingEntity: function (entity) {
       return this.isFacing(entity.x, entity.y);
-  },
-
-  isNextTooEntity: function (entity) {
-      return this.isNextToo(entity.x, entity.y);
   },
 
 /*******************************************************************************
@@ -7770,7 +7806,7 @@ define('entity/character',['./entitymoving', '../transition', '../timer', 'data/
        log.info("lookAtEntity");
        if (entity) {
            log.info("lookAtEntity "+entity.id);
-           this.orientation = this.getOrientationTo([entity.x, entity.y]);
+           this.setOrientation(this.getOrientationTo([entity.x, entity.y]));
            log.info("this.orientation="+this.orientation);
        }
        if (!this.hasAnimation('atk'))
@@ -15105,7 +15141,7 @@ define('entity/player',['./entity', './character', '../exceptions', 'data/appear
     move: function (time, orientation, state, x, y) {
       var self = this;
 
-      this.orientation = orientation;
+      this.setOrientation(orientation);
       if (state == 1 && orientation != Types.Orientations.NONE)
       {
         var lockStepTime = (G_LATENCY - (getWorldTime()-time));
@@ -15373,7 +15409,7 @@ define('entity/player',['./entity', './character', '../exceptions', 'data/appear
 
     respawn: function () {
       this.setArmorSprite();
-      this.orientation = Types.Orientations.DOWN;
+      this.setOrientation(Types.Orientations.DOWN);
       this.idle(this.orientation);
       this.fsm = "IDLE";
     },
@@ -15443,11 +15479,11 @@ define('entity/player',['./entity', './character', '../exceptions', 'data/appear
       clearInterval(this.harvestTimeout);
       this.harvestTimeout = setInterval(function () {
         if (!self.harvestTimeout) {
-          self.harvestOff();
+          self.forceStop();
           return;
         }
         if (self.target && !(self.target.type == Types.EntityTypes.NODE)) {
-          self.harvestOff();
+          self.forceStop();
           return;
         }
         harvest();
@@ -15460,7 +15496,7 @@ define('entity/player',['./entity', './character', '../exceptions', 'data/appear
         clearInterval(this.harvestTimeout);
         this.harvestTimeout = null;
         //this.fsm = "IDLE";
-        this.forceStop();
+        //this.forceStop();
         //this.fsm = "IDLE";
         //this.idle();
         this.startHarvestTime = 0;
@@ -16833,47 +16869,59 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
         },
 
 				setHandlers: function () {
-					this.handlers[Types.Messages.SC_AUCTIONOPEN] = this.auction_callback;
-					this.handlers[Types.Messages.SC_CHANGEPOINTS] = this.change_points_callback;
-					this.handlers[Types.Messages.SC_CHAT] = this.chat_callback;
-					this.handlers[Types.Messages.SC_DAMAGE] = this.dmg_callback;
-					this.handlers[Types.Messages.SC_DESTROY] = this.destroy_callback;
-					this.handlers[Types.Messages.SC_GOLD] = this.gold_callback;
-					this.handlers[Types.Messages.SC_ITEMSLOT] = this.itemslot_callback;
-					this.handlers[Types.Messages.SC_ITEMLEVELUP] = this.itemlevelup_callback;
-					this.handlers[Types.Messages.SC_STAT] = this.stat_callback;
-					this.handlers[Types.Messages.SC_LEVELUP] = this.levelup_callback;
-					this.handlers[Types.Messages.SC_DESPAWN] = this.despawn_callback;
-					this.handlers[Types.Messages.SC_SWAPSPRITE] = this.swapsprite_callback;
-					this.handlers[Types.Messages.SC_APPEARANCE] = this.appearance_callback;
-					//this.handlers[Types.Messages.SC_LOOKUPDATE] = this.updatelook_calllback;
-					this.handlers[Types.Messages.SC_MOVE] = this.move_callback;
-					this.handlers[Types.Messages.SC_MOVEPATH] = this.movepath_callback;
-					this.handlers[Types.Messages.SC_NOTIFY] = this.notify_callback;
-					this.handlers[Types.Messages.SC_QUEST] = this.quest_callback;
-					this.handlers[Types.Messages.SC_ACHIEVEMENT] = this.achievement_callback;
-					this.handlers[Types.Messages.SC_SKILLEFFECTS] = this.skilleffects_callback;
-					this.handlers[Types.Messages.SC_SKILLLOAD] = this.skillLoad_callback;
-					this.handlers[Types.Messages.SC_SKILLXP] = this.skillxp_callback;
-					this.handlers[Types.Messages.SC_SPAWN] = this.receiveSpawn;
-					this.handlers[Types.Messages.SC_SPEECH] = this.speech_callback;
-					this.handlers[Types.Messages.SC_DIALOGUE] = this.dialogue_callback;
-					this.handlers[Types.Messages.SC_STATINFO] = this.statInfo_callback;
-					this.handlers[Types.Messages.SC_TELEPORT_MAP] = this.teleportmap_callback;
-					this.handlers[Types.Messages.SC_BLOCK_MODIFY] = this.block_callback;
-					this.handlers[Types.Messages.SC_PARTY] = this.party_callback;
-					this.handlers[Types.Messages.SC_LOOKS] = this.looks_callback;
-					this.handlers[Types.Messages.SC_PLAYERINFO] = this.playerinfo_callback;
-					this.handlers[Types.Messages.SC_HARVEST] = this.harvest_callback;
+					this.handlers[Types.Messages.WC_AUCTIONOPEN] = this.auction_callback;
+					this.handlers[Types.Messages.WC_CHANGEPOINTS] = this.change_points_callback;
+					this.handlers[Types.Messages.WC_CHAT] = this.chat_callback;
+					this.handlers[Types.Messages.WC_DAMAGE] = this.dmg_callback;
+					this.handlers[Types.Messages.WC_DESTROY] = this.destroy_callback;
+					this.handlers[Types.Messages.WC_GOLD] = this.gold_callback;
+					this.handlers[Types.Messages.WC_ITEMSLOT] = this.itemslot_callback;
+					this.handlers[Types.Messages.WC_ITEMLEVELUP] = this.itemlevelup_callback;
+					this.handlers[Types.Messages.WC_STAT] = this.stat_callback;
+					this.handlers[Types.Messages.WC_LEVELUP] = this.levelup_callback;
+					this.handlers[Types.Messages.WC_DESPAWN] = this.despawn_callback;
+					this.handlers[Types.Messages.WC_SWAPSPRITE] = this.swapsprite_callback;
+					this.handlers[Types.Messages.WC_APPEARANCE] = this.appearance_callback;
+					//this.handlers[Types.Messages.WC_LOOKUPDATE] = this.updatelook_calllback;
+					this.handlers[Types.Messages.WC_MOVE] = this.move_callback;
+					this.handlers[Types.Messages.WC_MOVEPATH] = this.movepath_callback;
+					this.handlers[Types.Messages.WC_NOTIFY] = this.notify_callback;
+					this.handlers[Types.Messages.WC_QUEST] = this.quest_callback;
+					this.handlers[Types.Messages.WC_ACHIEVEMENT] = this.achievement_callback;
+					this.handlers[Types.Messages.WC_SKILLEFFECTS] = this.skilleffects_callback;
+					this.handlers[Types.Messages.WC_SKILLLOAD] = this.skillLoad_callback;
+					this.handlers[Types.Messages.WC_SKILLXP] = this.skillxp_callback;
+					this.handlers[Types.Messages.WC_SPAWN] = this.receiveSpawn;
+					this.handlers[Types.Messages.WC_SPEECH] = this.speech_callback;
+					this.handlers[Types.Messages.WC_DIALOGUE] = this.dialogue_callback;
+					this.handlers[Types.Messages.WC_STATINFO] = this.statInfo_callback;
+					this.handlers[Types.Messages.WC_TELEPORT_MAP] = this.teleportmap_callback;
+					this.handlers[Types.Messages.WC_BLOCK_MODIFY] = this.block_callback;
+					this.handlers[Types.Messages.WC_PARTY] = this.party_callback;
+					this.handlers[Types.Messages.WC_LOOKS] = this.looks_callback;
+					this.handlers[Types.Messages.WC_PLAYERINFO] = this.playerinfo_callback;
+					this.handlers[Types.Messages.WC_HARVEST] = this.harvest_callback;
 
-					this.handlers[Types.Messages.SC_SET_SPRITE] = this.set_sprite_callback;
-					this.handlers[Types.Messages.SC_SET_ANIMATION] = this.set_animation_callback;
+					this.handlers[Types.Messages.WC_SET_SPRITE] = this.set_sprite_callback;
+					this.handlers[Types.Messages.WC_SET_ANIMATION] = this.set_animation_callback;
+					this.handlers[Types.Messages.WC_VERSION] = this.onVersion;
+					this.handlers[Types.Messages.WC_PLAYER] = this.player_callback;
 				},
 
-				connect: function (connection) {
+				connect: function (url, data) {
 					var self = this;
 
-					this.connection = connection;
+					this.connection = io(url, {
+            forceNew: true,
+            reconnection: false,
+            timeout: 10000,
+            transports: ['websocket'],
+          });
+
+					this.connection.on('connect', function() {
+            log.info("Connected to server "+url);
+            self.onConnected(data);
+          });
 
 					//this.connection.removeListener('message', userclient.onMessage);
 					this.connection.on('message', function(e) {
@@ -16881,10 +16929,33 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 							self.onMessage(e);
 							return false;
 					});
+
+					this.connection.on('disconnect', function() {
+							log.debug("Connection closed");
+							if(self.disconnected_callback) {
+									if(self.isTimeout) {
+											self._onError(["You have been disconnected for being inactive for too long"]);
+									} else {
+											self._onError(["The connection to RRO2 has been lost."]);
+									}
+							}
+					});
+				},
+
+				_onError: function (data) {
+	          var message = data[0];
+	          $('#container').addClass('error');
+	          $('#errorwindow .errordetails').html("<p>"+message+"</p>");
+	          app.loadWindow('playerwindow','errorwindow');
+	      },
+
+				onConnected: function (data) {
+					this.sendLoginPlayer(data[0], data[1]);
+					this.sendSyncTime();
 				},
 
 				onVersion: function (data) {
-	        game.onVersion(data);
+	        game.onVersionGame(data);
 	      },
 
         enable: function() {
@@ -17220,9 +17291,19 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 				},
 
 // SEND FUNCTIONS.
+				sendSyncTime: function() {
+						log.info("sendSyncTime");
+						this.sendMessage([Types.Messages.BI_SYNCTIME,Date.now()]);
+				},
+
+				sendLoginPlayer: function (playername, playerhash) {
+					this.sendMessage([Types.Messages.CW_LOGIN_PLAYER,
+														playername,
+														playerhash]);
+				},
 
         /*sendCreate: function(player) {
-            this.sendMessage([Types.Messages.CS_CREATE_PLAYER,
+            this.sendMessage([Types.Messages.CW_CREATE_PLAYER,
 															Date.now(),
                               player.name,
             		      				player.pClass
@@ -17230,14 +17311,15 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
         },
 
         sendLogin: function(player) {
-            this.sendMessage([Types.Messages.CS_LOGIN_PLAYER,
+            this.sendMessage([Types.Messages.CW_LOGIN_PLAYER,
 															Date.now(),
                               player.name]);
         },*/
 
         sendMoveEntity: function(entity, action) {
 						//try { throw new Error(); } catch(err) { console.error(err.stack); }
-            this.sendMessage([Types.Messages.CS_MOVE,
+						console.info("DEBUG: sendMoveEntity: x:"+entity.x+",entity.y:"+entity.y);
+            this.sendMessage([Types.Messages.CW_MOVE,
 											getWorldTime(),
             		      entity.id,
 											action,
@@ -17254,195 +17336,191 @@ define('gameclient',['lib/pako', 'entity/player', 'entityfactory', 'entity/mob',
 							length--;
 						}
 
-            var array = [Types.Messages.CS_MOVEPATH,
+            var array = [Types.Messages.CW_MOVEPATH,
 											getWorldTime(),
             		      entity.id,
 											entity.getOrientation(path[0], path[1]),
                       (entity.interrupted ? 1 : 0)];
 
-            array = array.concat(simpath);
+            array.push(simpath);
         		this.sendMessage(array);
         },
 
 				sendDropItem: function(item, x, y) {
-					this.sendMessage([Types.Messages.CS_DROP,
+					this.sendMessage([Types.Messages.CW_DROP,
 														x,
 														y,
 														item.id]);
 				},
 
         sendAttack: function(player, mob, spellId) {
-            this.sendMessage([Types.Messages.CS_ATTACK, getWorldTime(),
+            this.sendMessage([Types.Messages.CW_ATTACK, getWorldTime(),
                               mob.id, player.orientation, spellId]);
         },
 
         sendChat: function(text) {
-            this.sendMessage([Types.Messages.CS_CHAT,
+            this.sendMessage([Types.Messages.CW_CHAT,
                               text]);
         },
 
         sendLoot: function(item) {
-            this.sendMessage([Types.Messages.CS_LOOT].concat(_.pluck(item,'id')));
+            this.sendMessage([Types.Messages.CW_LOOT].concat(_.pluck(item,'id')));
         },
 
 				// map, status, x, y
         sendTeleportMap: function(data) {
 						//if (data[1] == 0)
 							//game.renderer.blankFrame = true;
-            this.sendMessage([Types.Messages.CS_TELEPORT_MAP,
+            this.sendMessage([Types.Messages.CW_TELEPORT_MAP,
             		      	  		data[0], data[1], data[2], data[3]]);
         },
 
         sendWho: function(ids) {
-						ids = ids || [];
-						ids.unshift((ids.length > 0) ? 2 : 1);
-						ids.unshift(Types.Messages.CS_WHO);
-            this.sendMessage(ids);
+						this.sendMessage([Types.Messages.CW_WHO,ids]);
         },
 
-				/*sendKnowWho: function(ids) {
-            ids.unshift(Types.Messages.CS_KNOWWHO);
-            this.sendMessage(ids);
-        },*/
+				sendWhoRequest: function() {
+						this.sendMessage([Types.Messages.CW_REQUEST,3]);
+        },
 
         sendDelist: function(ids) {
-            ids.unshift(Types.Messages.CS_DELIST);
+            ids.unshift(Types.Messages.CW_DELIST);
             this.sendMessage(ids);
         },
 
         sendTalkToNPC: function (type, npcId) {
-            this.sendMessage([Types.Messages.CS_TALKTONPC, type, npcId]);
+            this.sendMessage([Types.Messages.CW_TALKTONPC, type, npcId]);
         },
 
         sendQuest: function(entityId, questId, status){
-            this.sendMessage([Types.Messages.CS_QUEST, entityId, questId, status]);
+            this.sendMessage([Types.Messages.CW_QUEST, entityId, questId, status]);
         },
 
 				// category, type, inventoryNumber, count, x, y
         sendItemSlot: function(data){
-            this.sendMessage([Types.Messages.CS_ITEMSLOT].concat(data));
+            this.sendMessage([Types.Messages.CW_ITEMSLOT].concat(data));
         },
 
         sendSkill: function(type, targetId){
-            this.sendMessage([Types.Messages.CS_SKILL, type, targetId]);
+            this.sendMessage([Types.Messages.CW_SKILL, type, targetId]);
         },
 
         sendShortcut: function(index, type, shortcutId) {
-            this.sendMessage([Types.Messages.CS_SHORTCUT, index, type, shortcutId]);
+            this.sendMessage([Types.Messages.CW_SHORTCUT, index, type, shortcutId]);
         },
 
         sendSkillLoad: function() {
-            this.sendMessage([Types.Messages.CS_SKILLLOAD]);
+            this.sendMessage([Types.Messages.CW_SKILLLOAD]);
         },
 
         /*sendCharacterInfo: function() {
-            this.sendMessage([Types.Messages.CS_CHARACTERINFO]);
+            this.sendMessage([Types.Messages.CW_CHARACTERINFO]);
         },*/
 
         sendStoreSell: function(type, inventoryNumber) {
-            this.sendMessage([Types.Messages.CS_STORESELL, type, inventoryNumber]);
+            this.sendMessage([Types.Messages.CW_STORESELL, type, inventoryNumber]);
         },
         sendStoreBuy: function(itemType, itemKind, itemCount) {
-            this.sendMessage([Types.Messages.CS_STOREBUY, itemType, itemKind, itemCount]);
+            this.sendMessage([Types.Messages.CW_STOREBUY, itemType, itemKind, itemCount]);
         },
 				sendStoreCraft: function(itemKind, itemCount) {
-            this.sendMessage([Types.Messages.CS_CRAFT, itemKind, itemCount]);
+            this.sendMessage([Types.Messages.CW_CRAFT, itemKind, itemCount]);
         },
 
 				sendPlayerInfo: function () {
-					this.sendMessage([Types.Messages.CS_REQUEST, 2]);
+					this.sendMessage([Types.Messages.CW_REQUEST, 2]);
 				},
 
         sendAuctionOpen: function(type) {
-            this.sendMessage([Types.Messages.CS_AUCTIONOPEN, type]);
+            this.sendMessage([Types.Messages.CW_AUCTIONOPEN, type]);
         },
         sendAuctionSell: function(inventoryNumber, sellValue) {
-            this.sendMessage([Types.Messages.CS_AUCTIONSELL, inventoryNumber, sellValue]);
+            this.sendMessage([Types.Messages.CW_AUCTIONSELL, inventoryNumber, sellValue]);
         },
         sendAuctionBuy: function(index, type) {
-            this.sendMessage([Types.Messages.CS_AUCTIONBUY, index, type]);
+            this.sendMessage([Types.Messages.CW_AUCTIONBUY, index, type]);
         },
         sendAuctionDelete: function(index, type) {
-            this.sendMessage([Types.Messages.CS_AUCTIONDELETE, index, type]);
+            this.sendMessage([Types.Messages.CW_AUCTIONDELETE, index, type]);
         },
 
         sendStoreEnchant: function(type, index) { // type 1 = Inventory, 2 = Equipment.
-            this.sendMessage([Types.Messages.CS_STORE_MODITEM, 1, type, index]);
+            this.sendMessage([Types.Messages.CW_STORE_MODITEM, 1, type, index]);
         },
         sendStoreRepair: function(type, index) { // type 1 = Inventory, 2 = Equipment.
-            this.sendMessage([Types.Messages.CS_STORE_MODITEM, 0, type, index]);
+            this.sendMessage([Types.Messages.CW_STORE_MODITEM, 0, type, index]);
         },
 
         /*sendBankStore: function(itemSlot) {
-            this.sendMessage([Types.Messages.CS_ITEMSLOT, 2, itemSlot]);
+            this.sendMessage([Types.Messages.CW_ITEMSLOT, 2, itemSlot]);
         },
         sendBankRetrieve: function(itemSlot) {
-            this.sendMessage([Types.Messages.CS_BANKRETRIEVE, itemSlot]);
+            this.sendMessage([Types.Messages.CW_BANKRETRIEVE, itemSlot]);
         },*/
         sendGold: function(type, amount, type2) {
-            this.sendMessage([Types.Messages.CS_GOLD, parseInt(type), parseInt(amount), parseInt(type2)]);
+            this.sendMessage([Types.Messages.CW_GOLD, parseInt(type), parseInt(amount), parseInt(type2)]);
         },
 
         sendMapStatus: function (mapId, status) {
-        	this.sendMessage([Types.Messages.CS_MAP_STATUS, mapId, status]);
+        	this.sendMessage([Types.Messages.CW_MAP_STATUS, mapId, status]);
         },
         sendPlayerRevive: function () {
-        	this.sendMessage([Types.Messages.CS_REQUEST, 1]);
+        	this.sendMessage([Types.Messages.CW_REQUEST, 1]);
         },
         sendColorTint: function(type, value) {
-        	this.sendMessage([Types.Messages.CS_COLOR_TINT, type, value]);
+        	this.sendMessage([Types.Messages.CW_COLOR_TINT, type, value]);
         },
 
 				sendAppearanceList: function() {
-					this.sendMessage([Types.Messages.CS_REQUEST, 0]);
+					this.sendMessage([Types.Messages.CW_REQUEST, 0]);
 				},
 
 				sendAppearanceUnlock: function(index, buy) {
 					buy = buy || 0;
-					this.sendMessage([Types.Messages.CS_APPEARANCEUNLOCK, index, buy]);
+					this.sendMessage([Types.Messages.CW_APPEARANCEUNLOCK, index, buy]);
 				},
 
 				sendLook: function (type, id) {
-					this.sendMessage([Types.Messages.CS_LOOKUPDATE, type, id]);
+					this.sendMessage([Types.Messages.CW_LOOKUPDATE, type, id]);
 				},
 
 				sendAddStat: function(statType, points) {
-					this.sendMessage([Types.Messages.CS_STATADD, statType, points]);
+					this.sendMessage([Types.Messages.CW_STATADD, statType, points]);
 				},
 
 				sendLootMove: function (item) {
-					this.sendMessage([Types.Messages.CS_LOOT, item.id, item.x, item.y]);
+					this.sendMessage([Types.Messages.CW_LOOT, item.id, item.x, item.y]);
 				},
 
 				sendBlock: function (type, id, x, y) {
-					this.sendMessage([Types.Messages.CS_BLOCK_MODIFY, type, id, x, y]);
+					this.sendMessage([Types.Messages.CW_BLOCK_MODIFY, type, id, x, y]);
 				},
 
 				sendPartyInvite: function(name, status) { // 0 for request, 1, for yes, 2 for no.
-            this.sendMessage([Types.Messages.CS_PARTY, 1,
+            this.sendMessage([Types.Messages.CW_PARTY, 1,
                               name, status]);
         },
 
 				sendPartyKick: function(name) {
-            this.sendMessage([Types.Messages.CS_PARTY, 2,
+            this.sendMessage([Types.Messages.CW_PARTY, 2,
                               name, 0]);
         },
 
 				sendPartyLeader: function(name) {
-            this.sendMessage([Types.Messages.CS_PARTY, 3,
+            this.sendMessage([Types.Messages.CW_PARTY, 3,
                               name, 0]);
         },
 
         sendPartyLeave: function() {
-            this.sendMessage([Types.Messages.CS_PARTY, 4, '', 0]);
+            this.sendMessage([Types.Messages.CW_PARTY, 4, '', 0]);
         },
 
 				sendHarvest: function(x, y) {
-            this.sendMessage([Types.Messages.CS_HARVEST, x, y]);
+            this.sendMessage([Types.Messages.CW_HARVEST, x, y]);
         },
 
 				sendHarvestEntity: function(entity) {
-            this.sendMessage([Types.Messages.CS_USE_NODE, entity.id]);
+            this.sendMessage([Types.Messages.CW_USE_NODE, entity.id]);
         },
 
 
@@ -18180,12 +18258,14 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
         this.config = config;
 
         this.handlers = {};
+        this.handlers[Types.UserMessages.UC_WORLD_READY] = this.onWorldReady;
+
         this.handlers[Types.Messages.BI_SYNCTIME] = this.onSyncTime;
-        this.handlers[Types.Messages.SC_ERROR] = this.onError;
-        this.handlers[Types.Messages.SC_VERSION] = this.onVersion;
-        this.handlers[Types.Messages.SC_PLAYER] = this.onPlayer;
-        this.handlers[Types.Messages.SC_PLAYER_SUM] = this.onPlayerSummary;
-        this.handlers[Types.Messages.SC_WORLDS] = this.onWorlds;
+        this.handlers[Types.UserMessages.UC_ERROR] = this.onError;
+        this.handlers[Types.UserMessages.UC_VERSION] = this.onVersion;
+
+        this.handlers[Types.UserMessages.UC_PLAYER_SUM] = this.onPlayerSummary;
+        this.handlers[Types.UserMessages.UC_WORLDS] = this.onWorlds;
 
         this.useBison = false;
         this.versionChecked = false;
@@ -18346,8 +18426,8 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
       onConnected: function() {
         log.info("Starting client/server handshake");
 
-        //this.sendUserConnected();
-        this.sendSyncTime();
+        this.sendUserConnected();
+        //this.sendSyncTime();
 
         /*switch (this.initialAction)
         {
@@ -18359,196 +18439,6 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
           client.sendCreateUser();
           break;
         }*/
-      },
-
-      onPlayer: function (data) {
-          //setWorldTime(data[0], data[1]);
-          data.shift();
-          data.shift();
-
-          var p = game.player;
-
-          p.id = parseInt(data.shift());
-          p.name = data.shift();
-          p.mapIndex = parseInt(data.shift());
-          p.orientation = Types.Orientations.DOWN;
-          p.x = parseInt(data.shift()), p.y = parseInt(data.shift());
-          p.setPositionSpawn(p.x, p.y);
-
-          p.setMaxHP(parseInt(data.shift()));
-          p.setMaxEP(parseInt(data.shift()));
-          //p.setClass(parseInt(data.shift()));
-
-          p.exp = {
-            base: parseInt(data.shift()),
-            attack: parseInt(data.shift()),
-            defense: parseInt(data.shift()),
-            move: parseInt(data.shift()),
-            sword: parseInt(data.shift()),
-            bow: parseInt(data.shift()),
-            hammer: parseInt(data.shift()),
-            axe: parseInt(data.shift()),
-            logging: parseInt(data.shift()),
-            mining: parseInt(data.shift())
-          };
-
-          p.level = {
-            base: Types.getLevel(p.exp.base),
-            attack: Types.getAttackLevel(p.exp.attack),
-            defense: Types.getDefenseLevel(p.exp.defense),
-            move: Types.getMoveLevel(p.exp.move),
-            sword: Types.getWeaponLevel(p.exp.sword),
-            bow: Types.getWeaponLevel(p.exp.bow),
-            hammer: Types.getWeaponLevel(p.exp.hammer),
-            axe: Types.getWeaponLevel(p.exp.axe),
-          }
-          p.colors = [];
-          p.colors[0] = parseInt(data.shift());
-          p.colors[1] = parseInt(data.shift());
-
-          p.gold = [];
-          p.gold[0] = parseInt(data.shift()); // inventory gold.
-          p.gold[1] = parseInt(data.shift()); // bank gold.
-          p.gems = parseInt(data.shift());
-
-          game.inventoryHandler.setCurrency(p.gold[0], p.gems);
-          game.bankHandler.setGold(p.gold[1]);
-
-          p.setMoveRate(500-p.level.move)
-
-          p.stats.attack = parseInt(data.shift());
-          p.stats.defense = parseInt(data.shift());
-          p.stats.health = parseInt(data.shift());
-          p.stats.energy = parseInt(data.shift());
-          p.stats.luck = parseInt(data.shift());
-          p.stats.free = parseInt(data.shift());
-
-          // TODO fix item inits, and skill functions.
-          var itemCount = parseInt(data.shift());
-          if (itemCount > 0)
-          {
-            var items = [];
-            var itemArray = data.splice(0,(itemCount*6)).parseInt();
-            for(var i=0; i < itemCount; ++i)
-            {
-              var index = i*6;
-              var itemRoom = new ItemRoom(
-                itemArray[index+0],
-                itemArray[index+1],
-                itemArray[index+2],
-                itemArray[index+3],
-                itemArray[index+4],
-                itemArray[index+5],
-              );
-              items.push(itemRoom);
-            }
-            game.equipmentHandler.setEquipment(items);
-          }
-
-          p.sprites = [];
-          p.sprites[0] = parseInt(data.shift());
-          p.sprites[1] = parseInt(data.shift());
-
-          p.setWeaponSprite();
-          p.setArmorSprite();
-          p.setRange();
-
-          var itemCount = parseInt(data.shift());
-          if (itemCount > 0)
-          {
-            var items = [];
-            var itemArray = data.splice(0,(itemCount*6)).parseInt();
-            for(var i=0; i < itemCount; ++i)
-            {
-              var index = i*6;
-              var itemRoom = new ItemRoom(
-                itemArray[index+0],
-                itemArray[index+1],
-                itemArray[index+2],
-                itemArray[index+3],
-                itemArray[index+4],
-                itemArray[index+5],
-              );
-              items.push(itemRoom);
-            }
-            game.inventoryHandler.initInventory(items);
-          }
-
-          var itemCount = parseInt(data.shift());
-          if (itemCount > 0)
-          {
-            var items = [];
-            var itemArray = data.splice(0,(itemCount*6)).parseInt();
-            for(var i=0; i < itemCount; ++i)
-            {
-                var index = i*6;
-                var itemRoom = new ItemRoom(
-                  itemArray[index+0],
-                  itemArray[index+1],
-                  itemArray[index+2],
-                  itemArray[index+3],
-                  itemArray[index+4],
-                  itemArray[index+5],
-                );
-                items.push(itemRoom);
-            }
-            game.bankHandler.initBank(items);
-          }
-
-          p.quests = {};
-          var questCount = parseInt(data.shift());
-          if (questCount > 0)
-          {
-            var questArray = data.splice(0,(questCount*13));
-            questArray.parseInt();
-            for(var i=0; i < questCount; ++i)
-            {
-              var index = i*13;
-              p.quests[questArray[index]] = new Quest(questArray.slice(index,index+13));
-            }
-          }
-
-          p.achievements = [];
-          var achieveCount = parseInt(data.shift());
-          if (achieveCount > 0)
-          {
-            var achieveArray = data.splice(0,(achieveCount*7));
-            achieveArray.parseInt();
-            var achievement = null;
-            for(var i=0; i < achieveCount; ++i)
-            {
-              var index = i*7;
-              achievement = new Achievement(achieveArray.slice(index,index+7));
-              p.achievements.push(achievement);
-            }
-            game.achievementHandler.achievementReloadLog();
-          }
-
-          p.skillHandler = new SkillHandler(self);
-
-          var skillCount = parseInt(data.shift());
-          var skillExps = data.splice(0,skillCount);
-          skillExps.parseInt();
-          p.setSkills(skillExps);
-          game.skillDialog.page.setSkills(skillExps);
-
-
-          var shortcutCount = parseInt(data.shift());
-          if (shortcutCount > 0)
-          {
-            var shortcutArray = data.splice(0,(shortcutCount*3));
-            shortcutArray.parseInt();
-            var shortcuts = [];
-            for(var i=0; i < shortcutCount; ++i)
-            {
-              var index = i*3;
-              shortcuts.push(shortcutArray.slice(index,index+3));
-            }
-            game.shortcuts.installAll(shortcuts);
-          }
-
-          game.onWorldReady(this.connection);
-          game.onPlayerLoad(p);
       },
 
       onPlayerSummary: function (data) {
@@ -18595,18 +18485,13 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
 
       _onError: function (data) {
           var message = data[0];
-          /*if (message == 'playerexists') {
-            app.addValidationError(null, 'The playername you entered is not available.');
-            return;
-          }*/
-
           $('#container').addClass('error');
           $('#errorwindow .errordetails').html("<p>"+message+"</p>");
           app.loadWindow('loginwindow','errorwindow');
       },
 
       onVersion: function (data) {
-        game.onVersion(data);
+        game.onVersionUser(data);
       },
 
       /*onVersion: function(data) {
@@ -18638,6 +18523,11 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
         setWorldTime(parseInt(data[0]), parseInt(data[1]))
       },
 
+      onWorldReady: function (data) {
+        this.connection.disconnect();
+        game.onWorldReady(data);
+      },
+
       onError: function (data) {
         var error = data[0];
 
@@ -18661,37 +18551,36 @@ define('userclient',['gameclient', 'skillhandler', 'quest', 'config', 'achieveme
         this._onError(data);
       },
 
-      sendSyncTime: function() {
-          log.info("sendSyncTime");
-          this.sendMessage([Types.Messages.BI_SYNCTIME,Date.now()]);
+      sendUserConnected: function() {
+          this.sendMessage([Types.UserMessages.CU_CONNECT_USER]);
       },
 
       sendLoginUser: function (user) {
-        this.sendMessage([Types.Messages.CS_LOGIN_USER,
+        this.sendMessage([Types.UserMessages.CU_LOGIN_USER,
                           user.username,
                           user.hash]);
       },
 
       sendCreateUser: function (user) {
-        this.sendMessage([Types.Messages.CS_CREATE_USER,
+        this.sendMessage([Types.UserMessages.CU_CREATE_USER,
                           user.username,
                           user.hash]);
       },
 
       sendRemoveUser: function (user) {
-        this.sendMessage([Types.Messages.CS_REMOVE_USER,
+        this.sendMessage([Types.UserMessages.CU_REMOVE_USER,
                           user.username,
                           user.hash]);
       },
 
       sendLoginPlayer: function (worldIndex, playerIndex) {
-        this.sendMessage([Types.Messages.CS_LOGIN_PLAYER,
+        this.sendMessage([Types.UserMessages.CU_LOGIN_PLAYER,
                           worldIndex,
                           playerIndex]);
       },
 
       sendCreatePlayer: function (worldIndex, playerName) {
-        this.sendMessage([Types.Messages.CS_CREATE_PLAYER,
+        this.sendMessage([Types.UserMessages.CU_CREATE_PLAYER,
           worldIndex,
           playerName]);
       }
@@ -18808,6 +18697,7 @@ function(UserClient, Player, AppearanceData) {
         player.setItems();
 
         player.forceStop = function () {
+          this.harvestOff();
           if (this.keyMove && this.key_move_callback)
           {
             this.key_move_callback(false);
@@ -18818,7 +18708,7 @@ function(UserClient, Player, AppearanceData) {
           this._forceStop();
 
           this.idle();
-          this.fsm = "IDLE";
+          //this.fsm = "IDLE";
         };
 
         player.canAttack = function(time) {
@@ -18840,17 +18730,12 @@ function(UserClient, Player, AppearanceData) {
           orientation = orientation || this.orientation;
           var self = this;
 
-          if (this.fsm == "MOVEPATH") {
-            return;
-          }
-
-          this.harvestOff();
           this.setOrientation(orientation || 0);
-
           this.forceStop();
           this.fsm = "ATTACK";
           this.animate("atk", this.atkSpeed, 1, function () {
             self.idle(self.orientation);
+            self.fsm = "IDLE";
             self.forceStop();
           });
           return true;
@@ -18874,21 +18759,18 @@ function(UserClient, Player, AppearanceData) {
         player.moveTo_ = function(x, y, callback) {
           var self = this;
 
-          if (this.fsm == "MOVEPATH") {
-            return;
-          }
-
           if (this.fsm == "ATTACK") {
             return;
           }
 
-          this.forceStop();
-          this.harvestOff();
+          if (this.isMoving())
+            this.forceStop();
 
           log.info("background - free delay =" + G_LATENCY);
 
-          this.fsm = "MOVEPATH";
           this.walk();
+
+          //this.setFreeze(G_LATENCY);
           return this._moveTo(x, y, callback);
         };
 
@@ -18904,9 +18786,9 @@ function(UserClient, Player, AppearanceData) {
             return;
           }
 
-          if (this.fsm == "MOVEPATH") {
+          /*if (this.fsm == "MOVEPATH") {
             return;
-          }
+          }*/
 
           if (state && orientation != Types.Orientations.NONE)
           {
@@ -18915,20 +18797,19 @@ function(UserClient, Player, AppearanceData) {
             }
 
             if (!this.canMove(orientation)) {
-              //this.forceStop();
               return;
             }
 
+            if (this.isMoving())
+              this.forceStop();
+
+            this.orientation = orientation;
             this.setOrientation(orientation);
-
-            this.harvestOff();
-            this.forceStop();
-
-            this.fsm = "MOVING";
 
             this.walk();
 
             this.keyMove = true;
+            //this.setFreeze(G_LATENCY);
           }
           if (!state)
           {
@@ -19833,7 +19714,7 @@ define('entrypoint',['lib/sha1', 'util'],function() {
 });
 
 
-define('text!data/../../shared/data/lang.json', function () { return '{\r\n  "EN": {\r\n    "BANK_FULL": "Bank is full.",\r\n    "EQUIPMENT_FULL": "Equipment is full.",\r\n    "INVENTORY_FULL": "Inventory is full.",\r\n    "ITEM_ADDED": "{0} added",\r\n    "GOLD_ADDED": "{0} gold added",\r\n    "GOLD_REMOVED": "{0} gold removed",\r\n\r\n    "EQUIPMENT_LEVEL": "You need to be level {0} to equip this.",\r\n    "EQUIPMENT_WRONGCLASS": "Your class cannot use this Item.",\r\n\r\n    "CHAT_MUTED": "You are currently muted.",\r\n\r\n    "MAP_ENTERED": "{0} has entered the {1} map.",\r\n\r\n    "NOTICE_1": "Go to the Google Play Store and rate Retro RPG Online!",\r\n\r\n    "TRADE_REQUESTED": "You requested a trade with {0}.",\r\n    "TRADE_REQUEST": "{0} has requested to trade you.",\r\n\r\n    "TUTORIAL_MOVE": "Click or Tap on land to move.",\r\n    "TUTORIAL_ATTACK": "Now click or tap on a Monster to attack",\r\n    "TUTORIAL_ATTACK2": "Thats it now kill more Monsters.",\r\n    "TUTORIAL_EQUIP": "Now I want to equip my brought gear by going into Menu Backpack and selecting it.",\r\n    "TUTORIAL_SHOPBUY": "I should find the Beginner Store by going to the menu and pressing Town.",\r\n    "TUTORIAL_SHOPBUY2": "I want to buy my first Armor and Weapon that is Level 10.",\r\n    "TUTORIAL_STATS": "You can now assign custom Stats in Menu >> Character >> 3rd Page (Character Stats),",\r\n    "TUTORIAL_PORTAL": "In the Town House move to the blue Portal near the bottom left.",\r\n\r\n    "SHOP_REPAIRED": "{0} item repaired.",\r\n    "SHOP_REMOVED": "{0} item removed.",\r\n    "SHOP_SOLD": "{0} has been sold.",\r\n    "SHOP_BUY": "{0} has been bought.",\r\n    "SHOP_ENCHANTED": "{0} has been enchanted.",\r\n    "SHOP_NOGOLD": "You don\'t have enough Gold.",\r\n    "SHOP_NOGEMS": "You don\'t have enough Gems.",\r\n    "SHOP_NOSPACE": "There is not enough space in your inventory.",\r\n    "SHOP_MISMATCH": "The price has been changed, please try again.",\r\n    "AUCTION_ADDED": "The auction item you listed has been added.",\r\n    "SHOP_NOCRAFTITEMS": "You do not have enough craft Items.",\r\n    "SHOP_MISSINGITEMS": "You are missing {0} {1}\'s",\r\n\r\n    "COMBAT_PLAYERKILLED": "/1 {0} killed {1} in combat.",\r\n    "COMBAT_TARGETINVINCIBLE": "Target is invincible.",\r\n\r\n    "GROUP_PLAYERLEFT": "{0} has left your group.",\r\n    "ATTACK_TOOFAR": "You are too far away to attack.",\r\n\r\n    "TUTORIAL": "TUTORIAL",\r\n    "TUTORIAL_1": "To Move, Mouse click on the Map or an Object, or use the WASD or arrow keys.",\r\n    "TUTORIAL_2": "To Attack, Mouse click on the Object or get in attack range and press Space bar.",\r\n    "TUTORIAL_3": "To Cycle Targets, use keys T to target the closest Object or Y to reverse target.",\r\n    "TUTORIAL_4": "You can use Keys 1-4 for Skill Shortcuts, and Keys 5-8 for consumables like Potions.",\r\n    "TUTORIAL_5": "If you need to buy items you can select Menu >> Town to instantly warp to Town.",\r\n    "TUTORIAL_6": "At level 10 you can equip Items in Menu >> Equipment, and at level 20 you can assign Stat Points.",\r\n\r\n    "ACHIEVEMENTS_0": "Kill {0} Monsters.",\r\n    "ACHIEVEMENTS_1": "Collect {0} Items.",\r\n    "ACHIEVEMENTS_2": "Do {0} Damage to Monsters.",\r\n    "ACHIEVEMENTS_3": "Mine {0} Nodes.",\r\n    "ACHIEVEMENTS_4": "Log {0} Trees.",\r\n    "ACHIEVEMENTS_5": "Interact with {0} Objects.",\r\n    "ACHIEVEMENTS_0_COMPLETE": "Achievement - Kill {0} Monsters Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_1_COMPLETE": "Achievement - Collect {0} Items Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_2_COMPLETE": "Achievement - Do {0} Damage to Monsters Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_3_COMPLETE": "Achievement - Mine {0} Nodes Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_4_COMPLETE": "Achievement - Log {0} Trees Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_5_COMPLETE": "Achievement - Interact with {0} Objects Completed. {1}XP Added.",\r\n\r\n    "PARTY_PLAYER_INVITE_SENT": "Party invite sent to player {0}",\r\n    "PARTY_MAX_PLAYERS": "Max players reached in party.",\r\n    "PARTY_PLAYER_JOINED": "{0} joined your party.",\r\n    "PARTY_PLAYER_ADDED": "You are now partied with {0}",\r\n    "PARTY_YOU_REJECTED_INVITE": "You rejected {0}\'s invite.",\r\n    "PARTY_THEY_REJECTED_INVITE": "{0} rejected your invite.",\r\n    "PARTY_CANNOT_KICK": "You cannot kick as you are not in a party or leader.",\r\n    "PARTY_PLAYER_KICKED": "You have been kicked from the party.",\r\n    "PARTY_NOT_LEADER": "You cannot set the leader as you are not in a party.",\r\n    "PARTY_YOU_LEADER": "You are now the leader.",\r\n    "PARTY_PLAYER_LEADER": "{0} is now leader.",\r\n    "PARTY_IS_LEADER": "{0} is already leader.",\r\n    "PARTY_NOT_IN": "You cannot leave as you are not in a party.",\r\n    "PARTY_PLAYER_LEFT": "{0} has left your party.",\r\n    "PARTY_YOU_LEFT": "You have left {0}\'s party.",\r\n    "PARTY_ALL_LEFT": "The party has been disbanded.",\r\n    "NO_PLAYER_EXIST": "Player {0} does not exist.",\r\n\r\n    "HARVEST_INVALID": "You cannot harvest at this point, use the right weapon, try somewhere else or again later.",\r\n    "HARVEST_ADDED": "{0} has been added to your inventory",\r\n    "HARVEST_WRONG_TYPE": "You cannot use this with a {0}.",\r\n    "HARVEST_NO_WEAPON": "You do not have a harvest item equipped.",\r\n\r\n    "DIALOGUE_1": [\r\n      [0, "You look lost young boy..."],\r\n      [1, "Where am I?"],\r\n      [0, "What do you mean where you are? Anyway I need help son."],\r\n      [0, "You see, young one, my house, well, it\'s not quite the welcoming place it used to be."],\r\n      [0, "It\'s overrun by rats, scurrying through every nook and cranny, making themselves right at home."],\r\n      [0, "It\'s a bit of a mess, I\'m afraid. Can you kill 10 rats for me, Sonny?"],\r\n      [0, "That way I can get into my home again.", "QUEST_1"]\r\n    ],\r\n    "DIALOGUE_2": [\r\n      [0, "Rats have stolen my 3 dice I need you to kill some Rats to get them.", "QUEST_2"]\r\n    ],\r\n    "DIALOGUE_3": [\r\n      [0, "Rats have stolen my tasty cheese.", "QUEST_3"]\r\n    ],\r\n    "DIALOGUE_4": [\r\n      [0, "Hello I was writing my memiors earlier.."],\r\n      [0, "When a pesky Crab stole my Feather Quilt."],\r\n      [0, "The problem is I don\'t know which one stole it"],\r\n      [0, "So I need you to kill and search all of them until it\'s found.", "QUEST_4"]\r\n    ],\r\n    "DIALOGUE_5": [\r\n      [0, "Crabs have overrun the place..", "QUEST_5"]\r\n    ],\r\n    "DIALOGUE_6": [\r\n      [0, "Fires were started by Goblins after they left the area"],\r\n      [0, "I need you to put out some fires so they don\'t get out of control.", "QUEST_6"]\r\n    ],\r\n\r\n    "DIALOGUE_7": [\r\n      [0, "The graveyard is overrun with Skeletons."],\r\n      [0, "I need you to remove the tombstones."],\r\n      [0, "This will prevent the evil wizards resurrecting people in graves.", "QUEST_7"]\r\n    ],\r\n\r\n    "QUESTS_NONE": [\r\n      [0, "I have no more quests for you, head {0} and look for {1}."],\r\n      [1, "Thanks {2}."]\r\n    ],\r\n\r\n    "QUESTS": {\r\n      "1": [\r\n          [\r\n            [0, "Thank you when you have completed this return to me."]\r\n          ],\r\n          ["Kill %count% %name%\'s"]\r\n      ],\r\n      "2": [\r\n        [\r\n          [0, "Please get the dice and return to me when complete."]\r\n        ],\r\n        ["Come back when you have my %count% %name%."],\r\n        [\r\n          [0, "Thank-you for returning my dice."],\r\n          [0, "I can now gamble hardcore with my lucky dice."],\r\n          [1, "Err, your welcome I guess..."]\r\n        ]\r\n      ],\r\n      "3": [\r\n          [\r\n            [0, "Can you please kill rats and return my cheese?"],\r\n            [0, "I need %count% pieces back to me."]\r\n          ],\r\n          ["Get %count% pieces of cheese."],\r\n          ["Thank-you for returning my cheese."]\r\n      ],\r\n      "4": [\r\n          [\r\n            [0, "Can you please kill Crabs and return my Feather Quill?"]\r\n          ],\r\n          ["Return my Feather Quill."],\r\n          [\r\n            [0,"Thank-you for returning my Feather Quill."],\r\n            [0,"I can now resume writing my memiors."]\r\n          ]\r\n      ],\r\n      "5": [\r\n          [\r\n            [0, "Kill %count% Crabs for me?"]\r\n          ],\r\n          ["Kill %count% Crabs."]\r\n      ],\r\n      "6": [\r\n          [\r\n            [0, "Can you destroy %count% fires?"]\r\n          ],\r\n          ["Destroy %count% fires."]\r\n      ],\r\n      "7": [\r\n          [\r\n            [0, "Can you destroy %count% tombstones for me?"]\r\n          ],\r\n          ["Destroy %count% tombstones."]\r\n      ]\r\n    },\r\n\r\n    "QUESTS_MOB": [\r\n        ["Kill %count% %name%\'s for me.",\r\n         "Have you killed %count% %name%s for me yet?"]\r\n    ],\r\n    "QUESTS_ITEM": [\r\n      ["%name2%\'s have stolen my %count% %name%s\'. I need you to kill %name2%\'s and get my %name%s\' back.",\r\n       "Have you got my %count% %name%\'s?",\r\n       "Thank you for returning my %name%\'s now I can use them."]\r\n\r\n    ],\r\n    "QUEST_SUMMARY": {\r\n      "HIDEANDSEEK": "Find %name%",\r\n      "KILLMOBKIND": "Kill %count% %name%s",\r\n      "GETITEMKIND": "Get %count% pieces of %name% from %name2%s",\r\n      "USENODE": "Use %count% %name%.",\r\n      "1": "Kill %count% %name%s",\r\n      "2": "Retrieve %count% %name%\'s from %name2%s",\r\n      "3": "Get %count% pieces of %name% from %name2%s",\r\n      "4": "Get the Feather Quill from %name%s",\r\n      "5": "Kill %count% %name%s",\r\n      "6": "Destroy %count% Fires.",\r\n      "7": "Destroy %count% Tombstones."\r\n    }\r\n  }\r\n}\r\n';});
+define('text!data/../../shared/data/lang.json', function () { return '{\r\n  "EN": {\r\n    "BANK_FULL": "Bank is full.",\r\n    "EQUIPMENT_FULL": "Equipment is full.",\r\n    "INVENTORY_FULL": "Inventory is full.",\r\n    "ITEM_ADDED": "{0} added",\r\n    "GOLD_ADDED": "{0} gold added",\r\n    "GOLD_REMOVED": "{0} gold removed",\r\n\r\n    "EQUIPMENT_LEVEL": "You need to be level {0} to equip this.",\r\n    "EQUIPMENT_WRONGCLASS": "Your class cannot use this Item.",\r\n\r\n    "CHAT_MUTED": "You are currently muted.",\r\n\r\n    "MAP_ENTERED": "{0} has entered the {1} map.",\r\n\r\n    "NOTICE_1": "Go to the Google Play Store and rate Retro RPG Online!",\r\n\r\n    "TRADE_REQUESTED": "You requested a trade with {0}.",\r\n    "TRADE_REQUEST": "{0} has requested to trade you.",\r\n\r\n    "TUTORIAL_MOVE": "Click or Tap on land to move.",\r\n    "TUTORIAL_ATTACK": "Now click or tap on a Monster to attack",\r\n    "TUTORIAL_ATTACK2": "Thats it now kill more Monsters.",\r\n    "TUTORIAL_EQUIP": "Now I want to equip my brought gear by going into Menu Backpack and selecting it.",\r\n    "TUTORIAL_SHOPBUY": "I should find the Beginner Store by going to the menu and pressing Town.",\r\n    "TUTORIAL_SHOPBUY2": "I want to buy my first Armor and Weapon that is Level 10.",\r\n    "TUTORIAL_STATS": "You can now assign custom Stats in Menu >> Character >> 3rd Page (Character Stats),",\r\n    "TUTORIAL_PORTAL": "In the Town House move to the blue Portal near the bottom left.",\r\n\r\n    "SHOP_REPAIRED": "{0} item repaired.",\r\n    "SHOP_REMOVED": "{0} item removed.",\r\n    "SHOP_SOLD": "{0} has been sold.",\r\n    "SHOP_BUY": "{0} has been bought.",\r\n    "SHOP_ENCHANTED": "{0} has been enchanted.",\r\n    "SHOP_NOGOLD": "You don\'t have enough Gold.",\r\n    "SHOP_NOGEMS": "You don\'t have enough Gems.",\r\n    "SHOP_NOSPACE": "There is not enough space in your inventory.",\r\n    "SHOP_MISMATCH": "The price has been changed, please try again.",\r\n    "AUCTION_ADDED": "The auction item you listed has been added.",\r\n    "SHOP_NOCRAFTITEMS": "You do not have enough craft Items.",\r\n    "SHOP_MISSINGITEMS": "You are missing {0} {1}\'s",\r\n\r\n    "COMBAT_PLAYERKILLED": "/1 {0} killed {1} in combat.",\r\n    "COMBAT_TARGETINVINCIBLE": "Target is invincible.",\r\n\r\n    "GROUP_PLAYERLEFT": "{0} has left your group.",\r\n    "ATTACK_TOOFAR": "You are too far away to attack.",\r\n\r\n    "TUTORIAL": "TUTORIAL",\r\n    "TUTORIAL_1": "To Move, Mouse click on the Map or an Object, or use the WASD or arrow keys.",\r\n    "TUTORIAL_2": "To Attack, Mouse click on the Object or get in attack range and press Space bar.",\r\n    "TUTORIAL_3": "To Cycle Targets, use keys T to target the closest Object or Y to reverse target.",\r\n    "TUTORIAL_4": "You can use Keys 1-4 for Skill Shortcuts, and Keys 5-8 for consumables like Potions.",\r\n    "TUTORIAL_5": "If you need to buy items you can select Menu >> Town to instantly warp to Town.",\r\n    "TUTORIAL_6": "At level 10 you can equip Items in Menu >> Equipment, and at level 20 you can assign Stat Points.",\r\n\r\n    "ACHIEVEMENTS_0": "Kill {0} Monsters.",\r\n    "ACHIEVEMENTS_1": "Collect {0} Items.",\r\n    "ACHIEVEMENTS_2": "Do {0} Damage to Monsters.",\r\n    "ACHIEVEMENTS_3": "Mine {0} Nodes.",\r\n    "ACHIEVEMENTS_4": "Log {0} Trees.",\r\n    "ACHIEVEMENTS_5": "Interact with {0} Objects.",\r\n    "ACHIEVEMENTS_0_COMPLETE": "Achievement - Kill {0} Monsters Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_1_COMPLETE": "Achievement - Collect {0} Items Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_2_COMPLETE": "Achievement - Do {0} Damage to Monsters Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_3_COMPLETE": "Achievement - Mine {0} Nodes Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_4_COMPLETE": "Achievement - Log {0} Trees Completed. {1}XP Added.",\r\n    "ACHIEVEMENTS_5_COMPLETE": "Achievement - Interact with {0} Objects Completed. {1}XP Added.",\r\n\r\n    "PARTY_PLAYER_INVITE_SENT": "Party invite sent to player {0}",\r\n    "PARTY_MAX_PLAYERS": "Max players reached in party.",\r\n    "PARTY_PLAYER_JOINED": "{0} joined your party.",\r\n    "PARTY_PLAYER_ADDED": "You are now partied with {0}",\r\n    "PARTY_YOU_REJECTED_INVITE": "You rejected {0}\'s invite.",\r\n    "PARTY_THEY_REJECTED_INVITE": "{0} rejected your invite.",\r\n    "PARTY_CANNOT_KICK": "You cannot kick as you are not in a party or leader.",\r\n    "PARTY_PLAYER_KICKED": "You have been kicked from the party.",\r\n    "PARTY_NOT_LEADER": "You cannot set the leader as you are not in a party.",\r\n    "PARTY_YOU_LEADER": "You are now the leader.",\r\n    "PARTY_PLAYER_LEADER": "{0} is now leader.",\r\n    "PARTY_IS_LEADER": "{0} is already leader.",\r\n    "PARTY_NOT_IN": "You cannot leave as you are not in a party.",\r\n    "PARTY_PLAYER_LEFT": "{0} has left your party.",\r\n    "PARTY_YOU_LEFT": "You have left {0}\'s party.",\r\n    "PARTY_ALL_LEFT": "The party has been disbanded.",\r\n    "NO_PLAYER_EXIST": "Player {0} does not exist.",\r\n\r\n    "HARVEST_INVALID": "You cannot harvest at this point, use the right weapon, try somewhere else or again later.",\r\n    "HARVEST_ADDED": "{0} has been added to your inventory",\r\n    "HARVEST_WRONG_TYPE": "You need to have a {0}.",\r\n    "HARVEST_NO_WEAPON": "You do not have a harvest item equipped.",\r\n\r\n    "DIALOGUE_1": [\r\n      [0, "You look lost young boy..."],\r\n      [1, "Where am I?"],\r\n      [0, "What do you mean where you are? Anyway I need help son."],\r\n      [0, "You see, young one, my house, well, it\'s not quite the welcoming place it used to be."],\r\n      [0, "It\'s overrun by rats, scurrying through every nook and cranny, making themselves right at home."],\r\n      [0, "It\'s a bit of a mess, I\'m afraid. Can you kill 10 rats for me, Sonny?"],\r\n      [0, "That way I can get into my home again.", "QUEST_1"]\r\n    ],\r\n    "DIALOGUE_2": [\r\n      [0, "Rats have stolen my 3 dice I need you to kill some Rats to get them.", "QUEST_2"]\r\n    ],\r\n    "DIALOGUE_3": [\r\n      [0, "Rats have stolen my tasty cheese.", "QUEST_3"]\r\n    ],\r\n    "DIALOGUE_4": [\r\n      [0, "Hello I was writing my memiors earlier.."],\r\n      [0, "When a pesky Crab stole my Feather Quilt."],\r\n      [0, "The problem is I don\'t know which one stole it"],\r\n      [0, "So I need you to kill and search all of them until it\'s found.", "QUEST_4"]\r\n    ],\r\n    "DIALOGUE_5": [\r\n      [0, "Crabs have overrun the place..", "QUEST_5"]\r\n    ],\r\n    "DIALOGUE_6": [\r\n      [0, "Fires were started by Goblins after they left the area"],\r\n      [0, "I need you to put out some fires so they don\'t get out of control.", "QUEST_6"]\r\n    ],\r\n\r\n    "DIALOGUE_7": [\r\n      [0, "The graveyard is overrun with Skeletons."],\r\n      [0, "I need you to remove the tombstones."],\r\n      [0, "This will prevent the evil wizards resurrecting people in graves.", "QUEST_7"]\r\n    ],\r\n\r\n    "QUESTS_NONE": [\r\n      [0, "I have no more quests for you, head {0} and look for {1}."],\r\n      [1, "Thanks {2}."]\r\n    ],\r\n\r\n    "QUESTS": {\r\n      "1": [\r\n          [\r\n            [0, "Thank you when you have completed this return to me."]\r\n          ],\r\n          ["Kill %count% %name%\'s"]\r\n      ],\r\n      "2": [\r\n        [\r\n          [0, "Please get the dice and return to me when complete."]\r\n        ],\r\n        ["Come back when you have my %count% %name%."],\r\n        [\r\n          [0, "Thank-you for returning my dice."],\r\n          [0, "I can now gamble hardcore with my lucky dice."],\r\n          [1, "Err, your welcome I guess..."]\r\n        ]\r\n      ],\r\n      "3": [\r\n          [\r\n            [0, "Can you please kill rats and return my cheese?"],\r\n            [0, "I need %count% pieces back to me."]\r\n          ],\r\n          ["Get %count% pieces of cheese."],\r\n          ["Thank-you for returning my cheese."]\r\n      ],\r\n      "4": [\r\n          [\r\n            [0, "Can you please kill Crabs and return my Feather Quill?"]\r\n          ],\r\n          ["Return my Feather Quill."],\r\n          [\r\n            [0,"Thank-you for returning my Feather Quill."],\r\n            [0,"I can now resume writing my memiors."]\r\n          ]\r\n      ],\r\n      "5": [\r\n          [\r\n            [0, "Kill %count% Crabs for me?"]\r\n          ],\r\n          ["Kill %count% Crabs."]\r\n      ],\r\n      "6": [\r\n          [\r\n            [0, "Can you destroy %count% fires?"]\r\n          ],\r\n          ["Destroy %count% fires."]\r\n      ],\r\n      "7": [\r\n          [\r\n            [0, "Can you destroy %count% tombstones for me?"]\r\n          ],\r\n          ["Destroy %count% tombstones."]\r\n      ]\r\n    },\r\n\r\n    "QUESTS_MOB": [\r\n        ["Kill %count% %name%\'s for me.",\r\n         "Have you killed %count% %name%s for me yet?"]\r\n    ],\r\n    "QUESTS_ITEM": [\r\n      ["%name2%\'s have stolen my %count% %name%s\'. I need you to kill %name2%\'s and get my %name%s\' back.",\r\n       "Have you got my %count% %name%\'s?",\r\n       "Thank you for returning my %name%\'s now I can use them."]\r\n\r\n    ],\r\n    "QUEST_SUMMARY": {\r\n      "HIDEANDSEEK": "Find %name%",\r\n      "KILLMOBKIND": "Kill %count% %name%s",\r\n      "GETITEMKIND": "Get %count% pieces of %name% from %name2%s",\r\n      "USENODE": "Use %count% %name%.",\r\n      "1": "Kill %count% %name%s",\r\n      "2": "Retrieve %count% %name%\'s from %name2%s",\r\n      "3": "Get %count% pieces of %name% from %name2%s",\r\n      "4": "Get the Feather Quill from %name%s",\r\n      "5": "Kill %count% %name%s",\r\n      "6": "Destroy %count% Fires.",\r\n      "7": "Destroy %count% Tombstones."\r\n    }\r\n  }\r\n}\r\n';});
 
 
 define('data/langdata',['text!../../shared/data/lang.json'], function(LangJson) {
@@ -23626,9 +23507,16 @@ define('mapcontainer',['area', 'detect', 'mapworker', 'map'], function(Area, Det
       if (!types.hasOwnProperty(type))
         return false;
 
-      //var harvestTiles = [678, 679, 698, 699, 855, 875];
-      var res = types[type].some(function (tile) { return tiles.includes(tile); });
+      var res = false;
+      if (Array.isArray(tiles)) {
+        res = types[type].some(function (tile) { return tiles.includes(tile); });
+      } else {
+        res = types[type].includes(tiles);
+      }
       return res;
+      //var harvestTiles = [678, 679, 698, 699, 855, 875];
+      //var res = types[type].some(function (tile) { return tiles.includes(tile); });
+      //return res;
     },
 
     getTiles: function (gx,gy) {
@@ -25616,17 +25504,17 @@ for (var sprite of this.sprites) {
     },
 
     idle: function(orientation) {
-        this.orientation = orientation || 0;
+        this.setOrientation(orientation);
         this.animate("idle", this.speeds.idle);
     },
 
     hit: function(orientation) {
-        this.orientation = orientation || 0;
+        this.setOrientation(orientation);
         this.animate("atk", this.speeds.attack, 1);
     },
 
     walk: function(orientation) {
-        this.orientation = orientation || 0;
+        this.setOrientation(orientation);
         this.animate("walk", this.speeds.walk);
     },
 
@@ -31680,15 +31568,16 @@ function(InfoManager, HoveringInfo, BubbleManager,
               if (!(p.x==x && p.y==y))
               {
                 console.warn("PLAYER NOT IN CORRECT POSITION.");
-                log.info("p.x="+p.x+",x="+x+"p.y="+p.y+",y="+y);
-
+                //log.info("DEBUG: p.x="+p.x+",x="+x+"p.y="+p.y+",y="+y);
+                // Dirty hack to avoid sending a incorrect packet in forcestop.
+                p.keyMove = false;
                 p.forceStop();
                 p.setPositionGrid(x,y);
                 game.player.user.client.sendSyncTime();
-                //game.mapContainer.moveGrid();
                 game.renderer.forceRedraw;
+                //log.info("DEBUG: p.x="+p.x+",x="+x+"p.y="+p.y+",y="+y);
+                return;
               }
-              return;
             }
 
             entity.setMoveRate(moveSpeed);
@@ -31739,7 +31628,7 @@ function(InfoManager, HoveringInfo, BubbleManager,
 
             entity.forceStop();
             entity.setPosition(path[0][0], path[0][1]);
-            entity.orientation = orientation;
+            entity.setOrientation(orientation);
 
             var movePathFunc = function () {
               if (entity.isDying || entity.isDead) {
@@ -31995,9 +31884,8 @@ function(InfoManager, HoveringInfo, BubbleManager,
             if(game.disconnect_callback) {
                 game.disconnect_callback(message);
             }
-            for(var index = 0; index < game.dialogs.length; index++) {
-                game.dialogs[index].hide();
-            }
+            for (var dialog of game.dialogs)
+              dialog.hide();
         });
 
         var questSpeech = function (quest) {
@@ -32524,13 +32412,202 @@ function(InfoManager, HoveringInfo, BubbleManager,
 
           }
           if (action == 2) {
-            p.harvestOff();
+            p.forceStop();
           }
 
         });
 
         client.onPlayerInfo(function (data) {
           game.statDialog.page.assign(data);
+        });
+
+        client.onPlayer(function(data) {
+            //setWorldTime(data[0], data[1]);
+            data.shift();
+            data.shift();
+
+            var p = game.player;
+
+            p.id = parseInt(data.shift());
+            p.name = data.shift();
+            p.mapIndex = parseInt(data.shift());
+            p.orientation = Types.Orientations.DOWN;
+            p.x = parseInt(data.shift()), p.y = parseInt(data.shift());
+            p.setPositionSpawn(p.x, p.y);
+
+            p.setMaxHP(parseInt(data.shift()));
+            p.setMaxEP(parseInt(data.shift()));
+            //p.setClass(parseInt(data.shift()));
+
+            p.exp = {
+              base: parseInt(data.shift()),
+              attack: parseInt(data.shift()),
+              defense: parseInt(data.shift()),
+              move: parseInt(data.shift()),
+              sword: parseInt(data.shift()),
+              bow: parseInt(data.shift()),
+              hammer: parseInt(data.shift()),
+              axe: parseInt(data.shift()),
+              logging: parseInt(data.shift()),
+              mining: parseInt(data.shift())
+            };
+
+            p.level = {
+              base: Types.getLevel(p.exp.base),
+              attack: Types.getAttackLevel(p.exp.attack),
+              defense: Types.getDefenseLevel(p.exp.defense),
+              move: Types.getMoveLevel(p.exp.move),
+              sword: Types.getWeaponLevel(p.exp.sword),
+              bow: Types.getWeaponLevel(p.exp.bow),
+              hammer: Types.getWeaponLevel(p.exp.hammer),
+              axe: Types.getWeaponLevel(p.exp.axe),
+            }
+            p.colors = [];
+            p.colors[0] = parseInt(data.shift());
+            p.colors[1] = parseInt(data.shift());
+
+            p.gold = [];
+            p.gold[0] = parseInt(data.shift()); // inventory gold.
+            p.gold[1] = parseInt(data.shift()); // bank gold.
+            p.gems = parseInt(data.shift());
+
+            game.inventoryHandler.setCurrency(p.gold[0], p.gems);
+            game.bankHandler.setGold(p.gold[1]);
+
+            p.setMoveRate(500-p.level.move)
+
+            p.stats.attack = parseInt(data.shift());
+            p.stats.defense = parseInt(data.shift());
+            p.stats.health = parseInt(data.shift());
+            p.stats.energy = parseInt(data.shift());
+            p.stats.luck = parseInt(data.shift());
+            p.stats.free = parseInt(data.shift());
+
+            // TODO fix item inits, and skill functions.
+            var itemCount = parseInt(data.shift());
+            if (itemCount > 0)
+            {
+              var items = [];
+              var itemArray = data.splice(0,(itemCount*6)).parseInt();
+              for(var i=0; i < itemCount; ++i)
+              {
+                var index = i*6;
+                var itemRoom = new ItemRoom(
+                  itemArray[index+0],
+                  itemArray[index+1],
+                  itemArray[index+2],
+                  itemArray[index+3],
+                  itemArray[index+4],
+                  itemArray[index+5],
+                );
+                items.push(itemRoom);
+              }
+              game.equipmentHandler.setEquipment(items);
+            }
+
+            p.sprites = [];
+            p.sprites[0] = parseInt(data.shift());
+            p.sprites[1] = parseInt(data.shift());
+
+            p.setWeaponSprite();
+            p.setArmorSprite();
+            p.setRange();
+
+            var itemCount = parseInt(data.shift());
+            if (itemCount > 0)
+            {
+              var items = [];
+              var itemArray = data.splice(0,(itemCount*6)).parseInt();
+              for(var i=0; i < itemCount; ++i)
+              {
+                var index = i*6;
+                var itemRoom = new ItemRoom(
+                  itemArray[index+0],
+                  itemArray[index+1],
+                  itemArray[index+2],
+                  itemArray[index+3],
+                  itemArray[index+4],
+                  itemArray[index+5],
+                );
+                items.push(itemRoom);
+              }
+              game.inventoryHandler.initInventory(items);
+            }
+
+            var itemCount = parseInt(data.shift());
+            if (itemCount > 0)
+            {
+              var items = [];
+              var itemArray = data.splice(0,(itemCount*6)).parseInt();
+              for(var i=0; i < itemCount; ++i)
+              {
+                  var index = i*6;
+                  var itemRoom = new ItemRoom(
+                    itemArray[index+0],
+                    itemArray[index+1],
+                    itemArray[index+2],
+                    itemArray[index+3],
+                    itemArray[index+4],
+                    itemArray[index+5],
+                  );
+                  items.push(itemRoom);
+              }
+              game.bankHandler.initBank(items);
+            }
+
+            p.quests = {};
+            var questCount = parseInt(data.shift());
+            if (questCount > 0)
+            {
+              var questArray = data.splice(0,(questCount*13));
+              questArray.parseInt();
+              for(var i=0; i < questCount; ++i)
+              {
+                var index = i*13;
+                p.quests[questArray[index]] = new Quest(questArray.slice(index,index+13));
+              }
+            }
+
+            p.achievements = [];
+            var achieveCount = parseInt(data.shift());
+            if (achieveCount > 0)
+            {
+              var achieveArray = data.splice(0,(achieveCount*7));
+              achieveArray.parseInt();
+              var achievement = null;
+              for(var i=0; i < achieveCount; ++i)
+              {
+                var index = i*7;
+                achievement = new Achievement(achieveArray.slice(index,index+7));
+                p.achievements.push(achievement);
+              }
+              game.achievementHandler.achievementReloadLog();
+            }
+
+            p.skillHandler = new SkillHandler(self);
+
+            var skillCount = parseInt(data.shift());
+            var skillExps = data.splice(0,skillCount);
+            skillExps.parseInt();
+            p.setSkills(skillExps);
+            game.skillDialog.page.setSkills(skillExps);
+
+
+            var shortcutCount = parseInt(data.shift());
+            if (shortcutCount > 0)
+            {
+              var shortcutArray = data.splice(0,(shortcutCount*3));
+              shortcutArray.parseInt();
+              var shortcuts = [];
+              for(var i=0; i < shortcutCount; ++i)
+              {
+                var index = i*3;
+                shortcuts.push(shortcutArray.slice(index,index+3));
+              }
+              game.shortcuts.installAll(shortcuts);
+            }
+
+            game.onPlayerLoad(p);
         });
 
       }
@@ -34391,7 +34468,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               });
             },
 
-            onVersion: function(data) {
+            onVersionUser: function(data) {
               //var self;
               this.versionChecked = true;
               var version = data[0];
@@ -34399,7 +34476,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               this.hashChallenge = hash;
               log.info("onVersion: hash="+hash);
 
-              var local_version = config.build.version;
+              var local_version = config.build.version_game;
               log.info("config.build.version_user="+local_version);
               if (version != local_version)
               {
@@ -34417,14 +34494,49 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
               }
             },
 
-            onWorldReady: function (connection, data) {
+            onVersionGame: function(data) {
+              //var self;
+              this.versionChecked = true;
+              var version = data[0];
+              var hash = data[1];
+              this.hashChallenge = hash;
+              log.info("onVersion: hash="+hash);
+
+              var local_version = config.build.version_user;
+              log.info("config.build.version_user="+local_version);
+              if (version != local_version)
+              {
+                $('#container').addClass('error');
+                var errmsg = "Please download the new version of RRO2.<br/>";
+
+                if (game.renderer.isMobile) {
+                  errmsg += "<br/>For mobile see: " + config.build.updatepage;
+                } else {
+                  errmsg += "<br/>For most browsers press Ctrl+F5 to reload the game cache files.";
+                }
+                game.clienterror_callback(errmsg);
+                if (this.tablet || this.mobile)
+                  window.location.replace(config.build.updatepage);
+              }
+            },
+
+            onWorldReady: function (data) {
+              var username = data[0];
+              var playername = data[1];
+              var hash = data[2];
+              var protocol = data[3];
+              var host = data[4];
+              var port = data[5];
+
+              var url = protocol + "://"+ host +":"+ port +"/";
+
               // Game Client takes over the processing of Messages.
               game.client = new GameClient();
 
               game.client.callbacks = new ClientCallbacks(game.client);
               game.client.setHandlers();
 
-              game.client.connect(connection);
+              game.client.connect(url, [playername,hash]);
             },
 
             onPlayerLoad: function (player) {
@@ -34440,7 +34552,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                     (/*(player.x % ts == 0 || player.y % ts == 0) ||*/
                      !player.isMoving()) && player.canObserve(game.currentTime))
                 {
-                    game.client.sendWho();
+                    game.client.sendWhoRequest();
 
                     player.observeTimer.lastTime = game.currentTime;
                 }
@@ -34570,7 +34682,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                       return;
                     }
 
-                    p.orientation = dest.orientation;
+                    p.setOrientation(dest.orientation);
 
                     p.buttonMoving = false;
                     p.forceStop();
@@ -34613,29 +34725,31 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
                   checkTeleport(p, x, y);
 
-                  if(self.player.target instanceof NpcStatic || self.player.target instanceof NpcMove) {
-                      self.makeNpcTalk(self.player.target);
-                  } else if(self.player.target instanceof Chest) {
-                      self.client.sendOpen(self.player.target);
+                  if(p.target instanceof NpcStatic || p.target instanceof NpcMove) {
+                      self.makeNpcTalk(p.target);
+                  } else if(p.target instanceof Chest) {
+                      self.client.sendOpen(p.target);
                       self.audioManager.playSound("chest");
                   }
               });
 
               self.player.onRequestPath(function(x, y) {
-              	var ignored = [self.player]; // Always ignore self
+                var p = self.player;
+              	var ignored = [p]; // Always ignore self
               	var included = [];
 
-                  if(self.player.hasTarget() && !self.player.target.isDead) {
+                  if(p.hasTarget() && !p.target.isDead) {
 
-                      ignored.push(self.player.target);
+                      ignored.push(p.target);
                   }
 
-                  var path = self.findPath(self.player, x, y, ignored);
+                  var path = self.findPath(p, x, y, ignored);
 
                   if (path && path.length > 0)
                   {
-                    self.player.orientation = self.player.getOrientationTo([path[1][0],path[1][1]]);
-                    self.client.sendMovePath(self.player,
+                    var orientation = p.getOrientationTo([path[1][0],path[1][1]]);
+                    p.setOrientation(orientation);
+                    self.client.sendMovePath(p,
                       path.length,
                       path);
 	                }
@@ -34779,7 +34893,17 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 if (processTarget()) return;
               }
 
+              // If the player is next to and facing a Harvest Tile.
               var pos = p.nextTile();
+              var type = p.getWeaponType();
+              if (type != null) {
+                var gpos = getGridPosition(pos[0], pos[1]);
+                if (this.mapContainer.isHarvestTile(gpos, type)) {
+                  game.processInput(pos[0], pos[1], true);
+                  return;
+                }
+              }
+
               entity = this.getEntityAt(pos[0], pos[1]);
               if (entity && entity != p && !fnIsDead(entity)) {
                 p.setTarget(entity);
@@ -34794,18 +34918,18 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 p.clearTarget();
               }
 
-              if (target && p.isNextToo(target)) {
+              if (target && p.isNextTooEntity(target)) {
                 if (p.isMoving())
                   p.forceStop();
                 p.lookAtEntity(target);
                 if (processTarget()) return;
               }
 
-              if (this.mapContainer.isColliding(pos[0], pos[1])) {
+              /*if (this.mapContainer.isColliding(pos[0], pos[1])) {
                 p.clearTarget();
                 this.processInput(pos[0], pos[1], true);
                 return;
-              }
+              }*/
 
               entity = null;
               var entities = Object.values(this.camera.entities);
@@ -34956,7 +35080,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
 
               if (!npc) return;
 
-              if (!game.player.isNextToo(npc.x, npc.y))
+              if (!game.player.isNextTooEntity(npc))
                 return;
 
               if (npc.type == Types.EntityTypes.NPCMOVE) {
@@ -35220,13 +35344,13 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 //log.info("x:"+x+",y:"+y);
                 if(len > 0) {
                   var entity = null;
-                  var dx, dy;
+                  //var pos = {x:x,y:y};
                   for (var k in entities) {
                       entity = entities[k];
                       if (!entity) continue;
 
                       //log.info("x2:"+entity.x+",y2:"+entity.y);
-                      if (entity.isOver(x, y))
+                      if (entity.isOverPosition(x,y))
                         return entity;
                   }
                 }
@@ -35548,6 +35672,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   var entity2 = entities[k];
                   //if (entity2 instanceof Item)
                     //continue;
+                  if (entity2 instanceof Player)
+                    continue;
                   if (entity instanceof Player && entity.holdingBlock == entity2)
                     continue;
                   if (!entity2 || entity == entity2)
@@ -35555,8 +35681,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   if (entity2.isDead || entity2.isDying)
                     continue;
 
-                  if (!entity2.isWithin(entity) &&
-                      entity2.isWithin({x:x, y:y}))
+                  if (!entity2.isNextTooEntity(entity) &&
+                      entity2.isNextTooPosition(x, y))
                     return true;
                 }
                 return false;
@@ -35626,10 +35752,9 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                 this.clickMove = true;
                 //this.playerPopupMenu.close();
 
-                for(var i = 0; i < this.dialogs.length; i++) {
-                    if(this.dialogs[i].visible){
-                        this.dialogs[i].hide();
-                    }
+                for (var dialog of this.dialogs) {
+                  if (dialog.visible)
+                    dialog.hide();
                 }
 
                 var entity = this.getEntityAt(pos.x, pos.y);
@@ -35702,7 +35827,7 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
           	    //this.playerPopupMenu.close();
                 //this.player.clearTarget();
                 var colliding = this.mapContainer.isColliding(px,py);
-                if (colliding && p.isNextToo(px, py)) {
+                if (colliding && p.isNextTooPosition(px, py)) {
                     // Start hit animation and send to Server harvest packet.
                     this.makePlayerHarvest(px, py);
                     return;
@@ -36093,7 +36218,8 @@ function(spriteNamesJSON, localforage, InfoManager, BubbleManager,
                   	delist.push(entity.id);
                   	self.removeEntity(entity);
                   }
-                  self.client.sendWho(delist);
+                  if (delist.length > 0)
+                    self.client.sendWho(delist);
                 }
             },
 

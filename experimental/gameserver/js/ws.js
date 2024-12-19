@@ -318,7 +318,7 @@ WS.userConnection = Connection.extend({
     connect: function (connectString) {
       var self = this;
 
-      this._connection = io_client.connect(connectString, {reconnect: true});
+      this._connection = io_client.connect(connectString, {reconnect: true, rejectUnauthorized: false});
 
       this._connection.on('connect_error', function(err){
         console.info('Failed to establish a connection to the servers, or lost     connection');
@@ -336,6 +336,7 @@ WS.userConnection = Connection.extend({
       });
 
       var fnDisconnect = function () {
+          try { throw new Error(); } catch (e) { console.error(e.stack); }
           console.info('USER CONNECTION CLOSED.');
           if (self.closeCallback) {
               self.closeCallback();

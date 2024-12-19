@@ -260,19 +260,14 @@ module.exports = ItemStore = cls.Class.extend({
     },
 
     toStringJSON: function () {
-      var itemString = "[";
-      var isItems = false;
-
-      for(var i=0; i<this.maxNumber; i++){
-          var item = this.rooms[i];
+      var item = null;
+      var items = [];
+      for(var i in this.rooms){
+          item = this.rooms[i];
           if (!item) continue;
-          itemString += "["+item.toArray().join(',')+"],"
-          isItems = true;
+          items.push(item.toArray());
       }
-      itemString = itemString.slice(0, -1);
-      itemString += "]";
-      if (!isItems) return "[]";
-      return itemString;
+      return JSON.stringify(items);
     },
 
 });

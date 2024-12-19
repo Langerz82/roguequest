@@ -457,7 +457,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       .hget(pKey, "sprites")
       .hget(pKey, "colors")
       .hget(pKey, "shortcuts")
-      .hget(pKey, "completeQuests")
+      .hget(pKey, "completeQuests2")
 
       .exec(function(err, data) {
         if (data === null || !(typeof data === 'object'))
@@ -483,7 +483,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       .hset(pKey, "sprites", data[7])
       .hset(pKey, "colors", data[8])
       .hset(pKey, "shortcuts", data[9])
-      .hset(pKey, "completeQuests", data[10])
+      .hset(pKey, "completeQuests2", data[10])
 
       .exec(function(err, replies) {
         if (err) {
@@ -742,6 +742,9 @@ loadAchievements: function(playername, callback) {
     client.del('b:bans');
     var key = 'b:bans-'+worldKey;
     client.del(key);
+    if (data.length === 0)
+      return;
+    console.warn("data:"+JSON.stringify(data));
     var multi = client.multi();
     for (var i = 0; i < data.length; ++i) {
         multi.sadd(key, data[i]);

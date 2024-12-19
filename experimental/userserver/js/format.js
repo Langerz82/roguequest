@@ -534,11 +534,15 @@ var _isTypeValid = function (fmt, msg) {
                 console.info("complete quests JSON parse error :"+JSON.stringify(data));
                 return false;
               }
-              if (!Array.isArray(arr)) {
-                console.info("complete quests is not an array.");
+              console.warn("complete quests: arr:"+JSON.stringify(arr));
+              if (typeof(arr) !== "object") {
+                console.info("complete quests is not an object.");
                 return false;
               }
-              fmt = [['array',0,questIdMax, [['no',0,questIdMax]] ]];
+              fmt = [['object',0,questIdMax, [
+                ['no',0,questNpcIdMax],
+                ['no',0,questIdMax]]
+              ]];
               var res = this.checkFormat(fmt, [arr], true);
               if (!res) {
                 console.info("complete quests format failed.");
