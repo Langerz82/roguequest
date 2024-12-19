@@ -12,7 +12,7 @@ This project now uses a seperate User Server and Game Server thats in the experi
 I am still working on this code. If you like this game give the project a Star/Like. Haha!!
 
 ### 18/07/2024 - NOTICE
-As I am no longer working on this code, I have provided the source to the Client and Server, see the js directory in client and server.
+I have provided the source to the Client and Server, see the js directory in client and server.
 
 To compile client run:
 ```
