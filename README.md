@@ -5,6 +5,9 @@ formerly Retro RPG Online 2/Rogue Quest
 https://www.landofmana.com/play/index.html
 
 ## UPDATES:
+### 20/12/2024
+This project now uses a seperate User Server and Game Server thats in the experimental folder. Completed Quests may have reset for players but other than that everything should work ok. If there are issues please let me know, cheers.
+
 ### 25/11/2024
 I am still working on this code. If you like this game give the project a Star/Like. Haha!!
 
