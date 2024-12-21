@@ -1,6 +1,4 @@
-
-var _ = require("underscore"),
-    SpawnJson = require("../../shared/data/entity_spawn.json"),
+var SpawnJson = require("../../shared/data/entity_spawn.json"),
     fs = require('fs');
 
 
