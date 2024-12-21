@@ -1,6 +1,3 @@
-var _ = require('underscore'),
-  cls = require('./lib/class'),
-  SkillData = require('./data/skilldata');
 
 // @entity Object reference to the owner of the effect.
 // @isTarget false Self, true Target.

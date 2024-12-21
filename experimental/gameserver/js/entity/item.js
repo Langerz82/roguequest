@@ -1,7 +1,6 @@
 /* global Types, module */
 
-var Entity = require('./entity'),
-		ItemData = require('../data/itemdata');
+var Entity = require('./entity');
 
 // TODO Make Item inherit from ItemRoom.
 

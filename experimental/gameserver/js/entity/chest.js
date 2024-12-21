@@ -1,5 +1,4 @@
-var Item = require('./item'),
-    ItemData = require('../data/itemdata');
+var Item = require('./item');
 
 var Chest = Item.extend({
     init: function (id, x, y, map, area, minLevel, maxLevel) {

@@ -6,9 +6,6 @@ var Chest = require('./entity/chest');
 var NpcStatic = require('./entity/npcstatic');
 
 var Messages = require('./message');
-var MobData = require('./data/mobdata');
-var NpcData = require('./data/npcdata');
-var SkillData = require("./data/skilldata");
 var MobCallback = require("./mobcallback");
 var MobAI = require("./mobai");
 

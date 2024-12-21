@@ -1,12 +1,8 @@
 
 /* global require, module, log, DBH */
 
-var cls = require("./lib/class"),
-    _ = require("underscore"),
-    formatCheck = require("./format").check,
-    UserMessages = require("./usermessage"),
-    AppearanceData = require("./data/appearancedata"),
-    SkillData = require("./data/skilldata");
+var formatCheck = require("./format").check,
+    UserMessages = require("./usermessage");
 //    PacketHandler = require("./packethandler");
 
 module.exports = WorldHandler = cls.Class.extend({
@@ -158,7 +154,7 @@ module.exports = WorldHandler = cls.Class.extend({
         console.warn("handleSaveUserBans: world is not set.");
         return;
       }
-      DBH.saveBans(this.world.key, msg, function (key, data) {
+      DBH.saveBans(this.world.key, msg[0], function (key, data) {
         self.SAVED_BANS = true;
       });
     },

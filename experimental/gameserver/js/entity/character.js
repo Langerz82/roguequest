@@ -1,6 +1,5 @@
 var EntityMoving = require("./entitymoving"),
   Messages = require("../message"),
-  MobData = require("../data/mobdata"),
   Timer = require("../timer"),
   Transition = require("../transition");
 

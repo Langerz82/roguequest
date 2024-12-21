@@ -5,3 +5,5 @@ GameTypes = require("../shared/js/gametypes");
 ItemTypes = require("../shared/js/itemtypes");
 Types = GameTypes;
 Utils = require('./utils');
+
+AppearanceData = require('./data/appearancedata');

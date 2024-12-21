@@ -1,4 +1,5 @@
 require('./common');
+require('./data/data');
 
 var Log = require('log');
 var fs = require('fs');

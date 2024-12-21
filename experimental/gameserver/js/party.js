@@ -1,6 +1,4 @@
 
-var cls = require("./lib/class");
-var MobData = require("./data/mobdata.js");
 var Messages = require("./message.js");
 //var NpcPlayer = require("./npcplayer.js");
 

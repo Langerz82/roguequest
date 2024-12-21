@@ -1,6 +1,5 @@
 var EntityArea = require('./entityarea'),
     _ = require('underscore'),
-    MobData = require('../data/mobdata'),
     Messages = require('../message');
 
 module.exports = MobArea = EntityArea.extend({

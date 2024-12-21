@@ -1,16 +1,11 @@
 /* global module */
 
 var Character = require('./character'),
-    AppearanceData = require('../data/appearancedata'),
-    MobData = require('../data/mobdata'),
-    NpcData = require('../data/npcdata'),
-    ItemLootData = require('../data/itemlootdata'),
     Messages = require('../message'),
     NpcMoveController = require('../npcmovecontroller'),
-    LangData = require('../data/langdata'),
-    Quest = require("../quest"),
-    QuestData = require("../data/questdata"),
-    NPCnames = require("../../shared/data/npc_names.json");
+    Quest = require("../quest");
+var NPCnames = require("../../shared/data/npc_names.json");
+
 
 var NpcMove = Character.extend({
     init: function (id, kind, x, y, map) {

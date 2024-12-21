@@ -1,11 +1,6 @@
 var Character = require('./character'),
   Messages = require('../message'),
-  MobArea = require('../area/mobarea'),
-  MobData = require('../data/mobdata'),
-  MobSpeech = require('../data/mobspeech'),
-  ItemData = require('../data/itemdata'),
-  ItemLootData = require('../data/itemlootdata');
-
+  MobArea = require('../area/mobarea');
 
 module.exports = Mob = Character.extend({
     init: function (id, kind, x, y, map, mobArea) {
@@ -433,7 +428,7 @@ module.exports = Mob = Character.extend({
 			return;
 
    	   	if (!value)
-			value = Utils.random(MobSpeech.Speech[key].length-1);
+			value = Utils.random(MobSpeechData.Speech[key].length-1);
 		return new Messages.Speech(this, key, value);*/
     return null;
    },

@@ -19,14 +19,6 @@ var cls = require("./lib/class"),
     MapManager = require('./mapmanager'),
     MapEntities = require('./mapentities'),
 
-    EntitySpawn = require('./data/entityspawn'),
-    NpcData = require('./data/npcdata'),
-    ItemData = require('./data/itemdata'),
-    AppearanceData = require('./data/appearancedata'),
-    SkillData = require("./data/skilldata"),
-    MobData = require("./data/mobdata"),
-    NotifyData = require("./data/notificationdata.js"),
-
     Messages = require('./message'),
 
     PlayerController = require("./playercontroller"),

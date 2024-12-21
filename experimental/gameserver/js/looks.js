@@ -1,6 +1,4 @@
-var cls = require("./lib/class"),
-    Messages = require("./message"),
-    AppearanceData = require("./data/appearancedata");
+var Messages = require("./message");
 
 
 module.exports = Looks = cls.Class.extend({

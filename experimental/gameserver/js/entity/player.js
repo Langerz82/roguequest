@@ -2,8 +2,6 @@
 /* global require, module, log, databaseHandler */
 var Character = require('./character'),
     Messages = require("../message"),
-    ItemLootData = require("../data/itemlootdata"),
-    AppearanceData = require("../data/appearancedata"),
     Formulas = require("../formulas"),
     Party = require("../party"),
     Bank = require("../items/bank"),

@@ -1,18 +1,11 @@
 
 /* global require, module, log, DBH */
 
-var cls = require("./lib/class"),
-    _ = require("underscore"),
-    crypto = require('crypto'),
+var crypto = require('crypto'),
     formatCheck = require("./format").check,
     UserMessages = require("./usermessage"),
     bcrypt = require('bcrypt'),
-    express = require('express'),
-    bodyParser = require('body-parser'),
-    app = express(),
-    AppearanceData = require("./data/appearancedata");
-    //PacketHandler = require("./packethandler");
-var CryptoJS = require("crypto-js");
+    CryptoJS = require("crypto-js");
 
 function PlayerSummary(index, db_player) {
   this.index = index;

@@ -1,5 +1,3 @@
-var cls = require("./lib/class");
-var SkillData = require("./data/skilldata.js");
 var Messages = require("./message.js");
 
 module.exports = SkillHandler = cls.Class.extend({

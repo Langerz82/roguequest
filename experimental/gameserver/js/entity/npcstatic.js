@@ -2,8 +2,6 @@
 
 var Entity = require('./entity'),
     Player = require('./player'),
-    QuestData = require('../data/questdata'),
-    NpcData = require('../data/npcdata'),
     Utils = require('../utils'),
     Messages = require('../message');
 

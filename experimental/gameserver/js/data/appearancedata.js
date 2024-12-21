@@ -1,5 +1,4 @@
-var _ = require('underscore'),
-    AppearancesJson = require("../../shared/data/appearance.json");
+var AppearancesJson = require("../../shared/data/appearance.json");
 
 var AppearanceData = [];
 

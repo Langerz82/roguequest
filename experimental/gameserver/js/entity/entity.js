@@ -1,7 +1,4 @@
-var cls = require('../lib/class'),
-    Messages = require('../message'),
-    Utils = require('../utils'),
-    AppearanceData = require('../data/appearancedata');
+var Messages = require('../message');
 
 module.exports = Entity = cls.Class.extend({
         init: function(id, type, kind, x, y, map) {

@@ -7,10 +7,7 @@ var redis = require("redis");
 var bcrypt = require("bcrypt");
 
 var Utils = require('./utils');
-var cls = require("./lib/class"),
-    SkillData = require('./data/skilldata'),
-    AppearanceData = require('./data/appearancedata'),
-    Auction = ('./auction');
+//var Auction = require('./auction');
 
 var client;
 
@@ -668,22 +665,25 @@ loadAchievements: function(playername, callback) {
   },
 
   saveAuctions: function(worldKey, data, callback) {
-    console.info("redis - saveAuctions: "/*+JSON.stringify(data)*/);
+    console.info("redis - saveAuctions: "+JSON.stringify(data));
     client.del('s:auction');
     var key = 's:auction-'+worldKey;
     client.del(key);
     var multi = client.multi();
+    var exec = (data.length > 0);
     for (var i = 0; i < data.length; ++i) {
         multi.sadd(key, data[i]);
     }
-    multi.exec(function(err, reply) {
-      if (err) {
-        console.error("redis - saveAuctions: "+JSON.stringify(err));
-        return;
-      }
-      if (callback)
-        callback(worldKey, reply);
-    });
+    if (exec) {
+      multi.exec(function(err, reply) {
+        if (err) {
+          console.error("redis - saveAuctions: "+JSON.stringify(err));
+          return;
+        }
+        if (callback)
+          callback(worldKey, reply);
+      });
+    }
   },
 // END AUCTION DB CALLS.
 

@@ -1,9 +1,7 @@
 /* global databaseHandler, log */
 
-var cls = require("../lib/class"),
-    ItemRoom = require("./itemroom"),
-    Messages = require("../message"),
-    ItemData = require("../data/itemdata");
+var ItemRoom = require("./itemroom"),
+    Messages = require("../message");
 
 module.exports = Equipment = cls.Class.extend({
     init: function(owner, number, items){

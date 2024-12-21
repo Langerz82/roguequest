@@ -7,12 +7,6 @@ var cls = require("./lib/class"),
   Messages = require("./message"),
   Utils = require("./utils"),
 
-  MobData = require("./data/mobdata"),
-  ItemData = require("./data/itemdata"),
-  Quests = require('./data/questdata'),
-  SkillData = require("./data/skilldata"),
-  AppearanceData = require('./data/appearancedata'),
-
   Formulas = require("./formulas"),
   formatCheck = require("./format").check,
   Party = require("./party"),

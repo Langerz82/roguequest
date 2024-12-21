@@ -1,10 +1,7 @@
 
 /* global require, module, log, DBH */
 
-var cls = require("./lib/class"),
-    _ = require("underscore"),
-    UserMessages = require("./usermessage"),
-    AppearanceData = require("./data/appearancedata");
+var UserMessages = require("./usermessage");
 
 module.exports = UserHandler = cls.Class.extend({
     init: function(main, server, world, connection) {

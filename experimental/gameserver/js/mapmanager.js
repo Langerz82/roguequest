@@ -9,7 +9,6 @@ var TrapArea = require("./area/traparea");
 var MobArea = require("./area/mobarea");
 var EntityArea = require("./area/entityarea");
 var TrapGroup = require("./trapgroup");
-var MobData = require("./data/mobdata");
 var Node = require("./entity/node");
 
 module.exports = MapManager = cls.Class.extend({
