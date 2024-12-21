@@ -1,7 +1,6 @@
 var cls = require("./lib/class"),
   EntityMoving = require("./entity/entitymoving"),
   Messages = require("./message"),
-  Types = require("../shared/js/gametypes"),
   AchievementJson = require("../shared/data/achievements.json");
 
 //var AchievementData = AchievementJson;

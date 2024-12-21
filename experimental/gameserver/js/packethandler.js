@@ -6,28 +6,18 @@ var cls = require("./lib/class"),
   Node = require('./entity/node'),
   Messages = require("./message"),
   Utils = require("./utils"),
+
   MobData = require("./data/mobdata"),
+  ItemData = require("./data/itemdata"),
+  Quests = require('./data/questdata'),
+  SkillData = require("./data/skilldata"),
+  AppearanceData = require('./data/appearancedata'),
+
   Formulas = require("./formulas"),
   formatCheck = require("./format").check,
   Party = require("./party"),
-  ItemData = require("./data/itemdata"),
-  Bank = require("./bank"),
-  Types = require("../shared/js/gametypes"),
-  ItemTypes = require("../shared/js/itemtypes"),
-  bcrypt = require('bcrypt'),
-  Inventory = require("./inventory"),
-  //NpcPlayer = require('./npcplayer'),
+
   SkillHandler = require("./skillhandler"),
-  //Variations = require('./variations'),
-  Trade = require('./trade'),
-  express = require('express'),
-  bodyParser = require('body-parser'),
-  app = express(),
-  Quests = require('./data/questdata'),
-  //request = require("request"),
-  SkillData = require("./data/skilldata"),
-  EntitySpawn = require("./entityspawn"),
-  AppearanceData = require('./data/appearancedata'),
   TaskHandler = require("./taskhandler");
 
 module.exports = PacketHandler = Class.extend({
@@ -1099,7 +1089,7 @@ module.exports = PacketHandler = Class.extend({
     if (!tEntity) return;
 
     if (tEntity instanceof Mob)
-      this.entities.mobAI.aggroPlayer(tEntity, sEntity);
+      tEntity.aggroPlayer(sEntity);
 
     this.server.handleDamage(tEntity, sEntity, -dmg, crit);
     if (sEntity instanceof Player)

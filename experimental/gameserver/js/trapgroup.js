@@ -1,8 +1,6 @@
 var cls = require("./lib/class"),
   Trap = require("./entity/trap"),
-  Timer = require("./timer"),
-  Utils = require("./utils"),
-  Types = require("../shared/js/gametypes");
+  Timer = require("./timer");
 
 module.exports = TrapGroup = cls.Class.extend({
   init: function(kind, x, y, width, height, map, damage, interval) {

@@ -1,7 +1,5 @@
 
 
-var cls = require('./lib/class');
-_ = require('underscore');
 var path = require('path');
 var Utils = require('./utils');
 var Chest = require('./entity/chest');
@@ -10,7 +8,6 @@ var NpcStatic = require('./entity/npcstatic');
 var Messages = require('./message');
 var MobData = require('./data/mobdata');
 var NpcData = require('./data/npcdata');
-var ItemTypes = require('../shared/js/itemtypes');
 var SkillData = require("./data/skilldata");
 var MobCallback = require("./mobcallback");
 var MobAI = require("./mobai");

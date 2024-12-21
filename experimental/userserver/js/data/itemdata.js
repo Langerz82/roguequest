@@ -1,6 +1,4 @@
-var _ = require('underscore'),
-    ItemTypes = require("../../shared/js/itemtypes"),
-    ItemsJson = require("../../shared/data/items2.json"),
+var ItemsJson = require("../../shared/data/items2.json"),
     CraftData = require("../../shared/data/craft.json");
 
   	var id = 0;

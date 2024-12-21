@@ -1,30 +1,18 @@
 
 /* global require, module, log, databaseHandler */
-
-var bodyParser = require('body-parser'),
-//    bcrypt = require('bcrypt'),
-    Character = require('./character'),
-    Chest = require('./chest'),
-    Mob = require('./mob'),
+var Character = require('./character'),
     Messages = require("../message"),
-    Utils = require("../utils"),
-    MobData = require("../data/mobdata"),
+    ItemLootData = require("../data/itemlootdata"),
+    AppearanceData = require("../data/appearancedata"),
     Formulas = require("../formulas"),
     Party = require("../party"),
-    //ItemData = require("../data/itemdata"),
-    AppearanceData = require("../data/appearancedata"),
-    Bank = require("../bank"),
-    Types = require("../../shared/js/gametypes"),
-    ItemTypes = require("../../shared/js/itemtypes"),
-    Equipment = require("../equipment"),
-    Inventory = require("../inventory"),
-//    Main = require('../main'),
+    Bank = require("../items/bank"),
+    Equipment = require("../items/equipment"),
+    Inventory = require("../items/inventory"),
     SkillHandler = require("../skillhandler"),
     SkillEffectHandler = require("../effecthandler"),
-    Trade = require('../trade'),
-    EntitySpawn = require("../entityspawn"),
     PacketHandler = require("../packethandler"),
-    ItemLootData = require("../data/itemlootdata"),
+
     Quest = require("../quest");
 
 module.exports = Player = Character.extend({

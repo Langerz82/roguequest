@@ -1,3 +1,5 @@
+require('./common')
+
 var fs = require('fs');
 var crypto = require('crypto');
 var Metrics = require('./metrics');
@@ -7,9 +9,6 @@ var WorldHandler = require('./worldhandler');
 var Utils = require('./utils');
 var redis = require('./redis');
 var UserMessages = require('./usermessage');
-//var Auction = require("./auction");
-//var Looks = require("./looks");
-var GameTypes = require("../shared/js/gametypes");
 
 var _ = require('underscore');
 var readline = require('readline').createInterface({

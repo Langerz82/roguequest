@@ -1,9 +1,7 @@
 var EntityMoving = require("./entitymoving"),
   Messages = require("../message"),
-  Utils = require("../utils"),
   MobData = require("../data/mobdata"),
   Timer = require("../timer"),
-  Types = require("../../shared/js/gametypes"),
   Transition = require("../transition");
 
 module.exports = Character = EntityMoving.extend({

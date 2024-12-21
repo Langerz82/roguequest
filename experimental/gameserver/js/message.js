@@ -1,7 +1,5 @@
 var _ = require('underscore');
 var cls = require('./lib/class');
-var Types = require('../shared/js/gametypes');
-var Utils = require('./utils');
 //var Quest = require('./quest');
 
 var Messages = {};

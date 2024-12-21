@@ -1,9 +1,6 @@
 /* global Types */
 
-var Utils = require('./utils'),
-	//NpcPlayer = require('./npcplayer'),
-    ItemTypes = require('../shared/js/itemtypes'),
-    Formulas = {};
+var Formulas = {};
 
 Formulas.crit = function(attacker, defender) {
 	var chance = (Utils.randomRangeInt(0,200) <= Utils.clamp(5, 195, ~~(25 + attacker.baseCrit() - defender.baseCritDef())));

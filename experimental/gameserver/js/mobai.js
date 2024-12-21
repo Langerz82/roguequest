@@ -38,11 +38,6 @@ module.exports = MobAI = Class.extend({
       return;
     }
 
-    /*if (!mob.canAggro()) {
-      //console.info("cannot Agrro.");
-      return;
-    }*/
-
     if (mob.hasTarget()) {
       //console.info("hasTarget");
       //this.aggroPlayer(mob, player);
@@ -69,50 +64,13 @@ module.exports = MobAI = Class.extend({
 			if (level >= player.level.base)
 			{
         //console.info("aggroPlayer.")
-        this.aggroPlayer(mob, player);
+        mob.aggroPlayer(player);
 			}
 		}
   },
 
-  aggroPlayer: function (mob, player, dmg)
-  {
-  	var self = this;
-  	var ws = this.worldServer;
-    dmg = dmg || 1;
-
-    //mob.map.entities.pushNeighbours(mob, new Messages.Spawn(mob));
-    mob.resetAggro(0);
-    mob.attackingMode = true;
-    //mob.setTarget(player);
-    //mob.setFreeze(G_LATENCY);
-  	mob.handleMobHate(player, 1);
-  	//mob.createAttackLink(player);
-    mob.setAiState(mobState.AGGRO);
-    mob.attackTimer = Date.now();
-    mob.freeze = false;
-  },
-
-  /*addHate: function (mob, player, dmg)
-  {
-  	var self = this;
-  	var ws = this.worldServer;
-
-    //mob.map.entities.pushNeighbours(mob, new Messages.Spawn(mob));
-    mob.resetAggro(0);
-    mob.attackingMode = true;
-    //mob.setTarget(player);
-
-    //mob.setFreeze(G_ROUNDTRIP);
-  	ws.handleMobHate(mob, player, dmg);
-    ws.createAttackLink(player, mob);
-  	//ws.createAttackLink(mob, player);
-
-    mob.setAiState(mobState.AGGRO);
-  },*/
-
   checkHit: function(mob) {
         var self = this;
-        //var ws = this.worldServer;
 
 	    	if (mob.isStunned || !mob.target || mob.freeze)
 	    		return;
@@ -132,45 +90,13 @@ module.exports = MobAI = Class.extend({
         if (mob.aiState !== mobState.ATTACKING)
           return;
 
-	    	//this.loadPreviousTarget(mob);
 	    	//console.info("mob.target: "+mob.target.id);
 	    	//console.info("mob.canAttack: "+ mob.canAttack(time));
 	    	//console.info("mob.canReach: "+mob.isAdjacentNonDiagonal(mob.target));
-        //var time = new Date().getTime();
 
   			if (mob.canAttack())
   			{
-          //mob.forceStop();
   				console.info("mob - Is Attacking");
-  				/*var canCallBackup = (Utils.random(Math.ceil(3200/mob.level)) === 1) && (mob.data && mob.data.special > 0);
-  				if (canCallBackup && mob.level >= 10 && mob.canCall && mob.stats.hp < (mob.stats.hpMax * 0.5))
-  				{
-  					//self.map.entities.pushToAdjacentGroups(mob.group, mob.Speech("callBackup"));
-  					mob.canCall = false;
-  					var mobs = self.map.entities.getCharactersAround(mob, mob.data.aggroRange * 16);
-  					var i =0;
-  					for (var id in mobs)
-  					{
-  						if (++i == 3)
-  							break;
-  						if (mobs[id] instanceof Mob)
-  						{
-  							this.aggroPlayer(mobs[id], mob.target);
-  							mobs[id].canCall = false;
-  						}
-  					}
-  				}*/
-
-  				/*var canCallAoe = (Utils.random(Math.ceil(300/mob.level)) === 1);
-  				if (canCallAoe && mob.level >= 25)
-  				{
-  					var chars = self.map.entities.getCharactersAround(mob.target, Math.ceil(mob.level/5));
-  					for (var id in chars)
-  					{
-  						if (chars[id] instanceof Player || chars[id] instanceof NpcPlayer)
-  							this.handleHurt(chars[id]);
-  					}
-  				}*/
 
   				this.handleHurt(mob);
         }
@@ -211,8 +137,6 @@ module.exports = MobAI = Class.extend({
       if (target.isDead ||target.isDying)
 			{
         //console.info(mob.id+" mob target is dead.");
-        //mob.returnToSpawn();
-				//mob.clearTarget();
 				return;
 			}
 
@@ -228,101 +152,67 @@ module.exports = MobAI = Class.extend({
         return;
       }
 
-			//if (mob.canAggro())
-			//{
-        /*if (this.tryMovingToADifferentTile(mob) === true)
-        {
-          console.info(mob.id+" mob moving to different tile")
+			if (!mob.canReach(target))
+			{
+        //console.info(mob.id+" not within range");
+        if (mob.isMovingPath()) {
+          //console.info(mob.id+" isMovingpath.");
           return;
-        }*/
+        }
 
-        //console.info(mob.id+" target and canAggro");
+        if (!target.isMoving() && mob.ptx == mob.target.x && mob.pty == mob.target.y)
+        {
+          //console.info(mob.id+" path same as before and expensive.");
+          return;
+        }
 
-        //if (mob.hasTarget() && !mob.isMovingPath())
-          //mob.lookAtEntity(mob.target);\
+        if (mob.isMoving() && target.isMoving())
+        {
+          console.info(mob.id+" monster and target is moving so abort.");
+          return;
+        }
 
-        //if (!target || !(target instanceof Character))
-          //return;
+        if (mob.canMoveAI()) {
 
-				if (!mob.canReach(target))
-				{
-          //console.info(mob.id+" not within range");
-          if (mob.isMovingPath()) {
-            //console.info(mob.id+" isMovingpath.");
+          if (this.checkReturn(mob))
+            return;
+
+          mob.setMoveAI(Utils.randomRangeInt(25,50));
+          mob.ptx = target.x;
+          mob.pty = target.y;
+
+
+          mob.followAttack(target);
+          if (mob.path) {
+            mob.setAiState(mobState.CHASING);
             return;
           }
-
-          if (!target.isMoving() && mob.ptx == mob.target.x && mob.pty == mob.target.y)
+          else
           {
-            //console.info(mob.id+" path same as before and expensive.");
-            return;
-          }
-
-          if (mob.isMoving() && target.isMoving())
-          {
-            console.info(mob.id+" monster and target is moving so abort.");
-            return;
-          }
-
-          if (mob.canMoveAI()) {
-            /*if (mob.isOverlapping()) {
-              mob.forceStop();
-              mob.follow(mob.target);
+              mob.returnToSpawn();
               return;
-            }*/
-
-            if (this.checkReturn(mob))
-              return;
-
-            /*if (mob.path > 1) {
-              dest = mob.path[mob.path.length-1];
-              dest[0] !=
-            } && )*/
-            //console.info(mob.id+" EXPENSIVE - mob following target.");
-            //mob.lookAt(mob.target);
-            //mob.setFreeze(G_LATENCY);
-
-            mob.setMoveAI(Utils.randomRangeInt(25,50));
-            mob.ptx = target.x;
-            mob.pty = target.y;
-
-
-            mob.followAttack(target);
-            if (mob.path) {
-              mob.setAiState(mobState.CHASING);
-              return;
-            }
-            else
-            {
-                //mob.setAiState(mobState.STUCK);
-                //console.info("MOB CANNOT GET PLAYER!");
-                //mob.forceStop();
-                mob.returnToSpawn();
-                //mob.setAiState(mobState.IDLE);
-                return;
-            }
-
-          }
-				}
-        else {
-          if (!mob.isMovingPath())
-          {
-            if (mob.isOverlapping()) {
-              mob.forceStop();
-              mob.follow(mob.target);
-              if (mob.path)
-                return;
-            }
-
-            //mob.setFreeze(G_LATENCY);
-            mob.forceStop();
-            console.info(mob.id+" within range");
-            //mob.setAggroRate((mob.moveSpeed+G_LATENCY));
-            mob.setAiState(mobState.FIRSTATTACK);
           }
 
         }
-			//}
+			}
+      else {
+        if (!mob.isMovingPath())
+        {
+          if (mob.isOverlapping()) {
+            mob.forceStop();
+            mob.follow(mob.target);
+            if (mob.path)
+              return;
+          }
+
+          //mob.setFreeze(G_LATENCY);
+          mob.forceStop();
+          console.info(mob.id+" within range");
+          //mob.setAggroRate((mob.moveSpeed+G_LATENCY));
+          mob.setAiState(mobState.FIRSTATTACK);
+        }
+
+      }
     },
 
     handleHurt: function(mob){ // 9
@@ -353,11 +243,7 @@ module.exports = MobAI = Class.extend({
                 mob.target.isDead = true;
             }
 
-            //mob.addTanker(mob.target.id);
-
             console.info("handleHurtEntity");
-            //if (mob.target instanceof Player)
-            	    //mob.target.armorDamage += dmg;
             this.server.handleDamage(mob.target, mob, -dmg, mob.criticalHit);
             this.server.handleHurtEntity(mob.target, mob);
             mob.attackTimer = Date.now();

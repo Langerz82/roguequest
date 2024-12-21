@@ -4,7 +4,7 @@ var fs = require('fs');
 var file = require('../shared/js/file');
 var path = require('path');
 var Utils = require('./utils');
-var Checkpoint = require('./checkpoint');
+var Checkpoint = require('./area/checkpoint');
 var Area = require('./area/area');
 var MapArea = require('./area/maparea');
 

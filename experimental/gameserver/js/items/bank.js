@@ -1,7 +1,7 @@
 /* global databaseHandler, log */
 
 var ItemRoomStore = require("./itemroomstore");
-var Messages = require("./message");
+var Messages = require("../message");
 
 module.exports = Bank = ItemRoomStore.extend({
     init: function(owner, number, items){

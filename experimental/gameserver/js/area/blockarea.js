@@ -1,7 +1,5 @@
 var EntityArea = require("./entityarea.js"),
-  Block = require("../entity/block.js"),
-  Utils = require('../utils'),
-  Types = require("../../shared/js/gametypes");
+  Block = require("../entity/block.js");
 
 module.exports = BlockArea = EntityArea.extend({
   init: function(id, x, y, width, height, map, elipse) {

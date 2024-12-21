@@ -1,8 +1,6 @@
 var _ = require('underscore'),
   cls = require('./lib/class'),
-  Utils = require('./utils'),
-  SkillData = require('./data/skilldata'),
-  Types = require("../shared/js/gametypes");
+  SkillData = require('./data/skilldata');
 
 // @entity Object reference to the owner of the effect.
 // @isTarget false Self, true Target.

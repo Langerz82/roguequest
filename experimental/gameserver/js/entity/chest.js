@@ -1,7 +1,5 @@
 var Item = require('./item'),
-    ItemData = require('../data/itemdata'),
-    Types = require('../../shared/js/gametypes'),
-    Utils = require('../utils');
+    ItemData = require('../data/itemdata');
 
 var Chest = Item.extend({
     init: function (id, x, y, map, area, minLevel, maxLevel) {

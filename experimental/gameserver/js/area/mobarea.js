@@ -1,9 +1,7 @@
 var EntityArea = require('./entityarea'),
     _ = require('underscore'),
     MobData = require('../data/mobdata'),
-    Messages = require('../message'),
-    Utils = require('../utils'),
-    Types = require("../../shared/js/gametypes");
+    Messages = require('../message');
 
 module.exports = MobArea = EntityArea.extend({
     init: function(id, nb, minLevel, maxLevel, x, y, width, height, include, exclude, definite, map, elipse, excludeId, sMinLevel, sMaxLevel) {

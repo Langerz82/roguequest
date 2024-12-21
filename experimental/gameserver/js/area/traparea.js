@@ -1,8 +1,6 @@
 var EntityArea = require("./entityarea"),
   Timer = require("../timer"),
-  TrapGroup = require("../trapgroup"),
-  Utils = require('../utils'),
-  Types = require("../../shared/js/gametypes");
+  TrapGroup = require("../trapgroup");
 
 module.exports = TrapArea = EntityArea.extend({
   init: function(id, x, y, width, height, map, damage, switchInterval) {

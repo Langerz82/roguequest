@@ -1,5 +1,4 @@
-var EntityMoving = require("./entitymoving"),
-  Types = require("../../shared/js/gametypes");
+var EntityMoving = require("./entitymoving");
 
 module.exports = Block = EntityMoving.extend({
   init: function(id, kind, x, y, map, parent, name, ix, iy) {

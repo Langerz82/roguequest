@@ -1,5 +1,4 @@
 var _ = require('underscore');
-var Types = require('../shared/js/gametypes');
 
 var isTypeValid = function (fmt,msg) {
   if (Array.isArray(fmt)) {
@@ -223,7 +222,7 @@ var _isTypeValid = function (fmt, msg) {
                 ['n',0,this.coordMax]]
               ]],
             this.formats[Types.Messages.CW_WHO] = [['array',0,999,[
-                ['n',0,99999]]
+                ['n',0,this.entityIdMax]]
             ]];
             /*this.formats[Types.Messages.CW_ITEMSLOT] = [
               ['n',0,3],
@@ -330,31 +329,6 @@ var _isTypeValid = function (fmt, msg) {
                 var res = this.checkFormat(format, message, true);
                 return res;
             }
-            /*else if (type === Types.Messages.CW_MOVEPATH)
-            {
-              console.info("type CW_MOVEPATH");
-              var format = [
-                  ['n',this.dateMin,this.dateMax],
-                  ['n',0,this.entityIdMax],
-                  ['n',0,4],
-                  ['n',0,1],
-                  ['array',2,16,[
-                    ['n',0,this.coordMax],
-                    ['n',0,this.coordMax]]
-              ]];
-              if (!this.checkFormat(format, message, true))
-                return false;
-              return true;
-            }
-            else if (type === Types.Messages.CW_WHO)
-            {
-              console.info("type CW_WHO");
-              var format = [['array',0,999,[
-                  ['n',0,99999]]
-              ]];
-              if (!this.checkFormat(format, [message], true))
-                return false;
-            }*/
             else if (type === Types.Messages.CW_ITEMSLOT)
             {
               console.info("type CW_ITEMSLOT");

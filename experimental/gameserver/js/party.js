@@ -74,24 +74,6 @@ module.exports = Party = Class.extend({
     return sum+1;
   },
 
-  // TODO - Players in map get XP Bonus only.
-  /*incExp: function(mob){
-    var i=0;
-    var totalLevel = this.sumTotalLevel();
-
-    for(i=0; i<this.players.length; i++){
-      var player = this.players[i];
-      //var exp = ~~(mob.xp * (20 - Utils.clamp(-20,20,(player.level - mob.level))) * 0.01);
-      //var exp1 = Math.ceil(exp * (player.level+1) / totalLevel);
-
-      if (mob.map == player.map)
-      	  var xp = player.incMobExp(mob, this.players.length); // 2nd argument isPartyXP.
-      //console.info("exp1=" + exp1);
-      if (player instanceof Player)
-      	  player.map.entities.pushToPlayer(player, new Messages.Kill(mob, player.level, xp));
-    }
-  },*/
-
   getHighestLevel: function(){
     var i=0;
     var highestLevel = 0;

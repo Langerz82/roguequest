@@ -1,6 +1,6 @@
 //var cls = require('./lib/class');
-var Utils = require('./utils');
-var Area = require('./area/area');
+var Utils = require('../utils');
+var Area = require('./area');
 
 var Checkpoint = Area.extend({
     init: function(id, x, y, width, height, map) {

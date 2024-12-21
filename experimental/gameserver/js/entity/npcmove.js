@@ -2,9 +2,6 @@
 
 var Character = require('./character'),
     AppearanceData = require('../data/appearancedata'),
-    Types = require('../../shared/js/gametypes'),
-    ItemTypes = require('../../shared/js/itemtypes'),
-    Utils = require('../utils'),
     MobData = require('../data/mobdata'),
     NpcData = require('../data/npcdata'),
     ItemLootData = require('../data/itemlootdata'),

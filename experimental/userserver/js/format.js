@@ -551,7 +551,6 @@ var _isTypeValid = function (fmt, msg) {
                 return false;
               }
 
-
               // quests data.
               var arr = null;
               var data = message[1][2];

@@ -3,12 +3,8 @@
 
 var cls = require("./lib/class"),
     _ = require("underscore"),
-    Utils = require("./utils"),
-    Types = require("../shared/js/gametypes"),
-//    Main = require("./main"),
-//    Messages = require("./message"),
+    UserMessages = require("./usermessage"),
     AppearanceData = require("./data/appearancedata");
-//    TaskHandler = require("./taskhandler");
 
 module.exports = UserHandler = cls.Class.extend({
     init: function(main, server, world, connection) {

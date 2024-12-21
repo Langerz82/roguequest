@@ -1,8 +1,6 @@
 var cls = require("./lib/class"),
-    ItemRoom = require("./itemroom"),
-    Messages = require("./message"),
-    ItemTypes = require("../shared/js/itemtypes"),
-    Types = require("../shared/js/gametypes");
+    ItemRoom = require("./items/itemroom"),
+    Messages = require("./message");
 
 module.exports = AuctionRecord = cls.Class.extend({
     init: function (playerName, price, item) {

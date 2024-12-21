@@ -1,3 +1,5 @@
+require('./common');
+
 var Log = require('log');
 var fs = require('fs');
 var util = require('util');
@@ -6,13 +8,11 @@ var BISON = require('bison');
 var useBison = false;
 var WS = require('./ws');
 
-var Metrics = require('./metrics');
 var ProductionConfig = require('./productionconfig');
 var UserHandler = require('./userhandler');
 var WorldHandler = require('./worldhandler');
-var Utils = require('./utils');
+
 var UserMessages = require('./usermessage');
-var GameTypes = require("../shared/js/gametypes");
 
 //var RedisServer = require('redis-server');
 
@@ -170,7 +170,6 @@ function main(config) {
     var WorldServer = require("./worldserver");
 
     server = new ws.WebsocketServer(config);
-    var metrics = config.metrics_enabled ? new Metrics(config) : null;
     var lastTotalPlayers = 0;
     var self = this;
 

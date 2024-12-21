@@ -4,9 +4,7 @@ var Character = require('./character'),
   MobData = require('../data/mobdata'),
   MobSpeech = require('../data/mobspeech'),
   ItemData = require('../data/itemdata'),
-  ItemLootData = require('../data/itemlootdata'),
-  Utils = require('../utils'),
-  ItemTypes = require("../../shared/js/itemtypes");
+  ItemLootData = require('../data/itemlootdata');
 
 
 module.exports = Mob = Character.extend({
@@ -546,6 +544,17 @@ module.exports = Mob = Character.extend({
         }
     },
 
+    aggroPlayer: function (player, dmg)
+    {
+      dmg = dmg || 1;
+
+      this.resetAggro(0);
+      this.attackingMode = true;
+    	this.handleMobHate(player, 1);
+      this.setAiState(mobState.AGGRO);
+      this.attackTimer = Date.now();
+      this.freeze = false;
+    },
 });
 
 module.exports = Mob;

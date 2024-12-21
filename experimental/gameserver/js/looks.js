@@ -2,6 +2,7 @@ var cls = require("./lib/class"),
     Messages = require("./message"),
     AppearanceData = require("./data/appearancedata");
 
+
 module.exports = Looks = cls.Class.extend({
     init: function(){
         this.prices = [];

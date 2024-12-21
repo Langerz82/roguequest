@@ -1,6 +1,4 @@
-var cls = require("./lib/class"),
-    Types = require("../shared/js/gametypes"),
-    ItemTypes = require("../shared/js/itemtypes");
+var cls = require("../lib/class");
 
 module.exports = BaseItem = cls.Class.extend({
     init: function(arr){

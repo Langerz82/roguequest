@@ -1,8 +1,5 @@
 var Utils = {},
-    sanitizer = require('sanitizer'),
-    Types = require("../shared/js/gametypes"),
-    ItemTypes = require("../shared/js/itemtypes");
-
+    sanitizer = require('sanitizer');
 
 Utils.sanitize = function(string) {
     // Strip unsafe tags, then escape as html entities.

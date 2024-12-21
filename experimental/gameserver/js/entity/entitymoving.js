@@ -1,8 +1,6 @@
 var Entity = require("./entity"),
   Messages = require("../message"),
-  Utils = require("../utils"),
   Timer = require("../timer"),
-  Types = require("../../shared/js/gametypes"),
   Transition = require("../transition");
 
 module.exports = EntityMoving = Entity.extend({
@@ -503,10 +501,10 @@ module.exports = EntityMoving = Entity.extend({
       this.walk(this.orientation);
   },
 
-  updateWalk: function(a, b) {
+  /*updateWalk: function(a, b) {
       this.orientation = this.getOrientation(a, b);
       this.walk(this.orientation);
-  },
+  },*/
 
   nextStepPath: function () {
     // Needed because x and y are moved != path[0].
