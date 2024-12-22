@@ -386,12 +386,12 @@ Utils.BinArrayToBase64 = function (uint8array) {
     //console.info("num2:"+parseInt(num, 2));
     tarr.push(parseInt(num, 2));
   }
-  base64 = btoa(tarr);
+  var base64 = tarr.toString('base64');
   return base64;
 }
 
 Utils.Base64ToBinArray = function (base64, limit) {
-  var data = atob(base64);
+  var data = base64.toString('binary');
   var arr = data.split(",");
   //console.info(JSON.stringify(arr));
   var uint8array = new Uint8Array(arr.length*32);
