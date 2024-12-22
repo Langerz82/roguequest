@@ -252,7 +252,7 @@ WS.socketioConnection = Connection.extend({
       {
 		      zlib.gzip(data, {level:1}, (err, buffer) => {
 			    buffer = new Buffer(buffer).toString('base64');
-			    self.sendUTF8('2'+buffer);
+			    self.sendUTF8('z|'+buffer);
 		      });
 	    }
     	else

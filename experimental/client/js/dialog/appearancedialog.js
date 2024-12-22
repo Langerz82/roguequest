@@ -384,7 +384,7 @@ define(['./dialog', '../tabbook', '../tabpage', 'data/appearancedata', '../pageN
             var weapon, armor,
                 width1, height1, width2, height2, width3, height3;
 
-        		game.player.appearances = HexToBin(datas.shift());
+        		game.player.appearances = Utils.Base64ToBinArray(datas.shift(), AppearanceData.length);
 
             for(var i=0; i < AppearanceData.length; i++)
             {

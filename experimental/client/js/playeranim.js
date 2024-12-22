@@ -128,17 +128,17 @@ for (var sprite of this.sprites) {
     },
 
     idle: function(orientation) {
-        this.setOrientation(orientation);
+        this.orientation = orientation;
         this.animate("idle", this.speeds.idle);
     },
 
     hit: function(orientation) {
-        this.setOrientation(orientation);
+        this.orientation = orientation;
         this.animate("atk", this.speeds.attack, 1);
     },
 
     walk: function(orientation) {
-        this.setOrientation(orientation);
+        this.orientation = orientation;
         this.animate("walk", this.speeds.walk);
     },
 

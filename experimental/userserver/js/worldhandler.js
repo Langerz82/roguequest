@@ -331,7 +331,7 @@ module.exports = WorldHandler = cls.Class.extend({
         self.playerCreateData[playerName] = objData;
       };
 
-      DBH.loadPlayerUserInfo(username, function (username, data) {
+      DBH.loadPlayerUserInfo(user, function (username, data) {
         var objData = {};
         objData.data = new Array(7);
         objData.count = 0;
@@ -444,7 +444,7 @@ module.exports = WorldHandler = cls.Class.extend({
         }
       };
 
-      DBH.loadPlayerUserInfo(username, function (username, db_data) {
+      DBH.loadPlayerUserInfo(user, function (username, db_data) {
         var objData = {};
         objData.data = new Array(7);
         objData.count = 0;

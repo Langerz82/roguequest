@@ -47,7 +47,12 @@ module.exports = User = cls.Class.extend({
         this.loadedPlayer = false;
         this.player_loggedin = false;
 
-        this.looks = new Array(AppearanceData.Data.length);
+        // Initialize Looks Array.
+        this.looks = new Uint8Array(AppearanceData.Data.length);
+        this.looks[0] = 1;
+        this.looks[50] = 1;
+        this.looks[77] = 1;
+        this.looks[151] = 1;
 
         this.gems = 0;
 

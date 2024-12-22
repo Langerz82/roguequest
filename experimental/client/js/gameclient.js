@@ -27,7 +27,6 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 						self.onMessage = function(data) {
 	            console.warn("recv: "+data);
 							var fnProcessMessage = function (message) {
-
 								if(self.isListening) {
 			            if(self.useBison) {
 			              data = BISON.decode(message);
@@ -49,12 +48,13 @@ define(['lib/pako', 'entity/player', 'entityfactory', 'entity/mob', 'entity/item
 	               }
 	             }
 	           };
-	           var method = data.substr(0,2) ;
-		        if (method === '2[')
+	           var method = data.substr(0,2);
+		        if (method === 'z|')
 		        {
-	            var buffer = _base64ToArrayBuffer(data.substr(1));
+	            var buffer = _base64ToArrayBuffer(data.substr(2));
 	            try {
 	              var message = pako.inflate(buffer, {gzip: true, to: 'string'});
+								console.warn("message:"+message);
 							  fnProcessMessage(message);
 	            } catch (err) {
 	              console.log(err);

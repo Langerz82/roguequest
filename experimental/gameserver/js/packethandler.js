@@ -1,6 +1,4 @@
-var cls = require("./lib/class"),
-  _ = require("underscore"),
-  Character = require('./entity/character'),
+var Character = require('./entity/character'),
   Chest = require('./entity/chest'),
   Mob = require('./entity/mob'),
   Node = require('./entity/node'),
@@ -759,7 +757,7 @@ module.exports = PacketHandler = Class.extend({
 
       if (gemCount >= price) {
         this.player.user.looks[appearanceIndex] = 1;
-        this.player.user.modifyGems(-price);
+        this.player.modifyGems(-price);
         this.server.looks.prices[appearanceIndex] += 100;
 
         this.sendPlayer(new Messages.Notify("SHOP", "SHOP_SOLD", [itemData.name]));
@@ -1524,7 +1522,7 @@ module.exports = PacketHandler = Class.extend({
 
     switch (type) {
       case 0: // CW_APPEARANCELIST
-        this.handlePlayerInfo(msg);
+        this.handleAppearanceList(msg);
         break;
       case 1: // CW_PLAYER_REVIVE
         this.handleRevive(msg);

@@ -1,8 +1,7 @@
 
 /* global require, module, log, DBH */
 
-var cls = require("./lib/class"),
-    _ = require("underscore"),
+var formatCheck = require("./format").check,
     UserMessages = require("./usermessage");
 
 module.exports = WorldHandler = cls.Class.extend({
@@ -18,6 +17,12 @@ module.exports = WorldHandler = cls.Class.extend({
         this.connection.listen(function(message) {
           console.info("recv="+JSON.stringify(message));
           var action = parseInt(message[0]);
+
+          if (action)
+          if(!formatCheck(message)) {
+              self.connection.close("Invalid "+Types.getMessageTypeAsString(action)+" message format: "+message);
+              return;
+          }
           message.shift();
 
           if (action == Types.Messages.CW_LOGIN_PLAYER) {
@@ -69,7 +74,7 @@ module.exports = WorldHandler = cls.Class.extend({
         user.name,
         user.hash,
         user.gems,
-        Utils.BinToHex(user.looks)];
+        Utils.BinArrayToBase64(user.looks)];
 
       if (callback)
         callback(user.name, data);
@@ -109,7 +114,7 @@ module.exports = WorldHandler = cls.Class.extend({
 
       //var completeQuests = (Object.keys(player.completeQuests).length > 0) ? JSON.stringify(player.completeQuests) : 0;
 
-      var hexLooks = Utils.BinToHex(player.user.looks);
+      var hexLooks = Utils.BinArrayToBase64(player.user.looks);
 
       var data = [
         player.name,

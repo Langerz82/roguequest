@@ -1011,6 +1011,18 @@ module.exports = Player = Character.extend({
     return true;
   },
 
+  modifyGems: function(diff) {
+    diff = parseInt(diff);
+    if ((this.user.gems - diff) < 0)
+    {
+      this.connection.send((new Messages.Notify("SHOP", "SHOP_NOGEMS")).serialize());
+      return false;
+    }
+    this.user.gems += diff;
+    this.connection.send((new Messages.Gold(this)).serialize());
+    return true;
+  },
+
   saveSection: function () {
     console.info("SAVING SECTION: "+this.savedSection);
     if (++this.savedSection == 6) {
@@ -1018,106 +1030,6 @@ module.exports = Player = Character.extend({
       this.savedSection = 0;
     }
   },
-
-
-  /*loadPlayerUserInfo: function (userName, callback) {
-
-    var data = [
-      this.user.gems,
-      Utils.BinToHex(this.user.looks)];
-
-    if (callback)
-      callback(userName, data);
-  },
-
-  loadPlayerInfo: function (playerName, callback) {
-    var player = this;
-    var stats = [
-      player.stats.attack,
-      player.stats.defense,
-      player.stats.health,
-      player.stats.energy,
-      player.stats.luck,
-      player.stats.free];
-
-    var exps = [
-      Utils.NaN2Zero(player.exp.base),
-      Utils.NaN2Zero(player.exp.attack),
-      Utils.NaN2Zero(player.exp.defense),
-      Utils.NaN2Zero(player.exp.move),
-      Utils.NaN2Zero(player.exp.sword),
-      Utils.NaN2Zero(player.exp.bow),
-      Utils.NaN2Zero(player.exp.hammer),
-      Utils.NaN2Zero(player.exp.axe),
-      Utils.NaN2Zero(player.exp.logging),
-      Utils.NaN2Zero(player.exp.mining),
-    ];
-
-    var map = [
-      player.map.index,
-      player.x,
-      player.y,
-      player.orientation];
-
-    var skillexps = [];
-    for (var i =0 ; i < player.skills.length; ++i)
-      skillexps[i] = player.skills[i].skillXP;
-
-    var completeQuests = (Object.keys(player.completeQuests).length > 0) ? JSON.stringify(player.completeQuests) : 0;
-
-    var hexLooks = Utils.BinToHex(player.user.looks);
-
-    var data = [
-      map.join(","),
-      stats.join(",")
-      exps.join(",")
-      player.gold.join(",")
-      skillexps.join(",")
-      JSON.stringify(player.shortcuts).join(",")
-      player.pStats.join(",")
-      player.sprites.join(",")
-      player.colors.join(",")
-      completeQuests
-    ]
-
-    if (callback)
-      callback(playerName, data);
-  },
-
-  loadPlayerQuests: function (playerName, callback) {
-    var player = self = this;
-
-    var quests = [];
-    for (var quest of this.quests)
-    {
-      if (!quest || quest.status == QuestStatus.COMPLETE  || _.isEmpty(quest))
-        continue;
-      quests.push(quest.toString());
-    }
-
-    if (callback)
-      callback(playerName, quests.join(','));
-  },
-
-  loadPlayerAchievements: function (playerName, callback) {
-    var player = self = this;
-
-    var data = "";
-    for (var achievement of this.achievements)
-    {
-        data += achievement.toRedis(achievement).join(',') + ",";
-    }
-
-    if (callback)
-      callback(playerName, data);
-  },
-
-  loadPlayerItems: function (playerName, type, callback) {
-    var player = self = this;
-
-    if (callback)
-      callback(playerName, type, player.itemStore[type].toStringJSON());
-  },*/
 
   sendToUserServer: function (msg) {
     if (this.world)
@@ -1128,8 +1040,6 @@ module.exports = Player = Character.extend({
   },
 
   save: function () {
-    //var self = this;
-
     console.info("Player - save, name:"+this.name);
 
     if (this.worldHandler)
@@ -1137,39 +1047,6 @@ module.exports = Player = Character.extend({
     else {
       console.warn("Player, save called without worldHandler being set. "+JSON.stringify(msg));
     }
-/*
-    //try { throw new Error(); } catch(err) { console.info(err.stack); }
-    var userName = this.user.name;
-    var playerName = this.name;
-
-
-// // TODO:
-    this.loadPlayerUserInfo(userName, function (userName, db_data) {
-      self.sendToUserServer( new UserMessages.SaveUserInfo(userName, db_data, ''));
-
-      self.loadPlayerInfo(playerName, function (playerName, db_data) {
-        self.sendToUserServer( new UserMessages.SavePlayerInfo(playerName, db_data));
-      });
-
-      self.loadPlayerQuests(playerName, function (playerName, db_data) {
-        self.sendToUserServer( new UserMessages.SavePlayerQuests(playerName, db_data));
-      });
-      self.loadPlayerAchievements(playerName, function (playerName, db_data) {
-        self.sendToUserServer( new UserMessages.SavePlayerAchievements(playerName, db_data));
-      });
-
-      self.loadPlayerItems(playerName, 0, function (playerName, type, db_data) {
-        self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
-      });
-      self.loadPlayerItems(playerName, 1, function (playerName, type, db_data) {
-        self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
-      });
-      self.loadPlayerItems(playerName, 2, function (playerName, type, db_data) {
-        self.sendToUserServer( new UserMessages.SavePlayerItems(playerName, type, db_data));
-      });
-
-    });
-*/
   },
 
   isArcher: function () {

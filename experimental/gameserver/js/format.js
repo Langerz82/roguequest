@@ -1,5 +1,106 @@
 var _ = require('underscore');
 
+var itemKindMax = 999;
+var itemNumberMax = 100;
+var itemDurabilityMax = 1000;
+var itemExperienceMax = 9999999;
+var itemPriceMax = 99999999;
+var itemStoreMax = 96;
+var itemInventoryMax = 48;
+var itemBankMax = 96;
+var itemEquipmentMax = 5;
+var itemStoreTypeMax = 2;
+
+var craftIdMax = 99;
+var craftItemCount = 100;
+
+var auctionEntriesMax = 9999;
+var auctionActionMax = 3;
+
+var achievementIndexMax = 99;
+var achievementRankMax = 10;
+var achievementCountMax = 999999;
+
+var skillsXPMax = 999999999;
+var mapsCountMax = 10;
+var mapCoordsMax = 16384;
+var orientationsMax = 4;
+var entityIdMax = 99999;
+var mapStatusMax = 3;
+
+var questIdMax = 999;
+var questTypeMax = 9;
+var questNpcIdMax = 100;
+var questCountMax = 99;
+var questStatusMax = 5;
+var questStrDataLen = 32;
+
+var questObjectTypeMax = 9;
+var questObjectKindMax = 999;
+var questObjectCountMax = 999;
+var questObjectChanceMax = 2000;
+var questObjectLevelMax = 999;
+
+var entityTypeNPCMin = 5;
+var entityTypeNPCMax = 6;
+
+var shortcutIndexMax = 8;
+var shortcutTypeMax = 2;
+var shortcutTypeIdMax = 999;
+
+var usernameLenMin = 2;
+var usernameLenMax = 16;
+var userHashLenMin = 120;
+var userHashLenMax = 120;
+var playerHashLenMax = 128;
+
+var playerNameLenMin = 2;
+var playerNameLenMax = 16;
+var playerColorsMaxLen = 6;
+var playerSpritesMax = 999;
+var playerPVPStatsMax = 999999;
+var playerXpMax = 999999999;
+var playerSkillXpMax = 999999999;
+var playerStatPointsMax = 1000;
+var playerStatFreePointsMax = 6000;
+var playerGoldMax = 999999999;
+var playerGemMax = 99999;
+var playerLooksTotal = 177;
+var playerLooksTotalCost = 10000;
+var playerStatMax = 5;
+var playerSkillMax = 50;
+var playerPartyMax = 6;
+var playerShortcutsMax = 7;
+var playerShortcutsType = 2;
+
+var worldNameLenMin = 2;
+var worldNameLenMax = 16;
+var worldUsersCountMin = 2;
+var worldUsersCountMax = 1000;
+var userServerPasswordLenMin = 10;
+var userServerPasswordLenMax = 128;
+var maxWorldCount = 10;
+var maxPlayersPerUser = 20;
+var worldKeyLenMin = 2;
+var worldKeyLenMax = 16;
+
+var serverAddressLenMin = 7;
+var serverAddressLenMax = 15;
+var serverPortMin = 1024;
+var serverPortMax = 65535;
+var serverProtocolLenMin = 2;
+var serverProtocolLenMax = 2;
+
+
+var userBansTotal = 1000;
+var banDateMin = 1730000000000;
+var banDateMax = 1800000000000;
+
+var serverDateMin = 1730000000000;
+var serverDateMax = 1800000000000;
+
+var maxChatLength = 256;
+
 var isTypeValid = function (fmt,msg) {
   if (Array.isArray(fmt)) {
     var res = _isTypeValid(fmt[0],msg);
@@ -80,149 +181,132 @@ var _isTypeValid = function (fmt, msg) {
         init: function () {
             this.formats = {};
 
-            this.usernameMax = 16;
-            this.playerMax = 16;
-            this.dateMin = 1670000000000;
-            this.dateMax = 2000000000000;
-            this.hashLen = 120;
-            //this.entityIdMin = 0;
-            this.entityIdMax = 99999;
-            //this.coordMin = -1;
-            this.coordMax = 16384;
-            this.bankMax = 47;
-            this.inventoryMax = 47;
-            this.goldMax = 99999999;
-            this.gemMax = 9999;
-            this.itemCountMax = 100;
-            this.itemKindMax = 999;
-            this.questMax = 999;
-
-            this.formats[Types.Messages.BI_SYNCTIME] = [['n',this.dateMin,this.dateMax]],
-
+            this.formats[Types.Messages.BI_SYNCTIME] = [
+              ['n',serverDateMin,serverDateMax]],
 // USER LOGIN PACKETS
             this.formats[Types.Messages.CW_CREATE_USER] = [
-              ['s',2,this.usernameMax],
-              ['s',this.hashLen,this.hashLen]],
+              ['s',usernameLenMin,usernameLenMax],
+              ['s',userHashLenMin,userHashLenMax]],
             this.formats[Types.Messages.CW_LOGIN_USER] = [
-              ['s',2,this.usernameMax],
-              ['s',this.hashLen,this.hashLen]],
+              ['s',usernameLenMin,usernameLenMax],
+              ['s',userHashLenMin,userHashLenMax]],
             this.formats[Types.Messages.CW_REMOVE_USER] = [
-              ['s',2,this.usernameMax],
-              ['s',this.hashLen,this.hashLen]],
+              ['s',usernameLenMin,usernameLenMax],
+              ['s',userHashLenMin,userHashLenMax]],
             this.formats[Types.Messages.CW_CREATE_PLAYER] = [
-              ['n',0,9],
-              ['s',2,this.playerMax]],
+              ['n',0,maxPlayersPerUser],
+              ['s',playerNameLenMin,playerNameLenMax]],
             this.formats[Types.Messages.CW_LOGIN_PLAYER] = [
-              ['n',0,9],
-              ['n',0,16]],
+              ['s',playerNameLenMin,playerNameLenMax],
+              ['s',0,playerHashLenMax]],
 // END USER LOGIN PACKETS
 
             this.formats[Types.Messages.CW_APPEARANCEUNLOCK] = [
-              ['n',0,255],
-              ['n',0,this.gemMax]],
+              ['n',0,playerLooksTotal],
+              ['n',0,playerGemMax]],
             this.formats[Types.Messages.CW_ATTACK] = [
-              ['n',this.dateMin,this.dateMax],
-              ['n',0,this.entityIdMax],
-              ['n',0,4],
-              ['n',-1,50]],
+              ['n',serverDateMin,serverDateMax],
+              ['n',0,entityIdMax],
+              ['n',0,orientationsMax],
+              ['n',-1,playerSkillMax]],
             this.formats[Types.Messages.CW_AUCTIONBUY] = [
-              ['n',0,1000],
-              ['n',0,3]],
+              ['n',0,auctionEntriesMax],
+              ['n',0,auctionActionMax]],
             this.formats[Types.Messages.CW_AUCTIONDELETE] = [
-              ['n',0,1000],
-              ['n',0,3]],
+              ['n',0,auctionEntriesMax],
+              ['n',0,auctionActionMax]],
             this.formats[Types.Messages.CW_AUCTIONOPEN] = [
-              ['n',0,3]],
+              ['n',0,auctionActionMax]],
             this.formats[Types.Messages.CW_AUCTIONSELL] = [
-              ['n',0,this.inventoryMax],
-              ['n',0,this.goldMax]],
+              ['n',0,itemInventoryMax],
+              ['n',0,itemPriceMax]],
             this.formats[Types.Messages.CW_BANKRETRIEVE] = [
-              ['n',0,this.bankMax]],
+              ['n',0,itemBankMax]],
             this.formats[Types.Messages.CW_BANKSTORE] = [
-              ['n',0,this.inventoryMax]],
+              ['n',0,itemInventoryMax]],
             this.formats[Types.Messages.CW_CHAT] = [
-              ['s',1,256]],
+              ['s',1,maxChatLength]],
             this.formats[Types.Messages.CW_COLOR_TINT] = [
-              ['n',0,1],['s',6,6]],
+              ['n',0,1],['s',playerColorsMaxLen,playerColorsMaxLen]],
             this.formats[Types.Messages.CW_BLOCK_MODIFY] = [
-              ['n',0,1],
-              ['n',0,this.entityIdMax],
-              ['n',0,this.coordMax],
-              ['n',0,this.coordMax]],
+              ['n',0,1], // type pickup/place
+              ['n',0,entityIdMax],
+              ['n',0,mapCoordsMax],
+              ['n',0,mapCoordsMax]],
             this.formats[Types.Messages.CW_LOOKUPDATE] = [
-              ['n',0,1],
-              ['n',0,999]],
+              ['n',0,1], // type
+              ['n',0,playerSpritesMax]],
             this.formats[Types.Messages.CW_LOOT] = [
-              ['n',0,this.entityIdMax],
-              ['n',0,this.coordMax],
-              ['n',0,this.coordMax]],
+              ['n',0,entityIdMax],
+              ['n',0,mapCoordsMax],
+              ['n',0,mapCoordsMax]],
             this.formats[Types.Messages.CW_MOVE] = [
-              ['n',this.dateMin,this.dateMax],
-              ['n',0,this.entityIdMax],
-              ['n',0,2],
-              ['n',0,4],
-              ['n',0,this.coordMax],
-              ['n',0,this.coordMax]],
+              ['n',serverDateMin,serverDateMax],
+              ['n',0,entityIdMax],
+              ['n',0,2], // move type.
+              ['n',0,orientationsMax],
+              ['n',0,mapCoordsMax],
+              ['n',0,mapCoordsMax]],
             this.formats[Types.Messages.CW_GOLD] = [
-              ['n',0,1],
-              ['n',0,this.goldMax],
-              ['n',0,1]],
+              ['n',0,1], // type (inventory,bank)
+              ['n',0,playerGoldMax],
+              ['n',0,1]], // type2 (inventory,bank)
             this.formats[Types.Messages.CW_STATADD] = [
-              ['n',1,5],
-              ['n',1,1]],
+              ['n',1,playerStatMax],
+              ['n',1,1]], // stat point add
             this.formats[Types.Messages.CW_STOREBUY] = [
-              ['n',1,3],
-              ['n',0,this.itemKindMax],
-              ['n',0,10]],
+              ['n',1,3], // item type
+              ['n',0,itemKindMax],
+              ['n',0,itemNumberMax]],
             this.formats[Types.Messages.CW_CRAFT] = [
-              ['n',0,this.itemKindMax],
-              ['n',0,10]],
+              ['n',0,craftIdMax],
+              ['n',0,craftItemCount]],
             this.formats[Types.Messages.CW_STORE_MODITEM] = [
-              ['n',0,2],
-              ['n',0,2],
-              ['n',0,this.inventoryMax]],
+              ['n',0,2], // modType
+              ['n',0,2], // type
+              ['n',0,itemInventoryMax]],
             this.formats[Types.Messages.CW_STORESELL] = [
-              ['n',0,2],
-              ['n',0,this.inventoryMax]],
+              ['n',0,itemStoreTypeMax],
+              ['n',0,itemInventoryMax]],
             this.formats[Types.Messages.CW_TALKTONPC] = [
-              ['n',5,6],
-              ['n',0,this.entityIdMax]],
+              ['n',entityTypeNPCMin,entityTypeNPCMax], // npc type but not used?
+              ['n',0,entityIdMax]],
             this.formats[Types.Messages.CW_TELEPORT_MAP] = [
-              ['n',0,9],
+              ['n',0,mapStatusMax],
               ['n',0,1],
-              ['n',-1,this.coordMax],
-              ['n',-1,this.coordMax]],
+              ['n',-1,mapCoordsMax],
+              ['n',-1,mapCoordsMax]],
             this.formats[Types.Messages.CW_SKILL] = [
-              ['n',0,50],
-              ['n',0,this.entityIdMax]],
+              ['n',0,playerSkillMax],
+              ['n',0,entityIdMax]],
             this.formats[Types.Messages.CW_SHORTCUT] = [
-              ['n',0,7],
-              ['n',0,2],
-              ['n',0,this.itemKindMax]],
+              ['n',0,playerShortcutsMax],
+              ['n',0,playerShortcutsType],
+              ['n',0,itemKindMax]],
             this.formats[Types.Messages.CW_PARTY] = [
               ['n',0,4],
-              ['so',0,this.playerMax],
+              ['so',0,playerPartyMax],
               ['no',0,3]],
             this.formats[Types.Messages.CW_HARVEST] = [
-              ['n',0,this.coordMax],
-              ['n',0,this.coordMax]],
+              ['n',0,mapCoordsMax],
+              ['n',0,mapCoordsMax]],
             this.formats[Types.Messages.CW_USE_NODE] = [
-              ['n',0,this.entityIdMax]],
+              ['n',0,entityIdMax]],
             this.formats[Types.Messages.CW_QUEST] = [
-              ['n',0,this.entityIdMax],
-              ['n',0,this.questMax],
+              ['n',0,entityIdMax],
+              ['n',0,questIdMax],
               ['n',0,2]],
             this.formats[Types.Messages.CW_MOVEPATH] = [
-              ['n',this.dateMin,this.dateMax],
-              ['n',0,this.entityIdMax],
-              ['n',0,4],
+              ['n',serverDateMin,serverDateMax],
+              ['n',0,entityIdMax],
+              ['n',0,orientationsMax],
               ['n',0,1],
               ['array',2,16,[
-                ['n',0,this.coordMax],
-                ['n',0,this.coordMax]]
+                ['n',0,mapCoordsMax],
+                ['n',0,mapCoordsMax]]
               ]],
             this.formats[Types.Messages.CW_WHO] = [['array',0,999,[
-                ['n',0,this.entityIdMax]]
+                ['n',0,entityIdMax]]
             ]];
             /*this.formats[Types.Messages.CW_ITEMSLOT] = [
               ['n',0,3],

@@ -288,29 +288,6 @@ if (!String.prototype.reverse) {
   }
 }
 
-Utils.BinToHex = function (uint8array) {
-  var len = Math.ceil(uint8array.length / 4);
-  var hex = "";
-  for (var i=0; i < len; i++) {
-    j=i*4;
-    var num = uint8array.slice(j,j+4).join('');
-    hex += parseInt(num, 2).toString(16).toUpperCase();
-  }
-  return hex;
-}
-
-Utils.HexToBin = function (hex) {
-  var len = Math.ceil(hex.length);
-  var tmp;
-  var sum = "";
-  for (var i=0; i < len; i++) {
-    tmp = hex.substr(i,1);
-    sum += parseInt(tmp, 16).toString(2).padStart(4,'0');
-  }
-  var uint8arr = new Uint8Array( sum.split('') );
-  return uint8arr;
-}
-
 Utils.ceilGrid = function (val) {
     return ~~(val+0.5);
 };
@@ -320,7 +297,6 @@ if (!Number.prototype.ceilGrid) {
     return ~~(this+0.5);
   }
 }
-
 
 Utils.minProp = function (arr, prop) {
   return arr.reduce(function(prev, curr) {
@@ -374,6 +350,36 @@ Utils.btoa = function (val) {
 
 Utils.getGridPosition = function (x, y) {
   return {gx: x >> 4, gy: y >> 4};
+}
+
+Utils.BinArrayToBase64 = function (uint8array) {
+  var len = Math.ceil(uint8array.length / 32);
+  var tarr = [];
+  for (var i=0; i < len; i++) {
+    var num = uint8array.slice((i*32),(i*32)+32).join('');
+    //console.info("num:"+num);
+    //console.info("num2:"+parseInt(num, 2));
+    tarr.push(parseInt(num, 2));
+  }
+  base64 = btoa(tarr);
+  return base64;
+}
+
+Utils.Base64ToBinArray = function (base64, limit) {
+  var data = atob(base64);
+  var arr = data.split(",");
+  //console.info(JSON.stringify(arr));
+  var uint8array = new Uint8Array(arr.length*32);
+  for (var i=0; i < arr.length; ++i)
+  {
+    var dec = parseInt(arr[i]);
+    var bin = dec.toString(2);
+    var l = bin.length;
+    var index = (i+1)*32-l;
+    for (var j=0; j < l; ++j)
+      uint8array[index+j] = bin[j];
+  }
+  return uint8array.slice(0,limit);
 }
 
 /*

@@ -169,7 +169,8 @@ module.exports = UserHandler = cls.Class.extend({
       //var user = {gems: gems,
         //looks: Utils.HexToBin(looks)};
       user.gems = gems;
-      user.looks = Utils.HexToBin(looks);
+      var len = AppearanceData.Data.length;
+      user.looks = Utils.Base64ToBinArray(looks, len);
       user.name = username;
       //user.world = this;
 

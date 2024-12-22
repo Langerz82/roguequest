@@ -350,7 +350,7 @@ Messages.UpdateLook = Message.extend({
 
 Messages.AppearanceList = Message.extend({
     init: function(user, looks) {
-        this.looks = Utils.BinToHex(user.looks);
+        this.looks = Utils.BinArrayToBase64(user.looks);
         this.prices = looks.prices;
     },
     serialize: function() {

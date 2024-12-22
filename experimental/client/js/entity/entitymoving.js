@@ -299,10 +299,10 @@ define(['./entity', '../transition', '../timer'], function(Entity, Transition, T
       this.walk(this.orientation);
   },
 
-  updateWalk: function(a, b) {
+  /*updateWalk: function(a, b) {
       this.orientation = this.getOrientation(a, b);
       this.walk(this.orientation);
-  },
+  },*/
 
   nextStepPath: function () {
     if (this.step == 0)

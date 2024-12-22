@@ -155,7 +155,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         0,
         '',
         user.gems,
-        Utils.BinToHex(user.looks),
+        Utils.BinArrayToBase64(user.looks),
         user.connection._connection.remoteAddress];
 
       self.saveUserInfo(user.name, data, function (username, data) {
@@ -172,8 +172,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
     var uKey = "u:" + username;
     client.multi()
       .sadd("usr", username)
-      .hset(uKey, "gems", data[7])
-      .hset(uKey, "looks", data[8])
+      .hset(uKey, "gems", data[0])
+      .hset(uKey, "looks2", data[1])
       .exec(function(err, replies) {
         if (callback)
           callback(username, playername, data);
@@ -194,7 +194,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         .hset(uKey, "membership", data[5])
         .hset(uKey, "players", data[6])
         .hset(uKey, "gems", data[7])
-        .hset(uKey, "looks", data[8])
+        .hset(uKey, "looks2", data[8])
         .hset(uKey, "ipAddresses", data[9])
         .exec(function(err, replies) {
           if (callback)
@@ -272,7 +272,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             "membership": data.membership,
             "players": data.players,
             "ipAddresses": data.ipAddresses,
-            "gems": data.gems
+            "gems": data.gems,
           };
 
           if (!data.gems)
@@ -280,14 +280,15 @@ module.exports = DatabaseHandler = cls.Class.extend({
           else
             db_user.gems = parseInt(data.gems);
 
-          if (!data.looks || parseInt(data.looks, 16) === 0 || data.looks.toLowerCase().includes("nan")) {
-            var len = AppearanceData.Data.length;
+          var len = AppearanceData.Data.length;
+          db_user.looks = new Uint8Array(len);
+          /*if (!data.looks2 || parseInt(data.looks2, 16) === 0 || data.looks2.toLowerCase().includes("nan")) {
             db_user.looks = new Uint8Array(len);
             for(var i=0; i < len; ++i)
               db_user.looks[i] = 0;
-          }
-          else {
-            db_user.looks = Utils.HexToBin(data.looks);
+          }*/
+          if (data.looks2) {
+            db_user.looks = Utils.Base64ToBinArray(data.looks2, len);
           }
 
           // [77,0,151,50] - Beginner Looks values.
@@ -298,7 +299,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
           console.info(JSON.stringify(db_user));
 
-          user.looks = db_user.looks.slice();
+          user.looks = db_user.looks;
           user.gems = db_user.gems;
 
           if(user.checkUser(db_user)) {
@@ -423,19 +424,24 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  loadPlayerUserInfo: function(username, callback) {
-    var uKey = "u:" + username;
+  loadPlayerUserInfo: function(user, callback) {
+    var uKey = "u:" + user.name;
 
     client.multi()
       .hget(uKey, "gems")
-      .hget(uKey, "looks")
+      .hget(uKey, "looks2")
 
       .exec(function(err, data) {
         if (data === null || !(typeof data === 'object'))
           return;
 
+        if (data[1] === null) {
+          var b64 = Utils.BinArrayToBase64(user.looks);
+          data[1] = b64;
+        }
+
         if (callback)
-          callback(username, data);
+          callback(user.name, data);
       });
   },
 
