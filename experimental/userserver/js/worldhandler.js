@@ -71,6 +71,10 @@ module.exports = WorldHandler = cls.Class.extend({
               self.handleSaveUserBans(message);
               return;
           }
+          else if (action == Types.UserMessages.WU_ADD_PLAYER_GOLD) {
+              self.handleAddPlayerGold(message);
+              return;
+          }
         };
         this.connection.listen(this.listener);
 
@@ -228,7 +232,9 @@ module.exports = WorldHandler = cls.Class.extend({
             console.info("loggedInUsers: "+JSON.stringify(loggedInUsers));
           }
           if (Object.keys(self.playerSaveData).length == 0) {
-            self.SAVED_PLAYERS = true;
+            DBH.transferOfflineGold(playerName, function (playerName) {
+              self.SAVED_PLAYERS = true;
+            });
           }
       };
 
@@ -240,7 +246,7 @@ module.exports = WorldHandler = cls.Class.extend({
         checkPlayerSaved(playerName);
       });
 
-      DBH.saveQuests(playerName, data[2], function (playerName) {
+      DBH.saveQuests(playerName, JSON.stringify(data[2]), function (playerName) {
         checkPlayerSaved(playerName);
       });
 
@@ -397,6 +403,12 @@ module.exports = WorldHandler = cls.Class.extend({
       DBH.loadBans(this.world.key, function (key, db_data) {
         self.sendMessage( new UserMessages.LoadUserBans(db_data));
       });
+    },
+
+    handleAddPlayerGold: function (msg) {
+        var playerName = msg[0];
+        var goldAmount = parseInt(msg[1]);
+        DBH.addPlayerGoldOffline(playerName, goldAmount);
     },
 
     sendWorldSave: function () {

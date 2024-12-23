@@ -202,6 +202,9 @@ var _isTypeValid = function (fmt, msg) {
                 ['array',0,userBansTotal, [
                   ['s',usernameLenMin,usernameLenMax],
                   ['n',banDateMin,banDateMax]] ]];
+            this.formats[Types.UserMessages.WU_ADD_PLAYER_GOLD] = [
+                ['s',playerNameLenMin,playerNameLenMax],
+                ['n',0,playerGoldMax]];
         },
 
         checkFormatData: function (fmt, msg) {
@@ -552,15 +555,7 @@ var _isTypeValid = function (fmt, msg) {
               }
 
               // quests data.
-              var arr = null;
-              var data = message[1][2];
-              try {
-                arr = JSON.parse(data);
-              }
-              catch {
-                console.info("quests JSON parse error msg:"+JSON.stringify(data));
-                return false;
-              }
+              var arr = message[1][2];
               console.info(JSON.stringify(arr));
               if (!Array.isArray(arr)) {
                 console.info("quests is not an array.");

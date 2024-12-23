@@ -17,7 +17,7 @@ module.exports = PacketHandler = Class.extend({
     this.user = user;
     this.player = player;
     this.connection = connection;
-    this.server = worldServer;
+    this.world = this.server = worldServer;
     this.map = player.map;
     this.entities = player.map.entities;
     //this.loadedPlayer = false;
@@ -398,6 +398,7 @@ module.exports = PacketHandler = Class.extend({
     if (type < 0 || type > 3)
       return;
 
+    var auctions = this.server.auction;
     var auction = this.server.auction.auctions[auctionIndex];
     if (!auction)
       return;
@@ -408,7 +409,7 @@ module.exports = PacketHandler = Class.extend({
     if (price < 0)
       return;
 
-    var goldCount = self.player.gold[0];
+    var goldCount = this.player.gold[0];
 
     if (goldCount < price) {
       this.sendPlayer(new Messages.Notify("SHOP","SHOP_NOGOLD"));
@@ -421,19 +422,24 @@ module.exports = PacketHandler = Class.extend({
     }
 
     var itemKind = auction.item.itemKind;
-    this.player.inventory.putItem(auction.item);
-    this.player.modifyGold(-price);
-    var itemName = ItemTypes.KindData[itemKind].name;
-    this.sendPlayer(new Messages.Notify("SHOP","SHOP_SOLD", [itemName]));
+    if (auctions.putItem(this.player, auction.item)) {
+      this.player.modifyGold(-price);
+      var itemName = ItemTypes.KindData[itemKind].name;
+      this.sendPlayer(new Messages.Notify("SHOP","SHOP_SOLD", [itemName]));
 
-    var auctionPlayer = this.server.getPlayerByName(auction.playerName);
-    if (auctionPlayer)
-      auctionPlayer.modifyGold(price);
-    else
-      databaseHandler.modifyGold(auction.playerName, price);
-
-    this.server.auction.remove(auctionIndex);
-    this.server.auction.list(this.player, type);
+      var auctionPlayer = this.server.getPlayerByName(auction.playerName);
+      if (auctionPlayer) {
+        auctionPlayer.modifyGold(price);
+      } else {
+        if (this.server.userHandler)
+          this.server.userHandler.sendPlayerGold(auction.playerName, price);
+        else {
+          console.warn("packetHander handleAuctionBuy: no world userHandler.");
+        }
+      }
+      this.server.auction.remove(auctionIndex);
+      this.server.auction.list(this.player, type);
+    }
   },
 
   handleAuctionDelete: function(message) {
@@ -444,9 +450,14 @@ module.exports = PacketHandler = Class.extend({
     if (type < 0 || type > 3)
       return;
 
-    var auction = this.server.auction.auctions[auctionIndex];
+    var auctions = this.server.auction;
+    var auction = auctions.auctions[auctionIndex];
     if (!auction)
       return;
+
+    if (auction.playerName !== this.player.name) {
+      return;
+    }
 
     if (!this.player.inventory.hasRoom()) {
       this.sendPlayer(new Messages.Notify("SHOP", "SHOP_NOSPACE"));
@@ -454,11 +465,13 @@ module.exports = PacketHandler = Class.extend({
     }
 
     var itemKind = auction.item.itemKind;
-    this.player.inventory.putItem(auction.item);
-    var itemName = ItemTypes.KindData[itemKind].name;
-    this.sendPlayer(new Messages.Notify("SHOP","SHOP_REMOVED", [itemName]));
-    this.server.auction.remove(auctionIndex);
-    this.server.auction.list(this.player, type);
+    if (auctions.putItem(this.player, auction.item))
+    {
+      var itemName = ItemTypes.KindData[itemKind].name;
+      this.sendPlayer(new Messages.Notify("SHOP","SHOP_REMOVED", [itemName]));
+      this.server.auction.remove(auctionIndex);
+      this.server.auction.list(this.player, type);
+    }
   },
 
   handleStoreModItem: function (msg) {

@@ -141,11 +141,11 @@ module.exports = WorldHandler = cls.Class.extend({
       {
         if (!quest || quest.status == QuestStatus.COMPLETE  || _.isEmpty(quest))
           continue;
-        quests.push(quest.toString().split(","));
+        quests.push(quest.toArray().join(','));
       }
 
       if (callback)
-        callback(player.name, JSON.stringify(quests));
+        callback(player.name, quests);
     },
 
     loadPlayerDataAchievements: function (player, callback) {

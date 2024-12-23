@@ -1,21 +1,22 @@
 var cls = require("./lib/class"),
-    ItemRoom = require("./items/itemroom"),
+    BaseItem = require("./items/baseitem"),
     Messages = require("./message");
 
 module.exports = AuctionRecord = cls.Class.extend({
-    init: function (playerName, price, item) {
+    init: function (index, playerName, price, item) {
+      this.index = index;
       this.playerName = playerName;
       this.price = price;
       this.item = item;
     },
 
-    save: function (index) {
+    save: function () {
         return [this.playerName,
-          this.price].join(",") + "," + this.item.save();
+          this.price].join(",") + "," + this.item.toArrayNoSlot().join(",");
     },
 
-    toArray: function (index) {
-      var cols = [parseInt(index),
+    toArray: function () {
+      var cols = [this.index,
         this.playerName,
         this.price];
       cols = cols.concat(this.item.toArray());
@@ -37,12 +38,15 @@ module.exports = Auction = cls.Class.extend({
         return;
 
       auctions = [];
+      var i=0;
       for (var rec of data)
       {
         var sData = rec.split(",");
-        var record = new AuctionRecord(sData[0],
+        var record = new AuctionRecord(i,
+          sData[0],
           parseInt(sData[1]),
-          new ItemRoom([parseInt(sData[2]),
+          new ItemRoom([
+             parseInt(sData[2]),
              parseInt(sData[3]),
              parseInt(sData[4]),
              parseInt(sData[5]),
@@ -61,7 +65,7 @@ module.exports = Auction = cls.Class.extend({
       var data = [];
       for(var auction of this.auctions) {
         if (auction)
-          data.push(auction.save(i));
+          data.push(auction.save());
       }
 
       if (world.userHandler) {
@@ -72,7 +76,8 @@ module.exports = Auction = cls.Class.extend({
     },
 
     add: function(player, item, price, invIndex) {
-        var auction = new AuctionRecord(player.name, price, item);
+        var index = Object.keys(this.auctions).length;
+        var auction = new AuctionRecord(index, player.name, price, item);
         this.auctions.push(auction);
         player.inventory.setItem(invIndex, null);
         player.map.entities.pushToPlayer(player, new Messages.Notify("AUCTION","AUCTION_ADDED"));
@@ -80,6 +85,12 @@ module.exports = Auction = cls.Class.extend({
 
     remove: function (index) {
       this.auctions[index] = null;
+    },
+
+    putItem: function (player, item) {
+      //var itemRoom = new ItemRoom(item.toArray());
+      return player.inventory.putItem(item) >= 0;
+
     },
 
     list: function (player, type) {
@@ -95,7 +106,7 @@ module.exports = Auction = cls.Class.extend({
           (type === 2 && !pc && ItemTypes.isWeapon(kind)) ||
           (type === 0 && pc))
         {
-          msg = msg.concat(auction.toArray(i));
+          msg = msg.concat(auction.toArray());
           ++recCount;
         }
       }

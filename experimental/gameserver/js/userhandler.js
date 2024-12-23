@@ -230,20 +230,24 @@ module.exports = UserHandler = cls.Class.extend({
       console.info("handleLoadPlayerQuests: "+JSON.stringify(msg));
       var player = this.player;
       //var playerName = msg.shift();
-      var quests = [];
       console.info("msg="+msg);
-      dataJSON = JSON.parse(msg);
-      for (var i = 0; i < dataJSON.length; i++) {
-        var questData = dataJSON[i];
-        if (questData) {
-          console.info(JSON.stringify(questData));
-          var quest = new Quest(questData.splice(0,7));
-          if (questData.length > 0)
-            quest.object = getQuestObject(questData.splice(0,6));
-          if (questData.length > 0)
-            quest.object2 = getQuestObject(questData.splice(0,6));
-          player.quests.push(quest);
+      try {
+        dataJSON = JSON.parse(msg);
+        for (var i = 0; i < dataJSON.length; i++) {
+          var questData = dataJSON[i].split(',');
+          if (questData) {
+            console.info(JSON.stringify(questData));
+            var quest = new Quest(questData.splice(0,7));
+            if (questData.length > 0)
+              quest.object = getQuestObject(questData.splice(0,6));
+            if (questData.length > 0)
+              quest.object2 = getQuestObject(questData.splice(0,6));
+            player.quests.push(quest);
+          }
         }
+      }
+      catch (err) {
+        console.warn(err.stack);
       }
     },
 
@@ -329,6 +333,10 @@ module.exports = UserHandler = cls.Class.extend({
 
     sendBansData: function (data) {
       this.sendToUserServer( new UserMessages.SaveUserBans(data));
+    },
+
+    sendPlayerGold: function (name, gold) {
+      this.sendToUserServer( new UserMessages.SendPlayerGold(name, gold));
     },
 
     /*sendPlayerLoggedIn: function (username, playerName) {

@@ -8,6 +8,18 @@ var Message = cls.Class.extend({
 
 });
 
+UserMessages.SendPlayerGold = Message.extend({
+    init: function (name, gold) {
+      this.name = name;
+      this.gold = gold;
+    },
+    serialize: function () {
+        return [Types.UserMessages.WU_ADD_PLAYER_GOLD,
+          this.name,
+          this.gold];
+    }
+});
+
 UserMessages.SavePlayerAuctions = Message.extend({
     init: function (data) {
       this.data = data;

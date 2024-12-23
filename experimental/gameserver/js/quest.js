@@ -47,25 +47,25 @@ module.exports = Quest = cls.Class.extend({
     },
 
     assign: function (quest) {
-      this.id = quest.id;
-      this.type = quest.type;
-      this.npcQuestId = quest.npcQuestId;
-      this.count = quest.count;
-      this.status = quest.status;
-      this.data1 = quest.data1;
-      this.data2 = quest.data2;
+      this.id = parseInt(quest.id);
+      this.type = parseInt(quest.type);
+      this.npcQuestId = parseInt(quest.npcQuestId);
+      this.count = parseInt(quest.count);
+      this.status = parseInt(quest.status);
+      this.data1 = parseInt(quest.data1);
+      this.data2 = parseInt(quest.data2);
       this.object = quest.object;
       this.object2 = quest.object2;
     },
 
     toArray: function () {
-      var cols = [this.id,
-        this.type,
-        this.npcQuestId,
-        this.count,
-        this.status,
-        this.data1,
-        this.data2];
+      var cols = [parseInt(this.id),
+        parseInt(this.type),
+        parseInt(this.npcQuestId),
+        parseInt(this.count),
+        parseInt(this.status),
+        parseInt(this.data1),
+        parseInt(this.data2)];
 
       if (this.object) {
         cols = cols.concat(this.object.toArray(this.object));

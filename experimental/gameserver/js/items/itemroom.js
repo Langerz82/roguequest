@@ -15,5 +15,13 @@ module.exports = ItemRoom = BaseItem.extend({
     {
       var cols = [parseInt(this.slot)].concat(this._super());
       return cols;
+    },
+
+    toArrayNoSlot: function ()
+    {
+      var arr = this.toArray();
+      arr.shift();
+      return arr;
     }
+
 });

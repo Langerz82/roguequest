@@ -84,13 +84,32 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
     client.hgetarray = hgetarray;
     this.ready = true;
-    //self.removeLegacyItems();
-    //self.removeAchievements();
-    //this.createPlayerKeys();
-    /*this.ExistsUsername("ca", function (name, res) {
-      console.info("ExistsUsername test:"+res);
-    });*/
+
+    // UNCOMMENT IF YOU HAD OLD DATA THAT NEEDS TO BE FIXED AND RUN ONCE
+    // THE COMMENT OUT AGAIN.
+    //this.removeOldValues();
   },
+
+  removeOldValues: function () {
+    var self = this;
+
+    client.keys('p:*', function (err, keys) {
+      if (err) return console.log(err);
+
+      for(var i = 0, len = keys.length; i < len; i++) {
+        var key = keys[i];
+        console.info(key);
+        if (key.startsWith("p:"))
+        {
+          client.hdel(key, "newquests");
+          client.hdel(key, "newquests2");
+          client.hdel(key, "completeQuests");
+          client.hdel(key, "completeQuests2");
+        }
+      }
+    });
+  },
+
 
   createPlayerKeys: function () {
     client.keys('p:*', function (err, arr) {
@@ -168,7 +187,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  savePlayerUserInfo: function (username, playername, data, callback) {
+  savePlayerUserInfo: function (username, playerName, data, callback) {
     var uKey = "u:" + username;
     client.multi()
       .sadd("usr", username)
@@ -176,7 +195,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       .hset(uKey, "looks2", data[1])
       .exec(function(err, replies) {
         if (callback)
-          callback(username, playername, data);
+          callback(username, playerName, data);
       });
   },
 
@@ -227,10 +246,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
       console.error("USER CHECK USER");
       if(user.checkUser(db_user, true)) {
         console.error("USER CHECK USER SUCCESS");
-        var playernames = data.players.split(",");
-        for(var i=0; i < playernames.length; ++i)
+        var playerNames = data.players.split(",");
+        for(var i=0; i < playerNames.length; ++i)
         {
-          var pKey = "p:"+playernames[i];
+          var pKey = "p:"+playerNames[i];
           client.del(pKey);
         }
         client.del(uKey);
@@ -347,12 +366,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
         user.sendPlayers();
         return;
       }
-      var playernames = reply.split(",");
+      var playerNames = reply.split(",");
       var db_players = [];
       var count = 0;
-      for(var i=0; i < playernames.length; ++i)
+      for(var i=0; i < playerNames.length; ++i)
       {
-        var pKey = "p:"+playernames[i];
+        var pKey = "p:"+playerNames[i];
         console.info("pKey:"+pKey);
         var keyArray = ["name","map","exps","colors","sprites"];
         hgetarray(pKey, keyArray, function(err, reply) {
@@ -373,41 +392,27 @@ module.exports = DatabaseHandler = cls.Class.extend({
             "sprites": reply[4].split(",")
           };
           db_players.push(db_player);
-          if (++count == playernames.length)
+          if (++count == playerNames.length)
             user.sendPlayers(db_players);
         });
       }
     });
   },
 
-// TODO SOME WACKKK SHIT
-  createPlayer: function(playername, callback) {
+  createPlayer: function(playerName, callback) {
     var self = this;
-    //var pKey = "p:" + playername;
-    //var curTime = new Date().getTime();
 
-    // Check if playername is taken
-    this.ExistsPlayerName(playername, function (name, res) {
+    // Check if playerName is taken
+    this.ExistsPlayerName(playerName, function (name, res) {
       if (res) {
         if (callback)
-          callback(playername, false);
+          callback(playerName, false);
         return;
       }
       console.info("CREATING PLAYER");
       if (callback)
-        callback(playername, true);
+        callback(playerName, true);
     });
-
-    /*client.hget(pKey, "name", function(err, reply) {
-      if (reply) {
-        if (callback)
-          callback(playername, false);
-        return;
-      }
-      console.info("CREATING PLAYER");
-      if (callback)
-        callback(playername, true);
-    });*/
   },
 
   loadUserInfo: function(username, callback) {
@@ -445,8 +450,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
       });
   },
 
-  loadPlayerInfo: function(playername, callback) {
-    var pKey = "p:" + playername;
+  loadPlayerInfo: function(playerName, callback) {
+    var pKey = "p:" + playerName;
 
     client.hdel(pKey, "skillSlots");
     client.multi()
@@ -460,19 +465,18 @@ module.exports = DatabaseHandler = cls.Class.extend({
       .hget(pKey, "sprites")
       .hget(pKey, "colors")
       .hget(pKey, "shortcuts")
-      .hget(pKey, "completeQuests2")
-
+      .hget(pKey, "completeQuests")
       .exec(function(err, data) {
         if (data === null || !(typeof data === 'object'))
           return;
 
         if (callback)
-          callback(playername, data);
+          callback(playerName, data);
       });
   },
 
-  savePlayerInfo: function(playername, data, callback) {
-    var pKey = "p:" + playername;
+  savePlayerInfo: function(playerName, data, callback) {
+    var pKey = "p:" + playerName;
 
     client.multi()
       .sadd("player", data[0])
@@ -486,7 +490,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       .hset(pKey, "sprites", data[7])
       .hset(pKey, "colors", data[8])
       .hset(pKey, "shortcuts", data[9])
-      .hset(pKey, "completeQuests2", data[10])
+      .hset(pKey, "completeQuests", data[10])
 
       .exec(function(err, replies) {
         if (err) {
@@ -496,21 +500,77 @@ module.exports = DatabaseHandler = cls.Class.extend({
         }
 
         if (callback)
-          callback(playername);
+          callback(playerName);
       });
   },
 
+  addPlayerGoldOffline: function (playerName, goldAmount) {
+    console.info("redis.addPlayerGoldOffline: playerName:"+playerName);
+    console.info("goldAmount:"+goldAmount);
 
-  modifyGold: function(playername, golddiff, type) {
-    var type = type || 0;
-    var golddiff = parseInt(golddiff);
-    var pKey = "p:" + playername;
-    //console.info(pKey+","+golddiff+","+type);
-    client.hget(pKey, "gold", function (err, data)
-    {
+    var pKey = "p:" + playerName;
+    client.hget(pKey, "goldoffline", function (err, data) {
       console.info("modifyGold.gold: "+JSON.stringify(data));
       if (!data) {
-        console.error("redis.modifyGold - no gold record for player '"+playername+"' found.");
+        console.error("redis.addPlayerGoldOffline - no goldoffline record for player '"+playerName+"' found.");
+        return;
+      }
+      if (err || !data || data == "") {
+        console.warn(err);
+        console.warn(JSON.stringify(data));
+        return;
+      }
+
+      var currentGold = parseInt(data);
+      console.info("currentGold:"+currentGold);
+      var totalGold = Math.max(0, (currentGold+goldAmount));
+
+      client.hset(pKey, "goldoffline", totalGold, function (err) {
+        if (err)
+          console.warn("redis.addPlayerGoldOffline: save error, "+JSON.stringify(err));
+      });
+    });
+  },
+
+  transferOfflineGold: function (playerName, callback) {
+    console.info("redis.transferOfflineGold: playerName:"+playerName);
+
+    var self = this;
+    this.getGoldOffline(playerName, function (playerName, addGold) {
+      self.modifyGold(playerName, addGold, 0, function (playerName) {
+        self.resetGoldOffline(playerName, function (playerName) {
+          if (callback)
+            callback(playerName);
+        })
+      });
+    });
+  },
+
+  resetGoldOffline: function(playerName, callback) {
+      console.info("redis.resetGoldOffline: playerName:"+playerName);
+      var pKey = "p:" + playerName;
+      client.hset(pKey, "goldoffline", 0, function (err, data) {
+        if (err) {
+          console.info("redis.resetGoldOffline: "+JSON.stringify(err));
+        }
+        if (callback)
+          callback(playerName);
+      })
+  },
+
+  getGoldOffline: function(playerName, callback) {
+    console.info("redis.getGoldOffline: playerName:"+playerName);
+    var type = type || 0;
+    var golddiff = parseInt(golddiff);
+    var pKey = "p:" + playerName;
+    //console.info(pKey+","+golddiff+","+type);
+    client.hget(pKey, "goldoffline", function (err, data)
+    {
+      console.info("getGoldOffline.gold: "+JSON.stringify(data));
+      if (!data) {
+        console.error("redis.getGoldOffline - no gold record for player '"+playerName+"' found.");
+        if (callback)
+          callback(playerName, 0);
         return;
       }
       if (err || !data || data == "") {
@@ -520,8 +580,46 @@ module.exports = DatabaseHandler = cls.Class.extend({
       }
 
       var gold = data.split(",");
+      if (callback)
+        callback(playerName, parseInt(gold[0]));
+    });
+  },
+
+  modifyGold: function(playerName, golddiff, type, callback) {
+    console.info("redis.modifyGold: playerName:"+playerName);
+    console.info("golddiff:"+golddiff);
+    console.info("type:"+type);
+
+    var type = type || 0;
+    var golddiff = parseInt(golddiff);
+    var pKey = "p:" + playerName;
+    //console.info(pKey+","+golddiff+","+type);
+    client.hget(pKey, "gold", function (err, data)
+    {
+      console.info("modifyGold.gold: "+JSON.stringify(data));
+      if (!data) {
+        console.error("redis.modifyGold - no gold record for player '"+playerName+"' found.");
+        if (callback)
+          callback(playerName, golddiff, type);
+        return;
+      }
+      if (err || !data || data == "") {
+        console.warn(err);
+        console.warn(JSON.stringify(data));
+        if (callback)
+          callback(playerName, golddiff, type);
+        return;
+      }
+
+      var gold = data.split(",");
       gold[type] = parseInt(gold[type])+golddiff;
-      client.hset(pKey, "gold", gold.join(","));
+      client.hset(pKey, "gold", gold.join(","), function (err) {
+        if (err) {
+          console.warn("redis.modifyGold: save gold error "+JSON.stringify(err));
+        }
+        if (callback)
+          callback(playerName, golddiff, type);
+      });
     });
   },
 
@@ -540,9 +638,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
 // ITEMS - BEGIN. New item store functions.
 
 
-  loadItems: function (playername, type, callback) {
+  loadItems: function (playerName, type, callback) {
     var self = this;
-    var pKey = "p:" + playername;
+    var pKey = "p:" + playerName;
 
     var maxNumber = getItemsStoreCount(type);
     var sType = getStoreTypeNew(type);
@@ -554,13 +652,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
           return;
         }
         if (callback)
-          callback(playername, data);
+          callback(playerName, data);
     });
   },
 
-  saveItems: function(playername, type, data, callback)
+  saveItems: function(playerName, type, data, callback)
   {
-    var pKey = "p:" + playername;
+    var pKey = "p:" + playerName;
     var sType = getStoreTypeNew(type);
     console.info("saveItems: "+data);
     console.info("pKey: "+pKey);
@@ -574,7 +672,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           return;
         }
         if (callback)
-          callback(playername);
+          callback(playerName);
     });
   },
 
@@ -584,10 +682,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
 // TODO - Just do new save rather than appending to key "quests".
 
   // example {id: id, type: 2, npcId: this.id, objectId: topEntity.kind, count: mobCount, repeat: repeat}
-  saveQuests: function(playername, data, callback) {
-    var pKey = "p:" + playername;
+  saveQuests: function(playerName, data, callback) {
+    var pKey = "p:" + playerName;
 
-    client.hset(pKey, "newquests2", data,
+    client.hset(pKey, "newquests", data,
       function(err, replies) {
         if (err || !data || data == "") {
           console.warn(err);
@@ -596,36 +694,36 @@ module.exports = DatabaseHandler = cls.Class.extend({
           return;
         }
         if (callback)
-          callback(playername);
+          callback(playerName);
     });
   },
 
-  loadQuests: function(playername, callback) {
+  loadQuests: function(playerName, callback) {
     var self = this;
     console.info("loadQuest");
-    var pKey = "p:" + playername;
+    var pKey = "p:" + playerName;
     var multi = client.multi();
     var indexes;
 
-    client.hget(pKey, "newquests2", function (err, data) {
+    client.hget(pKey, "newquests", function (err, data) {
         if (err || !data || data == "") {
           console.warn(err);
           console.warn(JSON.stringify(data));
-          return;
+          data = [];
         }
         console.info(pKey);
         console.info("getItems - data="+data);
         if (callback)
-          callback(playername, data);
+          callback(playerName, data);
     });
   },
 // QUESTS - END.
 
 
 // ACHIEVEMENTS - START.
-saveAchievements: function(playername, data, callback) {
+saveAchievements: function(playerName, data, callback) {
   console.info("saveAchievement");
-  var pKey = "p:" + playername;
+  var pKey = "p:" + playerName;
   client.hset(pKey, "achievements", data,
     function(err, replies) {
       if (err) {
@@ -635,13 +733,13 @@ saveAchievements: function(playername, data, callback) {
         return;
       }
       if (callback)
-        callback(playername);
+        callback(playerName);
   });
 },
 
-loadAchievements: function(playername, callback) {
+loadAchievements: function(playerName, callback) {
   console.info("loadAchievement");
-  var pKey = "p:" + playername;
+  var pKey = "p:" + playerName;
   client.hget(pKey, "achievements", function (err, data) {
       if (err || !data || data == "") {
         console.warn(err);
@@ -649,7 +747,7 @@ loadAchievements: function(playername, callback) {
         return;
       }
       if (callback)
-        callback(playername, data);
+        callback(playerName, data);
   });
 },
 // ACHIEVEMENTS - END.

@@ -5,12 +5,12 @@ module.exports = BaseItem = cls.Class.extend({
         this.set(arr);
     },
 
-    assign: function (itemRoom) {
-      this.set([itemRoom.itemKind,
-        itemRoom.itemNumber,
-        itemRoom.itemDurability,
-        itemRoom.itemDurabilityMax,
-        itemRoom.itemExperience]);
+    assign: function (item) {
+      this.set([item.itemKind,
+        item.itemNumber,
+        item.itemDurability,
+        item.itemDurabilityMax,
+        item.itemExperience]);
     },
 
     set: function(arr){
